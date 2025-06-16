@@ -607,6 +607,19 @@
         <div id="connectionStatus" class="connection-status status-disconnected">
             🔄 جاري الاتصال بقاعدة البيانات...
         </div>
+        
+        <!-- Quick Fix Buttons -->
+        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button class="btn btn-warning" onclick="checkConnection()" style="padding: 8px 15px; font-size: 12px;">
+                🔄 إعادة فحص الاتصال
+            </button>
+            <button class="btn btn-primary" onclick="createTables()" style="padding: 8px 15px; font-size: 12px;">
+                🛠️ إنشاء الجداول
+            </button>
+            <button class="btn btn-success" onclick="testSupabaseStatus()" style="padding: 8px 15px; font-size: 12px;">
+                🌐 فحص حالة Supabase
+            </button>
+        </div>
 
         <!-- Statistics -->
         <div class="stats-grid">
@@ -1244,30 +1257,205 @@
             extractedChannels = [];
         }
 
-        // Check Supabase connection
+        // Check Supabase connection with detailed diagnostics
         async function checkConnection() {
+            const statusElement = document.getElementById('connectionStatus');
+            
+            // مرحلة 1: فحص أساسي
+            statusElement.className = 'connection-status status-disconnected';
+            statusElement.innerHTML = '🔄 جاري التحقق من الاتصال...';
+            
             try {
-                const { data, error } = await supabase.from('users').select('count').limit(1);
-                if (error) throw error;
+                // فحص إعدادات Supabase
+                if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+                    throw new Error('Missing Supabase configuration');
+                }
                 
+                // فحص صحة URL
+                if (!SUPABASE_URL.includes('supabase.co')) {
+                    throw new Error('Invalid Supabase URL format');
+                }
+                
+                statusElement.innerHTML = '🔍 فحص إعدادات قاعدة البيانات...';
+                
+                // محاولة الاتصال مع timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 seconds timeout
+                
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('count')
+                    .limit(1)
+                    .abortSignal(controller.signal);
+                
+                clearTimeout(timeoutId);
+                
+                if (error) {
+                    console.error('Supabase Error Details:', error);
+                    
+                    // تحليل نوع الخطأ
+                    if (error.code === 'PGRST301') {
+                        throw new Error('Table "users" not found - Please create the users table first');
+                    } else if (error.message.includes('JWT')) {
+                        throw new Error('Invalid API key - Please check your Supabase anon key');
+                    } else if (error.message.includes('connection')) {
+                        throw new Error('Connection refused - Your IP might be banned or project is paused');
+                    } else {
+                        throw new Error(`Database error: ${error.message}`);
+                    }
+                }
+                
+                // نجح الاتصال
                 updateConnectionStatus(true);
                 showAlert('✅ تم الاتصال بقاعدة البيانات بنجاح!', 'success');
+                
             } catch (error) {
-                console.error('Connection error:', error);
-                updateConnectionStatus(false);
-                showAlert('❌ فشل في الاتصال بقاعدة البيانات!', 'error');
+                console.error('Connection error details:', error);
+                updateConnectionStatus(false, error.message);
+                
+                // عرض تعليمات الحل حسب نوع الخطأ
+                showDetailedError(error.message);
+            }
+        }
+        
+        // Show detailed error with solutions
+        function showDetailedError(errorMessage) {
+            let solution = '';
+            let alertType = 'error';
+            
+            if (errorMessage.includes('users table')) {
+                solution = `
+                    <div style="margin-top: 10px; padding: 15px; background: rgba(255,193,7,0.1); border-radius: 8px; border-left: 4px solid #ffc107;">
+                        <h4 style="color: #ffc107; margin-bottom: 10px;">🛠️ حل المشكلة:</h4>
+                        <p style="margin-bottom: 8px;">1. ادخل على لوحة تحكم Supabase</p>
+                        <p style="margin-bottom: 8px;">2. اذهب إلى Table Editor</p>
+                        <p style="margin-bottom: 8px;">3. أنشئ جدول "users" و "channels"</p>
+                        <p>4. أو استخدم SQL Editor لتشغيل الكود التالي:</p>
+                        <code style="background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px; display: block; margin-top: 8px; font-size: 12px;">
+                            CREATE TABLE users (id SERIAL PRIMARY KEY, username TEXT, email TEXT, is_premium BOOLEAN DEFAULT false, is_active BOOLEAN DEFAULT true, created_at TIMESTAMP DEFAULT NOW());
+                            CREATE TABLE channels (id SERIAL PRIMARY KEY, name TEXT, name_ar TEXT, url TEXT, category TEXT, is_active BOOLEAN DEFAULT true, created_at TIMESTAMP DEFAULT NOW());
+                        </code>
+                    </div>
+                `;
+                alertType = 'info';
+            } else if (errorMessage.includes('API key')) {
+                solution = `
+                    <div style="margin-top: 10px; padding: 15px; background: rgba(220,53,69,0.1); border-radius: 8px; border-left: 4px solid #dc3545;">
+                        <h4 style="color: #dc3545; margin-bottom: 10px;">🔑 مشكلة في المفتاح:</h4>
+                        <p style="margin-bottom: 8px;">1. ادخل على مشروعك في Supabase</p>
+                        <p style="margin-bottom: 8px;">2. اذهب إلى Settings → API</p>
+                        <p style="margin-bottom: 8px;">3. انسخ المفتاح الجديد (anon public)</p>
+                        <p>4. استبدل SUPABASE_ANON_KEY في الكود</p>
+                    </div>
+                `;
+            } else if (errorMessage.includes('IP might be banned')) {
+                solution = `
+                    <div style="margin-top: 10px; padding: 15px; background: rgba(255,193,7,0.1); border-radius: 8px; border-left: 4px solid #ffc107;">
+                        <h4 style="color: #ffc107; margin-bottom: 10px;">🚫 IP محظور:</h4>
+                        <p style="margin-bottom: 8px;">1. انتظر 30 دقيقة (الحظر مؤقت)</p>
+                        <p style="margin-bottom: 8px;">2. أو ادخل على Supabase Dashboard</p>
+                        <p style="margin-bottom: 8px;">3. اذهب إلى Settings → Database</p>
+                        <p>4. في أسفل الصفحة، احذف IP المحظور</p>
+                    </div>
+                `;
+                alertType = 'info';
+            }
+            
+            showAlert('❌ فشل الاتصال: ' + errorMessage + solution, alertType);
+        }
+        
+        // Create tables automatically
+        async function createTables() {
+            try {
+                showAlert('🛠️ جاري إنشاء الجداول...', 'info');
+                
+                // Create users table
+                const { error: usersError } = await supabase.rpc('exec_sql', {
+                    sql: `
+                        CREATE TABLE IF NOT EXISTS users (
+                            id SERIAL PRIMARY KEY,
+                            username TEXT UNIQUE NOT NULL,
+                            email TEXT UNIQUE,
+                            password TEXT,
+                            full_name TEXT,
+                            phone TEXT,
+                            is_premium BOOLEAN DEFAULT false,
+                            is_active BOOLEAN DEFAULT true,
+                            allowed_channels TEXT[],
+                            created_at TIMESTAMP DEFAULT NOW()
+                        );
+                    `
+                });
+                
+                // Create channels table
+                const { error: channelsError } = await supabase.rpc('exec_sql', {
+                    sql: `
+                        CREATE TABLE IF NOT EXISTS channels (
+                            id SERIAL PRIMARY KEY,
+                            name TEXT NOT NULL,
+                            name_ar TEXT,
+                            url TEXT UNIQUE NOT NULL,
+                            category TEXT,
+                            image_url TEXT,
+                            description TEXT,
+                            description_ar TEXT,
+                            quality TEXT DEFAULT 'HD',
+                            is_premium BOOLEAN DEFAULT false,
+                            is_active BOOLEAN DEFAULT true,
+                            viewers_count INTEGER DEFAULT 0,
+                            rating FLOAT DEFAULT 0,
+                            created_at TIMESTAMP DEFAULT NOW()
+                        );
+                    `
+                });
+                
+                if (!usersError && !channelsError) {
+                    showAlert('✅ تم إنشاء الجداول بنجاح!', 'success');
+                    setTimeout(checkConnection, 1000);
+                } else {
+                    throw new Error('فشل في إنشاء الجداول - تحقق من صلاحيات المشروع');
+                }
+                
+            } catch (error) {
+                console.error('Create tables error:', error);
+                showAlert('❌ فشل في إنشاء الجداول. يرجى إنشاؤها يدوياً في Supabase Dashboard', 'error');
+            }
+        }
+        
+        // Test Supabase status
+        async function testSupabaseStatus() {
+            try {
+                showAlert('🌐 جاري فحص حالة Supabase...', 'info');
+                
+                const response = await fetch('https://status.supabase.com/api/v2/status.json');
+                const status = await response.json();
+                
+                if (status.page.id) {
+                    const indicator = status.status.indicator;
+                    const description = status.status.description;
+                    
+                    if (indicator === 'none') {
+                        showAlert('✅ خدمات Supabase تعمل بشكل طبيعي', 'success');
+                    } else {
+                        showAlert(`⚠️ حالة Supabase: ${description}`, 'info');
+                    }
+                }
+                
+            } catch (error) {
+                showAlert('❌ فشل في فحص حالة Supabase', 'error');
             }
         }
 
         // Update connection status
-        function updateConnectionStatus(connected) {
+        function updateConnectionStatus(connected, errorMessage = '') {
             const statusElement = document.getElementById('connectionStatus');
             if (connected) {
                 statusElement.className = 'connection-status status-connected';
                 statusElement.innerHTML = '✅ متصل بقاعدة البيانات - Supabase';
             } else {
                 statusElement.className = 'connection-status status-disconnected';
-                statusElement.innerHTML = '❌ غير متصل بقاعدة البيانات!';
+                const shortError = errorMessage ? errorMessage.split('-')[0].trim() : 'غير متصل';
+                statusElement.innerHTML = `❌ خطأ في الاتصال: ${shortError}`;
             }
         }
 
