@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TvNa   لوحة التحكم </title>
+    <title>TvNa - لوحة التحكم</title>
     <style>
         * {
             margin: 0;
@@ -245,6 +245,39 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .file-upload input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 20px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .file-upload-label:hover {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .file-upload-label.dragover {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.2);
+        }
+
         .btn {
             padding: 12px 25px;
             border: none;
@@ -286,6 +319,11 @@
 
         .btn-warning {
             background: linear-gradient(135deg, #feca57, #ff9ff3);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00b894, #00a085);
             color: white;
         }
 
@@ -407,6 +445,8 @@
             max-width: 500px;
             position: relative;
             animation: slideIn 0.3s ease;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         @keyframes slideIn {
@@ -451,6 +491,11 @@
             color: white;
         }
 
+        .alert-info {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
         .loading {
             display: inline-block;
             width: 20px;
@@ -481,6 +526,43 @@
             background: linear-gradient(135deg, #e74c3c, #c0392b);
         }
 
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            border-radius: 5px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .m3u-preview {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .m3u-channel-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -509,12 +591,12 @@
                 <div class="logo">
                     <div class="logo-icon">📺</div>
                     <div class="logo-text">
-                        <h1>TvNa  </h1>
-                        <p>لوحة التحكم     </p>
+                        <h1>TvNa</h1>
+                        <p>لوحة التحكم</p>
                     </div>
                 </div>
                 <div class="admin-info">
-                    <p><strong> أمير حلواص</strong></p>
+                    <p><strong>أمير حلواص</strong></p>
                     <p>مدير النظام</p>
                     <p id="currentDate"></p>
                 </div>
@@ -549,6 +631,45 @@
         <!-- Alert Container -->
         <div id="alertContainer"></div>
 
+        <!-- Upload M3U File Section -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">📁</div>
+                <div>
+                    <div class="card-title">رفع ملف قنوات M3U</div>
+                    <div class="card-subtitle">قم برفع ملف M3U لإضافة قنوات متعددة</div>
+                </div>
+            </div>
+            
+            <div class="file-upload">
+                <input type="file" id="m3uFile" accept=".m3u,.m3u8" />
+                <label for="m3uFile" class="file-upload-label" id="fileUploadLabel">
+                    📁 اختر ملف M3U أو اسحبه هنا
+                    <br>
+                    <small style="color: rgba(255,255,255,0.6);">الملفات المدعومة: .m3u, .m3u8</small>
+                </label>
+            </div>
+
+            <div id="m3uProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                </div>
+                <p id="progressText">جاري المعالجة...</p>
+            </div>
+
+            <div id="m3uPreview" style="display: none;">
+                <h4>معاينة القنوات المستخرجة:</h4>
+                <div class="m3u-preview" id="channelsList"></div>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="btn btn-success" onclick="importM3UChannels()">
+                        <span id="importText">📥 استيراد جميع القنوات</span>
+                        <span id="importLoading" class="loading" style="display: none;"></span>
+                    </button>
+                    <button class="btn btn-warning" onclick="cancelImport()">❌ إلغاء</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Add Channel Section -->
         <div class="card">
             <div class="card-header">
@@ -582,6 +703,9 @@
                             <option value="AD Sports">AD Sports</option>
                             <option value="News">الأخبار</option>
                             <option value="Entertainment">الترفيه</option>
+                            <option value="Movies">الأفلام</option>
+                            <option value="Documentary">الوثائقي</option>
+                            <option value="Kids">الأطفال</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -629,23 +753,33 @@
                 <div class="card-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">👥</div>
                 <div>
                     <div class="card-title">إضافة مستخدم جديد</div>
-                    <div class="card-subtitle"> </div>
+                    <div class="card-subtitle">إنشاء حساب مستخدم جديد</div>
                 </div>
             </div>
             
             <form id="addUserForm">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
                     <div class="form-group">
-                        <label class="form-label">اسم المستخدم</label>
-                        <input type="text" class="form-input" id="username" placeholder="Username" required>
+                        <label class="form-label">اسم المستخدم *</label>
+                        <input type="text" class="form-input" id="username" placeholder="Username" required minlength="3" maxlength="20">
+                        <small style="color: rgba(255,255,255,0.6); font-size: 12px;">يجب أن يكون 3-20 حرف</small>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">كلمة المرور</label>
-                        <input type="password" class="form-input" id="password" placeholder="Password" required>
+                        <label class="form-label">كلمة المرور *</label>
+                        <input type="password" class="form-input" id="password" placeholder="Password" required minlength="6">
+                        <small style="color: rgba(255,255,255,0.6); font-size: 12px;">6 أحرف على الأقل</small>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">البريد الإلكتروني</label>
+                        <label class="form-label">البريد الإلكتروني *</label>
                         <input type="email" class="form-input" id="email" placeholder="user@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الاسم الكامل</label>
+                        <input type="text" class="form-input" id="fullName" placeholder="الاسم الكامل">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رقم الهاتف</label>
+                        <input type="tel" class="form-input" id="phone" placeholder="+964xxxxxxxxx">
                     </div>
                     <div class="form-group">
                         <label class="form-label">نوع الحساب</label>
@@ -695,6 +829,7 @@
                     <thead>
                         <tr>
                             <th>اسم المستخدم</th>
+                            <th>الاسم الكامل</th>
                             <th>البريد الإلكتروني</th>
                             <th>نوع الحساب</th>
                             <th>تاريخ التسجيل</th>
@@ -729,6 +864,19 @@
                     <label class="form-label">رابط القناة</label>
                     <input type="url" class="form-input" id="editChannelUrl" required>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">التصنيف</label>
+                    <select class="form-input" id="editChannelCategory">
+                        <option value="beIN Sports">beIN Sports</option>
+                        <option value="SSC Sports">SSC Sports</option>
+                        <option value="AD Sports">AD Sports</option>
+                        <option value="News">الأخبار</option>
+                        <option value="Entertainment">الترفيه</option>
+                        <option value="Movies">الأفلام</option>
+                        <option value="Documentary">الوثائقي</option>
+                        <option value="Kids">الأطفال</option>
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-primary">💾 حفظ التغييرات</button>
             </form>
         </div>
@@ -746,6 +894,7 @@
         // Global variables
         let channels = [];
         let users = [];
+        let extractedChannels = [];
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
@@ -754,8 +903,277 @@
             loadChannels();
             loadUsers();
             updateStats();
+            setupFileUpload();
             setInterval(updateDateTime, 1000);
         });
+
+        // Setup file upload functionality
+        function setupFileUpload() {
+            const fileInput = document.getElementById('m3uFile');
+            const fileLabel = document.getElementById('fileUploadLabel');
+
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Drag and drop functionality
+            fileLabel.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileLabel.classList.add('dragover');
+            });
+
+            fileLabel.addEventListener('dragleave', () => {
+                fileLabel.classList.remove('dragover');
+            });
+
+            fileLabel.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileLabel.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    handleFileSelect();
+                }
+            });
+        }
+
+        // Handle file selection
+        function handleFileSelect() {
+            const file = document.getElementById('m3uFile').files[0];
+            if (!file) return;
+
+            if (!file.name.match(/\.(m3u|m3u8)$/i)) {
+                showAlert('❌ يرجى اختيار ملف M3U صحيح!', 'error');
+                return;
+            }
+
+            document.getElementById('fileUploadLabel').innerHTML = `
+                📁 تم اختيار الملف: ${file.name}
+                <br>
+                <small style="color: rgba(255,255,255,0.6);">الحجم: ${(file.size / 1024).toFixed(1)} KB</small>
+            `;
+
+            parseM3UFile(file);
+        }
+
+        // Parse M3U file
+        async function parseM3UFile(file) {
+            const progressDiv = document.getElementById('m3uProgress');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            progressDiv.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressText.textContent = 'جاري قراءة الملف...';
+
+            try {
+                const text = await file.text();
+                const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+                
+                extractedChannels = [];
+                let currentChannel = null;
+                
+                progressText.textContent = 'جاري تحليل القنوات...';
+                progressFill.style.width = '30%';
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    
+                    if (line.startsWith('#EXTINF:')) {
+                        // Parse channel info
+                        const info = parseEXTINF(line);
+                        currentChannel = {
+                            name: info.name || `Channel ${extractedChannels.length + 1}`,
+                            name_ar: info.name || `قناة ${extractedChannels.length + 1}`,
+                            group: info.group || 'General',
+                            logo: info.logo || 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300'
+                        };
+                    } else if (line.startsWith('http') && currentChannel) {
+                        // This is the URL for the current channel
+                        currentChannel.url = line;
+                        currentChannel.category = categorizeChannel(currentChannel.name, currentChannel.group);
+                        currentChannel.quality = detectQuality(currentChannel.name);
+                        currentChannel.is_premium = isPremiumChannel(currentChannel.name, currentChannel.group);
+                        
+                        extractedChannels.push(currentChannel);
+                        currentChannel = null;
+                    }
+                    
+                    // Update progress
+                    const progress = 30 + (i / lines.length) * 60;
+                    progressFill.style.width = progress + '%';
+                }
+
+                progressFill.style.width = '100%';
+                progressText.textContent = `تم استخراج ${extractedChannels.length} قناة بنجاح!`;
+                
+                setTimeout(() => {
+                    progressDiv.style.display = 'none';
+                    displayM3UPreview();
+                }, 1000);
+
+            } catch (error) {
+                console.error('Error parsing M3U file:', error);
+                showAlert('❌ خطأ في قراءة ملف M3U!', 'error');
+                progressDiv.style.display = 'none';
+            }
+        }
+
+        // Parse EXTINF line
+        function parseEXTINF(line) {
+            const info = {};
+            
+            // Extract name (last part after commas)
+            const nameMatch = line.split(',').pop();
+            if (nameMatch) {
+                info.name = nameMatch.trim();
+            }
+            
+            // Extract group-title
+            const groupMatch = line.match(/group-title="([^"]+)"/i);
+            if (groupMatch) {
+                info.group = groupMatch[1];
+            }
+            
+            // Extract logo
+            const logoMatch = line.match(/tvg-logo="([^"]+)"/i);
+            if (logoMatch) {
+                info.logo = logoMatch[1];
+            }
+            
+            return info;
+        }
+
+        // Categorize channel based on name and group
+        function categorizeChannel(name, group) {
+            const lowerName = (name + ' ' + (group || '')).toLowerCase();
+            
+            if (lowerName.includes('bein') || lowerName.includes('sports')) return 'beIN Sports';
+            if (lowerName.includes('ssc')) return 'SSC Sports';
+            if (lowerName.includes('ad sports')) return 'AD Sports';
+            if (lowerName.includes('news') || lowerName.includes('أخبار')) return 'News';
+            if (lowerName.includes('movie') || lowerName.includes('cinema') || lowerName.includes('أفلام')) return 'Movies';
+            if (lowerName.includes('kids') || lowerName.includes('أطفال')) return 'Kids';
+            if (lowerName.includes('doc') || lowerName.includes('وثائقي')) return 'Documentary';
+            
+            return 'Entertainment';
+        }
+
+        // Detect quality from channel name
+        function detectQuality(name) {
+            const lowerName = name.toLowerCase();
+            if (lowerName.includes('4k')) return '4K';
+            if (lowerName.includes('fhd') || lowerName.includes('1080')) return 'FHD';
+            return 'HD';
+        }
+
+        // Check if channel is premium
+        function isPremiumChannel(name, group) {
+            const lowerName = (name + ' ' + (group || '')).toLowerCase();
+            return lowerName.includes('bein') || lowerName.includes('premium') || lowerName.includes('vip');
+        }
+
+        // Display M3U preview
+        function displayM3UPreview() {
+            const previewDiv = document.getElementById('m3uPreview');
+            const channelsList = document.getElementById('channelsList');
+            
+            channelsList.innerHTML = '';
+            
+            extractedChannels.forEach((channel, index) => {
+                const channelItem = document.createElement('div');
+                channelItem.className = 'm3u-channel-item';
+                channelItem.innerHTML = `
+                    <div>
+                        <strong>${channel.name}</strong>
+                        <br>
+                        <small style="color: rgba(255,255,255,0.6);">
+                            ${channel.category} • ${channel.quality} ${channel.is_premium ? '• ⭐ مميز' : ''}
+                        </small>
+                    </div>
+                    <div style="font-size: 10px; color: rgba(255,255,255,0.5);">
+                        #${index + 1}
+                    </div>
+                `;
+                channelsList.appendChild(channelItem);
+            });
+            
+            previewDiv.style.display = 'block';
+            showAlert(`📁 تم استخراج ${extractedChannels.length} قناة من ملف M3U`, 'info');
+        }
+
+        // Import M3U channels
+        async function importM3UChannels() {
+            if (extractedChannels.length === 0) {
+                showAlert('❌ لا توجد قنوات للاستيراد!', 'error');
+                return;
+            }
+
+            const importBtn = document.getElementById('importText');
+            const loadingBtn = document.getElementById('importLoading');
+            
+            importBtn.style.display = 'none';
+            loadingBtn.style.display = 'inline-block';
+
+            try {
+                let imported = 0;
+                let errors = 0;
+
+                for (const channel of extractedChannels) {
+                    try {
+                        const channelData = {
+                            name: channel.name,
+                            name_ar: channel.name_ar,
+                            url: channel.url,
+                            category: channel.category,
+                            image_url: channel.logo,
+                            description: `Imported from M3U - ${channel.name}`,
+                            description_ar: `مستورد من ملف M3U - ${channel.name_ar}`,
+                            quality: channel.quality,
+                            is_premium: channel.is_premium,
+                            viewers_count: Math.floor(Math.random() * 50000),
+                            rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
+                            is_active: true
+                        };
+
+                        const { error } = await supabase
+                            .from('channels')
+                            .insert([channelData]);
+
+                        if (error) {
+                            console.error('Error importing channel:', channel.name, error);
+                            errors++;
+                        } else {
+                            imported++;
+                        }
+                    } catch (error) {
+                        console.error('Error importing channel:', channel.name, error);
+                        errors++;
+                    }
+                }
+
+                showAlert(`✅ تم استيراد ${imported} قناة بنجاح! ${errors > 0 ? `(${errors} خطأ)` : ''}`, 'success');
+                cancelImport();
+                loadChannels();
+
+            } catch (error) {
+                console.error('Import error:', error);
+                showAlert('❌ خطأ في استيراد القنوات!', 'error');
+            } finally {
+                importBtn.style.display = 'inline-block';
+                loadingBtn.style.display = 'none';
+            }
+        }
+
+        // Cancel import
+        function cancelImport() {
+            document.getElementById('m3uPreview').style.display = 'none';
+            document.getElementById('m3uFile').value = '';
+            document.getElementById('fileUploadLabel').innerHTML = `
+                📁 اختر ملف M3U أو اسحبه هنا
+                <br>
+                <small style="color: rgba(255,255,255,0.6);">الملفات المدعومة: .m3u, .m3u8</small>
+            `;
+            extractedChannels = [];
+        }
 
         // Check Supabase connection
         async function checkConnection() {
@@ -860,6 +1278,30 @@
             }, 5000);
         }
 
+        // Validate form inputs
+        function validateUserForm() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const email = document.getElementById('email').value.trim();
+
+            if (username.length < 3 || username.length > 20) {
+                showAlert('❌ اسم المستخدم يجب أن يكون بين 3-20 حرف!', 'error');
+                return false;
+            }
+
+            if (password.length < 6) {
+                showAlert('❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل!', 'error');
+                return false;
+            }
+
+            if (!email.includes('@') || !email.includes('.')) {
+                showAlert('❌ يرجى إدخال بريد إلكتروني صحيح!', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
         // Add channel form submission
         document.getElementById('addChannelForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -872,13 +1314,13 @@
             
             try {
                 const channelData = {
-                    name: document.getElementById('channelName').value,
-                    name_ar: document.getElementById('channelNameAr').value,
-                    url: document.getElementById('channelUrl').value,
+                    name: document.getElementById('channelName').value.trim(),
+                    name_ar: document.getElementById('channelNameAr').value.trim(),
+                    url: document.getElementById('channelUrl').value.trim(),
                     category: document.getElementById('channelCategory').value,
-                    image_url: document.getElementById('channelImage').value || 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300',
-                    description: document.getElementById('channelDescription').value,
-                    description_ar: document.getElementById('channelDescriptionAr').value,
+                    image_url: document.getElementById('channelImage').value.trim() || 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300',
+                    description: document.getElementById('channelDescription').value.trim(),
+                    description_ar: document.getElementById('channelDescriptionAr').value.trim(),
                     quality: document.getElementById('channelQuality').value,
                     is_premium: document.getElementById('isPremium').checked,
                     viewers_count: Math.floor(Math.random() * 100000),
@@ -899,16 +1341,24 @@
                 
             } catch (error) {
                 console.error('Error adding channel:', error);
-                showAlert('❌ خطأ في إضافة القناة!', 'error');
+                if (error.code === '23505') {
+                    showAlert('❌ هذه القناة موجودة بالفعل!', 'error');
+                } else {
+                    showAlert('❌ خطأ في إضافة القناة!', 'error');
+                }
             } finally {
                 submitBtn.style.display = 'inline-block';
                 loadingBtn.style.display = 'none';
             }
         });
 
-        // Add user form submission
+        // Add user form submission (FIXED)
         document.getElementById('addUserForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            if (!validateUserForm()) {
+                return;
+            }
             
             const submitBtn = document.getElementById('addUserText');
             const loadingBtn = document.getElementById('addUserLoading');
@@ -918,13 +1368,34 @@
             
             try {
                 const userData = {
-                    username: document.getElementById('username').value,
-                    password: document.getElementById('password').value,
-                    email: document.getElementById('email').value,
+                    username: document.getElementById('username').value.trim(),
+                    password: document.getElementById('password').value, // In production, hash this!
+                    email: document.getElementById('email').value.trim(),
+                    full_name: document.getElementById('fullName').value.trim() || null,
+                    phone: document.getElementById('phone').value.trim() || null,
                     is_premium: document.getElementById('userType').value === 'true',
                     is_active: true,
-                    allowed_channels: []
+                    allowed_channels: [],
+                    created_at: new Date().toISOString()
                 };
+
+                // Check if username or email already exists
+                const { data: existingUsers, error: checkError } = await supabase
+                    .from('users')
+                    .select('username, email')
+                    .or(`username.eq.${userData.username},email.eq.${userData.email}`);
+
+                if (checkError) throw checkError;
+
+                if (existingUsers && existingUsers.length > 0) {
+                    const existing = existingUsers[0];
+                    if (existing.username === userData.username) {
+                        showAlert('❌ اسم المستخدم موجود بالفعل!', 'error');
+                    } else if (existing.email === userData.email) {
+                        showAlert('❌ البريد الإلكتروني موجود بالفعل!', 'error');
+                    }
+                    return;
+                }
 
                 const { data, error } = await supabase
                     .from('users')
@@ -942,7 +1413,7 @@
                 if (error.code === '23505') {
                     showAlert('❌ اسم المستخدم أو البريد الإلكتروني موجود بالفعل!', 'error');
                 } else {
-                    showAlert('❌ خطأ في إضافة المستخدم!', 'error');
+                    showAlert('❌ خطأ في إضافة المستخدم: ' + (error.message || 'خطأ غير معروف'), 'error');
                 }
             } finally {
                 submitBtn.style.display = 'inline-block';
@@ -966,15 +1437,15 @@
                 channelDiv.innerHTML = `
                     <div class="channel-header">
                         <div class="channel-info">
-                            <h3>${channel.name_ar}</h3>
+                            <h3>${channel.name_ar || channel.name}</h3>
                             <p>${channel.category} • ${channel.quality}</p>
                         </div>
                         <div>
                             ${channel.is_premium ? '<span class="channel-status status-premium">⭐ مميز</span>' : ''}
                         </div>
                     </div>
-                    <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 10px 0;">${channel.description_ar}</p>
-                    <p style="color: rgba(255,255,255,0.6); font-size: 12px;">👥 ${channel.viewers_count.toLocaleString()} مشاهد • ⭐ ${channel.rating}</p>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 10px 0;">${channel.description_ar || channel.description || 'لا يوجد وصف'}</p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 12px;">👥 ${(channel.viewers_count || 0).toLocaleString()} مشاهد • ⭐ ${channel.rating || 0}</p>
                     <div class="channel-actions">
                         <button class="btn btn-primary" onclick="editChannel('${channel.id}')" style="padding: 8px 12px; font-size: 12px;">✏️ تعديل</button>
                         <button class="btn btn-danger" onclick="deleteChannel('${channel.id}')" style="padding: 8px 12px; font-size: 12px;">🗑️ حذف</button>
@@ -991,7 +1462,7 @@
             tbody.innerHTML = '';
             
             if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #666;">لا يوجد مستخدمين مسجلين بعد</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #666;">لا يوجد مستخدمين مسجلين بعد</td></tr>';
                 return;
             }
             
@@ -999,6 +1470,7 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${user.username}</td>
+                    <td>${user.full_name || 'غير محدد'}</td>
                     <td>${user.email || 'غير محدد'}</td>
                     <td>
                         <span style="padding: 4px 8px; border-radius: 10px; font-size: 10px; ${user.is_premium ? 'background: linear-gradient(135deg, #feca57, #ff9ff3);' : 'background: #666;'} color: white;">
@@ -1031,6 +1503,7 @@
             document.getElementById('editChannelName').value = channel.name;
             document.getElementById('editChannelNameAr').value = channel.name_ar;
             document.getElementById('editChannelUrl').value = channel.url;
+            document.getElementById('editChannelCategory').value = channel.category;
             
             openModal('editChannelModal');
         }
@@ -1042,9 +1515,10 @@
             try {
                 const channelId = document.getElementById('editChannelId').value;
                 const updateData = {
-                    name: document.getElementById('editChannelName').value,
-                    name_ar: document.getElementById('editChannelNameAr').value,
-                    url: document.getElementById('editChannelUrl').value
+                    name: document.getElementById('editChannelName').value.trim(),
+                    name_ar: document.getElementById('editChannelNameAr').value.trim(),
+                    url: document.getElementById('editChannelUrl').value.trim(),
+                    category: document.getElementById('editChannelCategory').value
                 };
 
                 const { error } = await supabase
