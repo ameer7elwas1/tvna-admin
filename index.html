@@ -245,6 +245,72 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
+        .file-upload-area {
+            border: 2px dashed rgba(78, 205, 196, 0.5);
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(78, 205, 196, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload-area:hover {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .file-upload-area.dragover {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #4ecdc4;
+        }
+
+        .file-upload-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #4ecdc4;
+        }
+
+        .file-upload-hint {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #4ecdc4;
+            font-size: 14px;
+        }
+
         .btn {
             padding: 12px 25px;
             border: none;
@@ -407,6 +473,8 @@
             max-width: 500px;
             position: relative;
             animation: slideIn 0.3s ease;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         @keyframes slideIn {
@@ -481,6 +549,39 @@
             background: linear-gradient(135deg, #e74c3c, #c0392b);
         }
 
+        .upload-results {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .upload-result-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-icon {
+            font-size: 16px;
+        }
+
+        .result-success {
+            color: #00b894;
+        }
+
+        .result-error {
+            color: #e74c3c;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -548,6 +649,36 @@
 
         <!-- Alert Container -->
         <div id="alertContainer"></div>
+
+        <!-- M3U Upload Section -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">📁</div>
+                <div>
+                    <div class="card-title">رفع ملف M3U</div>
+                    <div class="card-subtitle">قم برفع ملف M3U لإضافة القنوات تلقائياً</div>
+                </div>
+            </div>
+            
+            <div class="file-upload-area" onclick="document.getElementById('m3uFile').click()">
+                <input type="file" id="m3uFile" accept=".m3u,.m3u8" style="display: none;">
+                <div class="file-upload-icon">📁</div>
+                <div class="file-upload-text">اضغط لاختيار ملف M3U أو اسحبه هنا</div>
+                <div class="file-upload-hint">يدعم ملفات .m3u و .m3u8</div>
+            </div>
+
+            <div class="progress-container" id="uploadProgress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">جاري المعالجة...</div>
+            </div>
+
+            <div id="uploadResults" class="upload-results" style="display: none;">
+                <h4 style="margin-bottom: 15px; color: #4ecdc4;">نتائج الرفع:</h4>
+                <div id="uploadResultsList"></div>
+            </div>
+        </div>
 
         <!-- Add Channel Section -->
         <div class="card">
@@ -755,7 +886,292 @@
             loadUsers();
             updateStats();
             setInterval(updateDateTime, 1000);
+            initializeFileUpload();
         });
+
+        // Initialize file upload functionality
+        function initializeFileUpload() {
+            const fileInput = document.getElementById('m3uFile');
+            const uploadArea = document.querySelector('.file-upload-area');
+
+            // File input change event
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // Drag and drop events
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('dragleave', handleDragLeave);
+            uploadArea.addEventListener('drop', handleFileDrop);
+        }
+
+        // Handle file selection
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                processM3UFile(file);
+            }
+        }
+
+        // Handle drag over
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        // Handle drag leave
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        // Handle file drop
+        function handleFileDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            if (files.length > 0 && (files[0].name.endsWith('.m3u') || files[0].name.endsWith('.m3u8'))) {
+                processM3UFile(files[0]);
+            } else {
+                showAlert('❌ يرجى رفع ملف M3U صحيح!', 'error');
+            }
+        }
+
+        // Process M3U file
+        async function processM3UFile(file) {
+            showProgress(true);
+            updateProgress(0, 'جاري قراءة الملف...');
+
+            try {
+                const fileContent = await readFileContent(file);
+                const parsedChannels = parseM3UContent(fileContent);
+                
+                if (parsedChannels.length === 0) {
+                    throw new Error('لم يتم العثور على قنوات صالحة في الملف');
+                }
+
+                updateProgress(20, `تم العثور على ${parsedChannels.length} قناة، جاري الإضافة...`);
+
+                const results = await addChannelsToDatabase(parsedChannels);
+                showUploadResults(results);
+                
+                updateProgress(100, 'تم الانتهاء!');
+                setTimeout(() => showProgress(false), 2000);
+
+                loadChannels();
+                showAlert(`✅ تم رفع ${results.success} قناة بنجاح من أصل ${parsedChannels.length}!`, 'success');
+
+            } catch (error) {
+                console.error('Error processing M3U file:', error);
+                showAlert(`❌ خطأ في معالجة الملف: ${error.message}`, 'error');
+                showProgress(false);
+            }
+        }
+
+        // Read file content
+        function readFileContent(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(new Error('خطأ في قراءة الملف'));
+                reader.readAsText(file, 'UTF-8');
+            });
+        }
+
+        // Parse M3U content
+        function parseM3UContent(content) {
+            const lines = content.split('\n').map(line => line.trim()).filter(line => line);
+            const channels = [];
+            let currentChannel = {};
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+
+                if (line.startsWith('#EXTINF:')) {
+                    // Parse channel info
+                    const info = line.substring(8); // Remove #EXTINF:
+                    const commaIndex = info.lastIndexOf(',');
+                    
+                    if (commaIndex !== -1) {
+                        const attributes = info.substring(0, commaIndex);
+                        const displayName = info.substring(commaIndex + 1).trim();
+
+                        currentChannel = {
+                            name: displayName,
+                            name_ar: displayName,
+                            description: '',
+                            description_ar: '',
+                            category: 'General',
+                            quality: 'HD',
+                            is_premium: false,
+                            image_url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300',
+                            viewers_count: Math.floor(Math.random() * 100000),
+                            rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
+                            is_active: true
+                        };
+
+                        // Extract attributes
+                        const logoMatch = attributes.match(/tvg-logo="([^"]+)"/);
+                        if (logoMatch) {
+                            currentChannel.image_url = logoMatch[1];
+                        }
+
+                        const groupMatch = attributes.match(/group-title="([^"]+)"/);
+                        if (groupMatch) {
+                            currentChannel.category = groupMatch[1];
+                        }
+
+                        const nameMatch = attributes.match(/tvg-name="([^"]+)"/);
+                        if (nameMatch) {
+                            currentChannel.name = nameMatch[1];
+                        }
+
+                        // Detect if premium based on name or category
+                        const premiumKeywords = ['premium', 'vip', 'exclusive', 'مميز', 'خاص'];
+                        const channelText = (currentChannel.name + ' ' + currentChannel.category).toLowerCase();
+                        currentChannel.is_premium = premiumKeywords.some(keyword => 
+                            channelText.includes(keyword.toLowerCase())
+                        );
+
+                        // Auto-detect quality
+                        if (channelText.includes('4k') || channelText.includes('uhd')) {
+                            currentChannel.quality = '4K';
+                        } else if (channelText.includes('fhd') || channelText.includes('1080')) {
+                            currentChannel.quality = 'FHD';
+                        }
+                    }
+                } else if (line.startsWith('http') && Object.keys(currentChannel).length > 0) {
+                    // This is the stream URL
+                    currentChannel.url = line;
+                    channels.push({...currentChannel});
+                    currentChannel = {};
+                }
+            }
+
+            return channels;
+        }
+
+        // Add channels to database
+        async function addChannelsToDatabase(channelsData) {
+            const results = {
+                success: 0,
+                errors: 0,
+                details: []
+            };
+
+            const totalChannels = channelsData.length;
+
+            for (let i = 0; i < totalChannels; i++) {
+                const channel = channelsData[i];
+                const progress = Math.round(((i + 1) / totalChannels) * 80) + 20; // 20-100%
+
+                updateProgress(progress, `معالجة القناة ${i + 1} من ${totalChannels}: ${channel.name}`);
+
+                try {
+                    // Check if channel already exists
+                    const { data: existingChannels } = await supabase
+                        .from('channels')
+                        .select('id')
+                        .eq('url', channel.url)
+                        .eq('is_active', true);
+
+                    if (existingChannels && existingChannels.length > 0) {
+                        results.errors++;
+                        results.details.push({
+                            name: channel.name,
+                            status: 'error',
+                            message: 'القناة موجودة بالفعل'
+                        });
+                        continue;
+                    }
+
+                    // Add channel to database
+                    const { data, error } = await supabase
+                        .from('channels')
+                        .insert([channel])
+                        .select();
+
+                    if (error) throw error;
+
+                    results.success++;
+                    results.details.push({
+                        name: channel.name,
+                        status: 'success',
+                        message: 'تم إضافة القناة بنجاح'
+                    });
+
+                } catch (error) {
+                    console.error(`Error adding channel ${channel.name}:`, error);
+                    results.errors++;
+                    results.details.push({
+                        name: channel.name,
+                        status: 'error',
+                        message: error.message || 'خطأ غير معروف'
+                    });
+                }
+            }
+
+            return results;
+        }
+
+        // Show/hide progress
+        function showProgress(show) {
+            const progressContainer = document.getElementById('uploadProgress');
+            progressContainer.style.display = show ? 'block' : 'none';
+            
+            if (!show) {
+                updateProgress(0, '');
+            }
+        }
+
+        // Update progress
+        function updateProgress(percent, text) {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            progressFill.style.width = percent + '%';
+            progressText.textContent = text;
+        }
+
+        // Show upload results
+        function showUploadResults(results) {
+            const resultsContainer = document.getElementById('uploadResults');
+            const resultsList = document.getElementById('uploadResultsList');
+            
+            resultsList.innerHTML = '';
+
+            // Add summary
+            const summary = document.createElement('div');
+            summary.style.marginBottom = '15px';
+            summary.style.padding = '10px';
+            summary.style.borderRadius = '5px';
+            summary.style.background = 'rgba(78, 205, 196, 0.1)';
+            summary.innerHTML = `
+                <strong>ملخص النتائج:</strong><br>
+                ✅ تم إضافة ${results.success} قناة بنجاح<br>
+                ❌ فشل في إضافة ${results.errors} قناة
+            `;
+            resultsList.appendChild(summary);
+
+            // Add detailed results
+            results.details.forEach(detail => {
+                const item = document.createElement('div');
+                item.className = 'upload-result-item';
+                
+                const icon = detail.status === 'success' ? '✅' : '❌';
+                const colorClass = detail.status === 'success' ? 'result-success' : 'result-error';
+                
+                item.innerHTML = `
+                    <span class="result-icon ${colorClass}">${icon}</span>
+                    <div>
+                        <strong>${detail.name}</strong><br>
+                        <small style="color: rgba(255,255,255,0.7);">${detail.message}</small>
+                    </div>
+                `;
+                
+                resultsList.appendChild(item);
+            });
+
+            resultsContainer.style.display = 'block';
+        }
 
         // Check Supabase connection
         async function checkConnection() {
