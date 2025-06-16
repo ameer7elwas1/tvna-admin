@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TvNa Admin Panel - لوحة تحكم المدير</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .logo-text h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        .admin-info {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transition: left 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .card-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #feca57, #ff9ff3);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .channel-card {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .channel-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .channel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .channel-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .channel-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+        }
+
+        .channel-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .status-live {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+        }
+
+        .status-premium {
+            background: linear-gradient(135deg, #feca57, #ff9ff3);
+        }
+
+        .channel-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .users-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-weight: bold;
+        }
+
+        .users-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #ff6b6b;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+            color: #ff4757;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #00b894, #00a085);
+            color: white;
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .connection-status {
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .status-connected {
+            background: linear-gradient(135deg, #00b894, #00a085);
+        }
+
+        .status-disconnected {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+
+            .channels-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">📺</div>
+                    <div class="logo-text">
+                        <h1>TvNa Admin Panel</h1>
+                        <p>لوحة تحكم المدير - إدارة القنوات والمستخدمين</p>
+                    </div>
+                </div>
+                <div class="admin-info">
+                    <p><strong>👑 أمير حلواص</strong></p>
+                    <p>مدير النظام</p>
+                    <p id="currentDate"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Status -->
+        <div id="connectionStatus" class="connection-status status-disconnected">
+            🔄 جاري الاتصال بقاعدة البيانات...
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalChannels">0</div>
+                <div class="stat-label">📺 إجمالي القنوات</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">👥 المستخدمين المسجلين</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeUsers">0</div>
+                <div class="stat-label">🟢 المستخدمين النشطين</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="premiumUsers">0</div>
+                <div class="stat-label">⭐ المستخدمين المميزين</div>
+            </div>
+        </div>
+
+        <!-- Alert Container -->
+        <div id="alertContainer"></div>
+
+        <!-- Add Channel Section -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #4ecdc4, #44a08d);">📺</div>
+                <div>
+                    <div class="card-title">إضافة قناة جديدة</div>
+                    <div class="card-subtitle">أضف قناة جديدة إلى النظام</div>
+                </div>
+            </div>
+            
+            <form id="addChannelForm">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">اسم القناة (English)</label>
+                        <input type="text" class="form-input" id="channelName" placeholder="Channel Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">اسم القناة (العربية)</label>
+                        <input type="text" class="form-input" id="channelNameAr" placeholder="اسم القناة بالعربية" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رابط القناة</label>
+                        <input type="url" class="form-input" id="channelUrl" placeholder="https://example.com/stream.m3u8" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">التصنيف</label>
+                        <select class="form-input" id="channelCategory" required>
+                            <option value="">اختر التصنيف</option>
+                            <option value="beIN Sports">beIN Sports</option>
+                            <option value="SSC Sports">SSC Sports</option>
+                            <option value="AD Sports">AD Sports</option>
+                            <option value="News">الأخبار</option>
+                            <option value="Entertainment">الترفيه</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رابط الصورة</label>
+                        <input type="url" class="form-input" id="channelImage" placeholder="https://example.com/image.jpg">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الجودة</label>
+                        <select class="form-input" id="channelQuality">
+                            <option value="HD">HD</option>
+                            <option value="FHD">FHD</option>
+                            <option value="4K">4K</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">الوصف (English)</label>
+                        <textarea class="form-input" id="channelDescription" placeholder="Channel Description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الوصف (العربية)</label>
+                        <textarea class="form-input" id="channelDescriptionAr" placeholder="وصف القناة بالعربية" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="isPremium">
+                        <span>⭐ قناة مميزة</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
+                    <span id="addChannelText">➕ إضافة القناة</span>
+                    <span id="addChannelLoading" class="loading" style="display: none;"></span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Add User Section -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">👥</div>
+                <div>
+                    <div class="card-title">إضافة مستخدم جديد</div>
+                    <div class="card-subtitle">إنشاء حساب مستخدم جديد</div>
+                </div>
+            </div>
+            
+            <form id="addUserForm">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">اسم المستخدم</label>
+                        <input type="text" class="form-input" id="username" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">كلمة المرور</label>
+                        <input type="password" class="form-input" id="password" placeholder="Password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">البريد الإلكتروني</label>
+                        <input type="email" class="form-input" id="email" placeholder="user@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">نوع الحساب</label>
+                        <select class="form-input" id="userType">
+                            <option value="false">عادي</option>
+                            <option value="true">مميز</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
+                    <span id="addUserText">👥 إضافة مستخدم</span>
+                    <span id="addUserLoading" class="loading" style="display: none;"></span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Channels Management -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f);">📺</div>
+                <div>
+                    <div class="card-title">إدارة القنوات</div>
+                    <div class="card-subtitle">عرض وتعديل القنوات الموجودة</div>
+                </div>
+                <button class="btn btn-warning" onclick="loadChannels()">🔄 تحديث</button>
+            </div>
+            
+            <div id="channelsContainer" class="channels-grid">
+                <!-- Channels will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Users Management -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #feca57, #ff9ff3);">👥</div>
+                <div>
+                    <div class="card-title">إدارة المستخدمين</div>
+                    <div class="card-subtitle">عرض وإدارة حسابات المستخدمين</div>
+                </div>
+                <button class="btn btn-warning" onclick="loadUsers()">🔄 تحديث</button>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>اسم المستخدم</th>
+                            <th>البريد الإلكتروني</th>
+                            <th>نوع الحساب</th>
+                            <th>تاريخ التسجيل</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Channel Modal -->
+    <div id="editChannelModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editChannelModal')">&times;</span>
+            <h2>تعديل القناة</h2>
+            <form id="editChannelForm">
+                <input type="hidden" id="editChannelId">
+                <div class="form-group">
+                    <label class="form-label">اسم القناة (English)</label>
+                    <input type="text" class="form-input" id="editChannelName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">اسم القناة (العربية)</label>
+                    <input type="text" class="form-input" id="editChannelNameAr" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">رابط القناة</label>
+                    <input type="url" class="form-input" id="editChannelUrl" required>
+                </div>
+                <button type="submit" class="btn btn-primary">💾 حفظ التغييرات</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://vpvvjascwgivdjyyhzwp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwdnZqYXNjd2dpdmRqeXloendwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MDYxMjYsImV4cCI6MjA2NTM4MjEyNn0.6AR2-MG4x9ugNTXe9jUqx-IwGEtj1m6MCYwQkTsSbUQ';
+
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Global variables
+        let channels = [];
+        let users = [];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            checkConnection();
+            loadChannels();
+            loadUsers();
+            updateStats();
+            setInterval(updateDateTime, 1000);
+        });
+
+        // Check Supabase connection
+        async function checkConnection() {
+            try {
+                const { data, error } = await supabase.from('users').select('count').limit(1);
+                if (error) throw error;
+                
+                updateConnectionStatus(true);
+                showAlert('✅ تم الاتصال بقاعدة البيانات بنجاح!', 'success');
+            } catch (error) {
+                console.error('Connection error:', error);
+                updateConnectionStatus(false);
+                showAlert('❌ فشل في الاتصال بقاعدة البيانات!', 'error');
+            }
+        }
+
+        // Update connection status
+        function updateConnectionStatus(connected) {
+            const statusElement = document.getElementById('connectionStatus');
+            if (connected) {
+                statusElement.className = 'connection-status status-connected';
+                statusElement.innerHTML = '✅ متصل بقاعدة البيانات - Supabase';
+            } else {
+                statusElement.className = 'connection-status status-disconnected';
+                statusElement.innerHTML = '❌ غير متصل بقاعدة البيانات!';
+            }
+        }
+
+        // Update current date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('ar-SA', options);
+        }
+
+        // Load channels from Supabase
+        async function loadChannels() {
+            try {
+                const { data, error } = await supabase
+                    .from('channels')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                channels = data || [];
+                displayChannels();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading channels:', error);
+                showAlert('❌ خطأ في تحميل القنوات!', 'error');
+            }
+        }
+
+        // Load users from Supabase
+        async function loadUsers() {
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                users = data || [];
+                displayUsers();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showAlert('❌ خطأ في تحميل المستخدمين!', 'error');
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalChannels').textContent = channels.length;
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('activeUsers').textContent = users.filter(u => u.is_active).length;
+            document.getElementById('premiumUsers').textContent = users.filter(u => u.is_premium).length;
+        }
+
+        // Show alert message
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = message;
+            
+            alertContainer.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        // Add channel form submission
+        document.getElementById('addChannelForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('addChannelText');
+            const loadingBtn = document.getElementById('addChannelLoading');
+            
+            submitBtn.style.display = 'none';
+            loadingBtn.style.display = 'inline-block';
+            
+            try {
+                const channelData = {
+                    name: document.getElementById('channelName').value,
+                    name_ar: document.getElementById('channelNameAr').value,
+                    url: document.getElementById('channelUrl').value,
+                    category: document.getElementById('channelCategory').value,
+                    image_url: document.getElementById('channelImage').value || 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300',
+                    description: document.getElementById('channelDescription').value,
+                    description_ar: document.getElementById('channelDescriptionAr').value,
+                    quality: document.getElementById('channelQuality').value,
+                    is_premium: document.getElementById('isPremium').checked,
+                    viewers_count: Math.floor(Math.random() * 100000),
+                    rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
+                    is_active: true
+                };
+
+                const { data, error } = await supabase
+                    .from('channels')
+                    .insert([channelData])
+                    .select();
+
+                if (error) throw error;
+
+                showAlert('✅ تم إضافة القناة بنجاح!', 'success');
+                this.reset();
+                loadChannels();
+                
+            } catch (error) {
+                console.error('Error adding channel:', error);
+                showAlert('❌ خطأ في إضافة القناة!', 'error');
+            } finally {
+                submitBtn.style.display = 'inline-block';
+                loadingBtn.style.display = 'none';
+            }
+        });
+
+        // Add user form submission
+        document.getElementById('addUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('addUserText');
+            const loadingBtn = document.getElementById('addUserLoading');
+            
+            submitBtn.style.display = 'none';
+            loadingBtn.style.display = 'inline-block';
+            
+            try {
+                const userData = {
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value,
+                    email: document.getElementById('email').value,
+                    is_premium: document.getElementById('userType').value === 'true',
+                    is_active: true,
+                    allowed_channels: []
+                };
+
+                const { data, error } = await supabase
+                    .from('users')
+                    .insert([userData])
+                    .select();
+
+                if (error) throw error;
+
+                showAlert('✅ تم إضافة المستخدم بنجاح!', 'success');
+                this.reset();
+                loadUsers();
+                
+            } catch (error) {
+                console.error('Error adding user:', error);
+                if (error.code === '23505') {
+                    showAlert('❌ اسم المستخدم أو البريد الإلكتروني موجود بالفعل!', 'error');
+                } else {
+                    showAlert('❌ خطأ في إضافة المستخدم!', 'error');
+                }
+            } finally {
+                submitBtn.style.display = 'inline-block';
+                loadingBtn.style.display = 'none';
+            }
+        });
+
+        // Display channels
+        function displayChannels() {
+            const container = document.getElementById('channelsContainer');
+            container.innerHTML = '';
+            
+            if (channels.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">لا توجد قنوات مضافة بعد</p>';
+                return;
+            }
+            
+            channels.forEach(channel => {
+                const channelDiv = document.createElement('div');
+                channelDiv.className = 'channel-card';
+                channelDiv.innerHTML = `
+                    <div class="channel-header">
+                        <div class="channel-info">
+                            <h3>${channel.name_ar}</h3>
+                            <p>${channel.category} • ${channel.quality}</p>
+                        </div>
+                        <div>
+                            ${channel.is_premium ? '<span class="channel-status status-premium">⭐ مميز</span>' : ''}
+                        </div>
+                    </div>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 10px 0;">${channel.description_ar}</p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 12px;">👥 ${channel.viewers_count.toLocaleString()} مشاهد • ⭐ ${channel.rating}</p>
+                    <div class="channel-actions">
+                        <button class="btn btn-primary" onclick="editChannel('${channel.id}')" style="padding: 8px 12px; font-size: 12px;">✏️ تعديل</button>
+                        <button class="btn btn-danger" onclick="deleteChannel('${channel.id}')" style="padding: 8px 12px; font-size: 12px;">🗑️ حذف</button>
+                        <button class="btn btn-warning" onclick="testChannel('${channel.url}')" style="padding: 8px 12px; font-size: 12px;">🔗 اختبار</button>
+                    </div>
+                `;
+                container.appendChild(channelDiv);
+            });
+        }
+
+        // Display users
+        function displayUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #666;">لا يوجد مستخدمين مسجلين بعد</td></tr>';
+                return;
+            }
+            
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.email || 'غير محدد'}</td>
+                    <td>
+                        <span style="padding: 4px 8px; border-radius: 10px; font-size: 10px; ${user.is_premium ? 'background: linear-gradient(135deg, #feca57, #ff9ff3);' : 'background: #666;'} color: white;">
+                            ${user.is_premium ? '⭐ مميز' : '👤 عادي'}
+                        </span>
+                    </td>
+                    <td>${new Date(user.created_at).toLocaleDateString('ar-SA')}</td>
+                    <td>
+                        <span style="padding: 4px 8px; border-radius: 10px; font-size: 10px; ${user.is_active ? 'background: #00b894;' : 'background: #e74c3c;'} color: white;">
+                            ${user.is_active ? '✅ نشط' : '❌ غير نشط'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteUser('${user.id}')" style="padding: 5px 10px; font-size: 11px;">🗑️ حذف</button>
+                        <button class="btn ${user.is_premium ? 'btn-warning' : 'btn-primary'}" onclick="toggleUserPremium('${user.id}')" style="padding: 5px 10px; font-size: 11px;">
+                            ${user.is_premium ? '⬇️ عادي' : '⬆️ مميز'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Edit channel
+        function editChannel(channelId) {
+            const channel = channels.find(ch => ch.id === channelId);
+            if (!channel) return;
+            
+            document.getElementById('editChannelId').value = channel.id;
+            document.getElementById('editChannelName').value = channel.name;
+            document.getElementById('editChannelNameAr').value = channel.name_ar;
+            document.getElementById('editChannelUrl').value = channel.url;
+            
+            openModal('editChannelModal');
+        }
+
+        // Edit channel form submission
+        document.getElementById('editChannelForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const channelId = document.getElementById('editChannelId').value;
+                const updateData = {
+                    name: document.getElementById('editChannelName').value,
+                    name_ar: document.getElementById('editChannelNameAr').value,
+                    url: document.getElementById('editChannelUrl').value
+                };
+
+                const { error } = await supabase
+                    .from('channels')
+                    .update(updateData)
+                    .eq('id', channelId);
+
+                if (error) throw error;
+
+                closeModal('editChannelModal');
+                showAlert('✅ تم تعديل القناة بنجاح!', 'success');
+                loadChannels();
+                
+            } catch (error) {
+                console.error('Error updating channel:', error);
+                showAlert('❌ خطأ في تعديل القناة!', 'error');
+            }
+        });
+
+        // Delete channel
+        async function deleteChannel(channelId) {
+            if (confirm('هل أنت متأكد من حذف هذه القناة؟')) {
+                try {
+                    const { error } = await supabase
+                        .from('channels')
+                        .update({ is_active: false })
+                        .eq('id', channelId);
+
+                    if (error) throw error;
+
+                    showAlert('✅ تم حذف القناة بنجاح!', 'success');
+                    loadChannels();
+                    
+                } catch (error) {
+                    console.error('Error deleting channel:', error);
+                    showAlert('❌ خطأ في حذف القناة!', 'error');
+                }
+            }
+        }
+
+        // Test channel
+        function testChannel(url) {
+            window.open(url, '_blank');
+            showAlert('🔗 تم فتح رابط القناة في نافذة جديدة', 'success');
+        }
+
+        // Delete user
+        async function deleteUser(userId) {
+            if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+                try {
+                    const { error } = await supabase
+                        .from('users')
+                        .update({ is_active: false })
+                        .eq('id', userId);
+
+                    if (error) throw error;
+
+                    showAlert('✅ تم حذف المستخدم بنجاح!', 'success');
+                    loadUsers();
+                    
+                } catch (error) {
+                    console.error('Error deleting user:', error);
+                    showAlert('❌ خطأ في حذف المستخدم!', 'error');
+                }
+            }
+        }
+
+        // Toggle user premium status
+        async function toggleUserPremium(userId) {
+            try {
+                const user = users.find(u => u.id === userId);
+                if (!user) return;
+
+                const { error } = await supabase
+                    .from('users')
+                    .update({ is_premium: !user.is_premium })
+                    .eq('id', userId);
+
+                if (error) throw error;
+
+                showAlert(`✅ تم ${!user.is_premium ? 'ترقية' : 'إلغاء ترقية'} المستخدم بنجاح!`, 'success');
+                loadUsers();
+                
+            } catch (error) {
+                console.error('Error updating user:', error);
+                showAlert('❌ خطأ في تحديث المستخدم!', 'error');
+            }
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>
