@@ -578,6 +578,10 @@
             color: #00b894;
         }
 
+        .result-warning {
+            color: #feca57;
+        }
+
         .result-error {
             color: #e74c3c;
         }
@@ -667,6 +671,13 @@
                 <div class="file-upload-hint">يدعم ملفات .m3u و .m3u8</div>
             </div>
 
+            <div style="margin-top: 15px;">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: rgba(255,255,255,0.8);">
+                    <input type="checkbox" id="skipUrlValidation">
+                    <span>تخطي فحص صحة الروابط (إضافة جميع القنوات حتى لو كانت لا تعمل)</span>
+                </label>
+            </div>
+
             <div class="progress-container" id="uploadProgress">
                 <div class="progress-bar">
                     <div class="progress-fill" id="progressFill"></div>
@@ -677,6 +688,17 @@
             <div id="uploadResults" class="upload-results" style="display: none;">
                 <h4 style="margin-bottom: 15px; color: #4ecdc4;">نتائج الرفع:</h4>
                 <div id="uploadResultsList"></div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(255, 193, 7, 0.1); border-radius: 10px; border-left: 4px solid #ffc107;">
+                    <h5 style="color: #ffc107; margin-bottom: 10px;">💡 نصائح للحصول على روابط تعمل:</h5>
+                    <ul style="color: rgba(255,255,255,0.8); line-height: 1.6;">
+                        <li>استخدم روابط M3U8 من مصادر موثوقة</li>
+                        <li>تجنب الروابط التي تحتوي على معرفات خاصة (اسم مستخدم/كلمة مرور)</li>
+                        <li>جرب الرابط في متصفح قبل إضافته</li>
+                        <li>الروابط المحلية (localhost) لن تعمل من الخارج</li>
+                        <li>تأكد من أن الخادم يدعم CORS للمتصفحات</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -948,9 +970,25 @@
                     throw new Error('لم يتم العثور على قنوات صالحة في الملف');
                 }
 
-                updateProgress(20, `تم العثور على ${parsedChannels.length} قناة، جاري الإضافة...`);
+                const skipValidation = document.getElementById('skipUrlValidation').checked;
+                let channelsToAdd = parsedChannels;
 
-                const results = await addChannelsToDatabase(parsedChannels);
+                if (!skipValidation) {
+                    updateProgress(10, `تم العثور على ${parsedChannels.length} قناة، جاري فحص الروابط...`);
+                    // Test channels before adding
+                    channelsToAdd = await testChannelsBeforeAdding(parsedChannels);
+                    updateProgress(50, `تم فحص الروابط، جاري إضافة ${channelsToAdd.length} قناة صالحة...`);
+                } else {
+                    updateProgress(20, `تم العثور على ${parsedChannels.length} قناة، جاري الإضافة بدون فحص...`);
+                    // Remove inappropriate content even if skipping validation
+                    channelsToAdd = parsedChannels.filter(channel => {
+                        const inappropriateKeywords = ['xxx', 'porn', 'sex', 'adult', 'milf', 'lesbian', 'gay', 'anal'];
+                        const channelText = (channel.name + ' ' + channel.category + ' ' + channel.url).toLowerCase();
+                        return !inappropriateKeywords.some(keyword => channelText.includes(keyword));
+                    });
+                }
+
+                const results = await addChannelsToDatabase(channelsToAdd);
                 showUploadResults(results);
                 
                 updateProgress(100, 'تم الانتهاء!');
@@ -976,7 +1014,118 @@
             });
         }
 
-        // Parse M3U content
+        // Test channels before adding to database
+        async function testChannelsBeforeAdding(channels) {
+            const validChannels = [];
+            const batchSize = 5; // Test 5 channels at a time to avoid overwhelming servers
+            
+            for (let i = 0; i < channels.length; i += batchSize) {
+                const batch = channels.slice(i, i + batchSize);
+                const progress = Math.round(((i + batchSize) / channels.length) * 40) + 10; // 10-50%
+                
+                updateProgress(progress, `فحص القنوات ${i + 1}-${Math.min(i + batchSize, channels.length)} من ${channels.length}...`);
+                
+                const batchPromises = batch.map(channel => testChannelUrl(channel));
+                const batchResults = await Promise.all(batchPromises);
+                
+                batchResults.forEach((result, index) => {
+                    if (result.isValid) {
+                        validChannels.push(batch[index]);
+                    }
+                });
+                
+                // Small delay to avoid overwhelming servers
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            return validChannels;
+        }
+
+        // Test individual channel URL
+        async function testChannelUrl(channel) {
+            try {
+                // Skip inappropriate content
+                const inappropriateKeywords = ['xxx', 'porn', 'sex', 'adult', 'milf', 'lesbian', 'gay', 'anal'];
+                const channelText = (channel.name + ' ' + channel.category + ' ' + channel.url).toLowerCase();
+                
+                if (inappropriateKeywords.some(keyword => channelText.includes(keyword))) {
+                    return { isValid: false, reason: 'محتوى غير مناسب' };
+                }
+
+                // Check if URL is valid format
+                if (!isValidUrl(channel.url)) {
+                    return { isValid: false, reason: 'رابط غير صحيح' };
+                }
+
+                // Check if URL contains authentication (private servers)
+                if (containsAuthentication(channel.url)) {
+                    return { isValid: false, reason: 'رابط يحتاج مصادقة' };
+                }
+
+                // Try to test the URL with a simple HEAD request
+                const testResult = await testUrlConnectivity(channel.url);
+                return testResult;
+
+            } catch (error) {
+                return { isValid: false, reason: 'خطأ في الفحص' };
+            }
+        }
+
+        // Check if URL is valid
+        function isValidUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+            } catch {
+                return false;
+            }
+        }
+
+        // Check if URL contains authentication parameters
+        function containsAuthentication(url) {
+            // Check for common authentication patterns
+            const authPatterns = [
+                /\/[a-zA-Z0-9]{8,}\/[a-zA-Z0-9]{8,}\/\d+/, // username/password/channel pattern
+                /:\/\/[^\/]+:[^\/]+@/, // user:pass@host pattern
+                /\?.*token.*=/, // token parameters
+                /\?.*key.*=/, // key parameters
+            ];
+            
+            return authPatterns.some(pattern => pattern.test(url));
+        }
+
+        // Test URL connectivity
+        async function testUrlConnectivity(url) {
+            try {
+                // Use a timeout for the request
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+                
+                const response = await fetch(url, {
+                    method: 'HEAD',
+                    signal: controller.signal,
+                    mode: 'no-cors' // This helps with CORS issues but limits response info
+                });
+                
+                clearTimeout(timeoutId);
+                
+                // For no-cors mode, we can't check status, so we assume it's working if no error
+                return { isValid: true, reason: 'تم التحقق بنجاح' };
+                
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    return { isValid: false, reason: 'انتهت مهلة الاتصال' };
+                }
+                
+                // Even if fetch fails due to CORS, the URL might still be valid for streaming
+                // So we'll be more lenient here
+                if (error.message.includes('CORS') || error.message.includes('network')) {
+                    return { isValid: true, reason: 'قد يعمل (مشكلة CORS)' };
+                }
+                
+                return { isValid: false, reason: 'فشل الاتصال' };
+            }
+        }
         function parseM3UContent(content) {
             const lines = content.split('\n').map(line => line.trim()).filter(line => line);
             const channels = [];
@@ -1054,6 +1203,7 @@
             const results = {
                 success: 0,
                 errors: 0,
+                skipped: 0,
                 details: []
             };
 
@@ -1061,9 +1211,9 @@
 
             for (let i = 0; i < totalChannels; i++) {
                 const channel = channelsData[i];
-                const progress = Math.round(((i + 1) / totalChannels) * 80) + 20; // 20-100%
+                const progress = Math.round(((i + 1) / totalChannels) * 50) + 50; // 50-100%
 
-                updateProgress(progress, `معالجة القناة ${i + 1} من ${totalChannels}: ${channel.name}`);
+                updateProgress(progress, `إضافة القناة ${i + 1} من ${totalChannels}: ${channel.name}`);
 
                 try {
                     // Check if channel already exists
@@ -1074,10 +1224,10 @@
                         .eq('is_active', true);
 
                     if (existingChannels && existingChannels.length > 0) {
-                        results.errors++;
+                        results.skipped++;
                         results.details.push({
                             name: channel.name,
-                            status: 'error',
+                            status: 'skipped',
                             message: 'القناة موجودة بالفعل'
                         });
                         continue;
@@ -1147,6 +1297,7 @@
             summary.innerHTML = `
                 <strong>ملخص النتائج:</strong><br>
                 ✅ تم إضافة ${results.success} قناة بنجاح<br>
+                ⚠️ تم تخطي ${results.skipped || 0} قناة (موجودة مسبقاً)<br>
                 ❌ فشل في إضافة ${results.errors} قناة
             `;
             resultsList.appendChild(summary);
@@ -1156,8 +1307,24 @@
                 const item = document.createElement('div');
                 item.className = 'upload-result-item';
                 
-                const icon = detail.status === 'success' ? '✅' : '❌';
-                const colorClass = detail.status === 'success' ? 'result-success' : 'result-error';
+                let icon, colorClass;
+                switch(detail.status) {
+                    case 'success':
+                        icon = '✅';
+                        colorClass = 'result-success';
+                        break;
+                    case 'skipped':
+                        icon = '⚠️';
+                        colorClass = 'result-warning';
+                        break;
+                    case 'error':
+                        icon = '❌';
+                        colorClass = 'result-error';
+                        break;
+                    default:
+                        icon = '❓';
+                        colorClass = 'result-error';
+                }
                 
                 item.innerHTML = `
                     <span class="result-icon ${colorClass}">${icon}</span>
