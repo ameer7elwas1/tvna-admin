@@ -376,6 +376,34 @@
             transition: all 0.3s ease;
         }
 
+        .channel-card.selection-mode {
+            padding-top: 50px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .channel-card.selection-mode:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(78, 205, 196, 0.2);
+        }
+
+        .channel-card.selected {
+            border: 2px solid #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 80%, #4ecdc4 100%);
+        }
+
+        .channel-checkbox {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            z-index: 10;
+            accent-color: #4ecdc4;
+        }
+
         .channel-card:hover {
             transform: scale(1.02);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
@@ -824,7 +852,69 @@
                     <div class="card-title">إدارة القنوات</div>
                     <div class="card-subtitle">عرض وتعديل القنوات الموجودة</div>
                 </div>
-                <button class="btn btn-warning" onclick="loadChannels()">🔄 تحديث</button>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button class="btn btn-warning" onclick="loadChannels()">🔄 تحديث</button>
+                    <button class="btn btn-primary" onclick="toggleSelectionMode()" id="selectionModeBtn">
+                        📝 تحديد متعدد
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bulk Actions Panel -->
+            <div id="bulkActionsPanel" style="display: none; margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div>
+                        <span style="color: #4ecdc4; font-weight: bold;">وضع التحديد المتعدد</span>
+                        <span id="selectedCount" style="margin-right: 10px; color: rgba(255,255,255,0.8);">لم يتم تحديد أي قناة</span>
+                    </div>
+                    <button class="btn btn-danger" onclick="exitSelectionMode()" style="padding: 8px 15px; font-size: 12px;">
+                        ❌ إلغاء
+                    </button>
+                </div>
+                
+                <!-- Keyboard Shortcuts Hint -->
+                <div style="margin-bottom: 15px; padding: 10px; background: rgba(78, 205, 196, 0.1); border-radius: 8px; border: 1px solid rgba(78, 205, 196, 0.2);">
+                    <small style="color: rgba(255,255,255,0.7);">
+                        💡 اختصارات لوحة المفاتيح: 
+                        <strong>Ctrl+A</strong> تحديد الكل | 
+                        <strong>Ctrl+D</strong> إلغاء تحديد الكل | 
+                        <strong>Ctrl+E</strong> تصدير | 
+                        <strong>Delete</strong> حذف المحدد | 
+                        <strong>Esc</strong> خروج
+                    </small>
+                </div>
+                
+                <!-- Quick Selection Options -->
+                <div style="margin-bottom: 15px;">
+                    <span style="color: rgba(255,255,255,0.8); font-size: 14px; margin-left: 10px;">تحديد سريع:</span>
+                    <button class="btn btn-primary" onclick="selectByCategory('beIN Sports')" style="padding: 6px 12px; font-size: 11px; margin: 2px;">
+                        beIN Sports
+                    </button>
+                    <button class="btn btn-primary" onclick="selectByCategory('SSC Sports')" style="padding: 6px 12px; font-size: 11px; margin: 2px;">
+                        SSC Sports
+                    </button>
+                    <button class="btn btn-primary" onclick="selectByCategory('MBC')" style="padding: 6px 12px; font-size: 11px; margin: 2px;">
+                        MBC
+                    </button>
+                    <button class="btn btn-primary" onclick="selectPremiumChannels()" style="padding: 6px 12px; font-size: 11px; margin: 2px;">
+                        ⭐ المميزة
+                    </button>
+                </div>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="selectAllChannels()" style="padding: 8px 15px; font-size: 12px;">
+                        ☑️ تحديد الكل
+                    </button>
+                    <button class="btn btn-warning" onclick="deselectAllChannels()" style="padding: 8px 15px; font-size: 12px;">
+                        ◻️ إلغاء تحديد الكل
+                    </button>
+                    <button class="btn btn-primary" onclick="exportSelectedChannels()" id="exportSelectedBtn" style="padding: 8px 15px; font-size: 12px; background: linear-gradient(135deg, #9b59b6, #8e44ad);" disabled>
+                        📥 تصدير M3U (<span id="exportCount">0</span>)
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteSelectedChannels()" id="deleteSelectedBtn" style="padding: 8px 15px; font-size: 12px;" disabled>
+                        🗑️ حذف المحدد (<span id="deleteCount">0</span>)
+                    </button>
+                </div>
             </div>
             
             <div id="channelsContainer" class="channels-grid">
@@ -887,6 +977,33 @@
         </div>
     </div>
 
+    <!-- Bulk Delete Confirmation Modal -->
+    <div id="bulkDeleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('bulkDeleteModal')">&times;</span>
+            <h2 style="color: #ff6b6b; margin-bottom: 20px;">🗑️ تأكيد الحذف المتعدد</h2>
+            
+            <div style="background: rgba(255, 107, 107, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(255, 107, 107, 0.3);">
+                <p style="color: #ff6b6b; font-weight: bold; margin-bottom: 10px;">⚠️ تحذير: هذا الإجراء لا يمكن التراجع عنه!</p>
+                <p style="color: rgba(255,255,255,0.8);">ستقوم بحذف <strong id="modalSelectedCount">0</strong> قناة نهائياً من النظام.</p>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 10px; margin-bottom: 20px; max-height: 200px; overflow-y: auto;">
+                <h4 style="color: #4ecdc4; margin-bottom: 10px;">القنوات التي سيتم حذفها:</h4>
+                <div id="modalChannelsList"></div>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn btn-danger" onclick="confirmBulkDelete()" id="confirmDeleteBtn">
+                    🗑️ نعم، احذف القنوات
+                </button>
+                <button class="btn btn-warning" onclick="closeModal('bulkDeleteModal')">
+                    ❌ إلغاء
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // Supabase Configuration
@@ -899,6 +1016,8 @@
         // Global variables
         let channels = [];
         let users = [];
+        let isSelectionMode = false;
+        let selectedChannels = new Set();
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
@@ -909,7 +1028,44 @@
             updateStats();
             setInterval(updateDateTime, 1000);
             initializeFileUpload();
+            initializeKeyboardShortcuts();
         });
+
+        // Initialize keyboard shortcuts
+        function initializeKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                // Only work in selection mode
+                if (!isSelectionMode) return;
+                
+                // Ctrl+A or Cmd+A to select all
+                if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
+                    e.preventDefault();
+                    selectAllChannels();
+                }
+                
+                // Escape to exit selection mode
+                if (e.key === 'Escape') {
+                    exitSelectionMode();
+                }
+                
+                // Delete key to delete selected
+                if (e.key === 'Delete' && selectedChannels.size > 0) {
+                    deleteSelectedChannels();
+                }
+                
+                // Ctrl+D or Cmd+D to deselect all
+                if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+                    e.preventDefault();
+                    deselectAllChannels();
+                }
+                
+                // Ctrl+E or Cmd+E to export selected
+                if ((e.ctrlKey || e.metaKey) && e.key === 'e' && selectedChannels.size > 0) {
+                    e.preventDefault();
+                    exportSelectedChannels();
+                }
+            });
+        }
 
         // Initialize file upload functionality
         function initializeFileUpload() {
@@ -1340,7 +1496,295 @@
             resultsContainer.style.display = 'block';
         }
 
-        // Check Supabase connection
+        // Select channels by category
+        function selectByCategory(category) {
+            channels.forEach(channel => {
+                if (channel.category.includes(category)) {
+                    selectedChannels.add(channel.id);
+                }
+            });
+            updateSelectionCount();
+            displayChannels();
+            showAlert(`✅ تم تحديد قنوات ${category}`, 'success');
+        }
+
+        // Select premium channels
+        function selectPremiumChannels() {
+            channels.forEach(channel => {
+                if (channel.is_premium) {
+                    selectedChannels.add(channel.id);
+                }
+            });
+            updateSelectionCount();
+            displayChannels();
+            showAlert('✅ تم تحديد القنوات المميزة', 'success');
+        }
+        function toggleSelectionMode() {
+            isSelectionMode = !isSelectionMode;
+            const bulkActionsPanel = document.getElementById('bulkActionsPanel');
+            const selectionModeBtn = document.getElementById('selectionModeBtn');
+            
+            if (isSelectionMode) {
+                bulkActionsPanel.style.display = 'block';
+                selectionModeBtn.innerHTML = '📋 عرض عادي';
+                selectionModeBtn.className = 'btn btn-warning';
+            } else {
+                exitSelectionMode();
+            }
+            
+            displayChannels();
+        }
+
+        // Exit selection mode
+        function exitSelectionMode() {
+            isSelectionMode = false;
+            selectedChannels.clear();
+            const bulkActionsPanel = document.getElementById('bulkActionsPanel');
+            const selectionModeBtn = document.getElementById('selectionModeBtn');
+            
+            bulkActionsPanel.style.display = 'none';
+            selectionModeBtn.innerHTML = '📝 تحديد متعدد';
+            selectionModeBtn.className = 'btn btn-primary';
+            
+            updateSelectionCount();
+            displayChannels();
+        }
+
+        // Select all channels
+        function selectAllChannels() {
+            channels.forEach(channel => {
+                selectedChannels.add(channel.id);
+            });
+            updateSelectionCount();
+            displayChannels();
+        }
+
+        // Deselect all channels
+        function deselectAllChannels() {
+            selectedChannels.clear();
+            updateSelectionCount();
+            displayChannels();
+        }
+
+        // Toggle channel selection
+        function toggleChannelSelection(channelId) {
+            if (selectedChannels.has(channelId)) {
+                selectedChannels.delete(channelId);
+            } else {
+                selectedChannels.add(channelId);
+            }
+            updateSelectionCount();
+            displayChannels();
+        }
+
+        // Update selection count
+        function updateSelectionCount() {
+            const selectedCountSpan = document.getElementById('selectedCount');
+            const deleteCountSpan = document.getElementById('deleteCount');
+            const exportCountSpan = document.getElementById('exportCount');
+            const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+            const exportSelectedBtn = document.getElementById('exportSelectedBtn');
+            
+            const count = selectedChannels.size;
+            
+            if (count === 0) {
+                selectedCountSpan.textContent = 'لم يتم تحديد أي قناة';
+                deleteSelectedBtn.disabled = true;
+                exportSelectedBtn.disabled = true;
+            } else {
+                // Get categories of selected channels
+                const selectedChannelsList = Array.from(selectedChannels);
+                const categoryCounts = {};
+                let premiumCount = 0;
+                
+                selectedChannelsList.forEach(channelId => {
+                    const channel = channels.find(ch => ch.id === channelId);
+                    if (channel) {
+                        categoryCounts[channel.category] = (categoryCounts[channel.category] || 0) + 1;
+                        if (channel.is_premium) premiumCount++;
+                    }
+                });
+                
+                const categoryInfo = Object.entries(categoryCounts)
+                    .map(([cat, count]) => `${cat} (${count})`)
+                    .slice(0, 3) // Show only first 3 categories
+                    .join(', ');
+                
+                const moreCategories = Object.keys(categoryCounts).length > 3 ? 
+                    ` و${Object.keys(categoryCounts).length - 3} فئات أخرى` : '';
+                
+                selectedCountSpan.innerHTML = `
+                    تم تحديد <strong style="color: #4ecdc4;">${count}</strong> قناة
+                    ${premiumCount > 0 ? `<span style="color: #feca57;"> (${premiumCount} مميزة)</span>` : ''}
+                    <br>
+                    <small style="color: rgba(255,255,255,0.6);">${categoryInfo}${moreCategories}</small>
+                `;
+                deleteSelectedBtn.disabled = false;
+                exportSelectedBtn.disabled = false;
+            }
+            
+            deleteCountSpan.textContent = count;
+            exportCountSpan.textContent = count;
+        }
+
+        // Export selected channels as M3U file
+        function exportSelectedChannels() {
+            const selectedCount = selectedChannels.size;
+            
+            if (selectedCount === 0) {
+                showAlert('❌ لم يتم تحديد أي قناة للتصدير!', 'error');
+                return;
+            }
+
+            try {
+                let m3uContent = '#EXTM3U\n\n';
+                
+                // Group channels by category
+                const channelsByCategory = {};
+                
+                selectedChannels.forEach(channelId => {
+                    const channel = channels.find(ch => ch.id === channelId);
+                    if (channel) {
+                        if (!channelsByCategory[channel.category]) {
+                            channelsByCategory[channel.category] = [];
+                        }
+                        channelsByCategory[channel.category].push(channel);
+                    }
+                });
+
+                // Generate M3U content
+                Object.entries(channelsByCategory).forEach(([category, categoryChannels]) => {
+                    m3uContent += `#----- ${category} -----\n`;
+                    
+                    categoryChannels.forEach(channel => {
+                        const attributes = [];
+                        
+                        if (channel.image_url) {
+                            attributes.push(`tvg-logo="${channel.image_url}"`);
+                        }
+                        
+                        attributes.push(`group-title="${channel.category}"`);
+                        
+                        if (channel.name !== channel.name_ar) {
+                            attributes.push(`tvg-name="${channel.name}"`);
+                        }
+
+                        const attributeString = attributes.length > 0 ? ` ${attributes.join(' ')}` : '';
+                        
+                        m3uContent += `#EXTINF:-1${attributeString},${channel.name_ar}\n`;
+                        m3uContent += `${channel.url}\n`;
+                    });
+                    
+                    m3uContent += '\n';
+                });
+
+                // Create and download file
+                const blob = new Blob([m3uContent], { type: 'application/vnd.apple.mpegurl' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `tvna_channels_${selectedCount}_${new Date().toISOString().split('T')[0]}.m3u`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showAlert(`✅ تم تصدير ${selectedCount} قناة بنجاح!`, 'success');
+
+            } catch (error) {
+                console.error('Error exporting channels:', error);
+                showAlert('❌ خطأ في تصدير القنوات!', 'error');
+            }
+        }
+
+        // Delete selected channels
+        async function deleteSelectedChannels() {
+            const selectedCount = selectedChannels.size;
+            
+            if (selectedCount === 0) {
+                showAlert('❌ لم يتم تحديد أي قناة للحذف!', 'error');
+                return;
+            }
+
+            // Prepare modal content
+            const modalSelectedCount = document.getElementById('modalSelectedCount');
+            const modalChannelsList = document.getElementById('modalChannelsList');
+            
+            modalSelectedCount.textContent = selectedCount;
+            modalChannelsList.innerHTML = '';
+
+            // List selected channels
+            selectedChannels.forEach(channelId => {
+                const channel = channels.find(ch => ch.id === channelId);
+                if (channel) {
+                    const channelItem = document.createElement('div');
+                    channelItem.style.cssText = 'padding: 8px; margin: 5px 0; background: rgba(255,255,255,0.1); border-radius: 5px; display: flex; align-items: center; gap: 10px;';
+                    channelItem.innerHTML = `
+                        <span style="color: #ff6b6b;">📺</span>
+                        <span style="color: white;">${channel.name_ar}</span>
+                        <span style="color: rgba(255,255,255,0.6); font-size: 12px;">(${channel.category})</span>
+                    `;
+                    modalChannelsList.appendChild(channelItem);
+                }
+            });
+
+            // Show modal
+            openModal('bulkDeleteModal');
+        }
+
+        // Confirm bulk delete
+        async function confirmBulkDelete() {
+            closeModal('bulkDeleteModal');
+            
+            showProgress(true);
+            updateProgress(0, 'جاري حذف القنوات المحددة...');
+
+            try {
+                const selectedIds = Array.from(selectedChannels);
+                let deletedCount = 0;
+                let errorCount = 0;
+
+                for (let i = 0; i < selectedIds.length; i++) {
+                    const channelId = selectedIds[i];
+                    const progress = Math.round(((i + 1) / selectedIds.length) * 100);
+                    
+                    updateProgress(progress, `حذف القناة ${i + 1} من ${selectedIds.length}...`);
+
+                    try {
+                        const { error } = await supabase
+                            .from('channels')
+                            .update({ is_active: false })
+                            .eq('id', channelId);
+
+                        if (error) throw error;
+                        deletedCount++;
+                    } catch (error) {
+                        console.error(`Error deleting channel ${channelId}:`, error);
+                        errorCount++;
+                    }
+
+                    // Small delay to show progress
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                }
+
+                showProgress(false);
+                
+                if (deletedCount > 0) {
+                    showAlert(`✅ تم حذف ${deletedCount} قناة بنجاح!${errorCount > 0 ? ` (${errorCount} قناة فشل حذفها)` : ''}`, 'success');
+                } else {
+                    showAlert('❌ فشل في حذف القنوات!', 'error');
+                }
+
+                // Reset selection and reload
+                exitSelectionMode();
+                loadChannels();
+
+            } catch (error) {
+                console.error('Error in bulk delete:', error);
+                showAlert('❌ خطأ في حذف القنوات!', 'error');
+                showProgress(false);
+            }
+        }
         async function checkConnection() {
             try {
                 const { data, error } = await supabase.from('users').select('count').limit(1);
@@ -1545,8 +1989,23 @@
             
             channels.forEach(channel => {
                 const channelDiv = document.createElement('div');
-                channelDiv.className = 'channel-card';
+                channelDiv.className = `channel-card ${isSelectionMode ? 'selection-mode' : ''}`;
+                
+                // Add selected class if channel is selected
+                if (selectedChannels.has(channel.id)) {
+                    channelDiv.classList.add('selected');
+                }
+                
+                const checkboxHtml = isSelectionMode ? `
+                    <input type="checkbox" 
+                           class="channel-checkbox" 
+                           ${selectedChannels.has(channel.id) ? 'checked' : ''}
+                           onchange="toggleChannelSelection('${channel.id}')"
+                           onclick="event.stopPropagation()">
+                ` : '';
+                
                 channelDiv.innerHTML = `
+                    ${checkboxHtml}
                     <div class="channel-header">
                         <div class="channel-info">
                             <h3>${channel.name_ar}</h3>
@@ -1558,12 +2017,24 @@
                     </div>
                     <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 10px 0;">${channel.description_ar}</p>
                     <p style="color: rgba(255,255,255,0.6); font-size: 12px;">👥 ${channel.viewers_count.toLocaleString()} مشاهد • ⭐ ${channel.rating}</p>
-                    <div class="channel-actions">
+                    <div class="channel-actions" ${isSelectionMode ? 'style="display: none;"' : ''}>
                         <button class="btn btn-primary" onclick="editChannel('${channel.id}')" style="padding: 8px 12px; font-size: 12px;">✏️ تعديل</button>
                         <button class="btn btn-danger" onclick="deleteChannel('${channel.id}')" style="padding: 8px 12px; font-size: 12px;">🗑️ حذف</button>
                         <button class="btn btn-warning" onclick="testChannel('${channel.url}')" style="padding: 8px 12px; font-size: 12px;">🔗 اختبار</button>
                     </div>
                 `;
+                
+                // Add click handler for selection mode
+                if (isSelectionMode) {
+                    channelDiv.style.cursor = 'pointer';
+                    channelDiv.addEventListener('click', function(e) {
+                        // Don't trigger if clicking on checkbox
+                        if (e.target.type !== 'checkbox') {
+                            toggleChannelSelection(channel.id);
+                        }
+                    });
+                }
+                
                 container.appendChild(channelDiv);
             });
         }
