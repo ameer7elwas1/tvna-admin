@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TvNa - لوحة التحكم </title>
+    <title>TvNa - مشاهدة القنوات</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%);
             color: white;
             min-height: 100vh;
             overflow-x: hidden;
@@ -25,6 +25,7 @@
             padding: 20px;
         }
 
+        /* Header */
         .header {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             padding: 20px;
@@ -95,226 +96,18 @@
             font-size: 14px;
         }
 
-        .admin-info {
-            text-align: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-
-        .card {
-            background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-            transition: left 0.5s;
-        }
-
-        .card:hover::before {
-            left: 100%;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .card-header {
+        .user-section {
             display: flex;
             align-items: center;
             gap: 15px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .card-subtitle {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            animation: rotate 4s linear infinite;
-        }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .stat-number {
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 5px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .stat-label {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 14px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #4ecdc4;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #4ecdc4;
-            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
-        }
-
-        .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .file-upload-area {
-            border: 2px dashed rgba(78, 205, 196, 0.5);
-            border-radius: 15px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(78, 205, 196, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .file-upload-area:hover {
-            border-color: #4ecdc4;
-            background: rgba(78, 205, 196, 0.1);
-        }
-
-        .file-upload-area.dragover {
-            border-color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.1);
-        }
-
-        .file-upload-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-            color: #4ecdc4;
-        }
-
-        .file-upload-text {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: #4ecdc4;
-        }
-
-        .file-upload-hint {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .progress-container {
-            display: none;
-            margin-top: 20px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .progress-text {
-            text-align: center;
-            color: #4ecdc4;
-            font-size: 14px;
-        }
-
-        .btn {
+        .login-btn {
             padding: 12px 25px;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 25px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -322,7 +115,7 @@
             overflow: hidden;
         }
 
-        .btn::before {
+        .login-btn::before {
             content: '';
             position: absolute;
             top: 50%;
@@ -335,112 +128,400 @@
             transform: translate(-50%, -50%);
         }
 
-        .btn:hover::before {
+        .login-btn:hover::before {
             width: 300px;
             height: 300px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #feca57, #ff9ff3);
-            color: white;
-        }
-
-        .btn:hover {
+        .login-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
+        .user-info {
+            display: none;
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Advertisements Section */
+        .ads-section {
+            margin-bottom: 30px;
+            position: relative;
+            height: 200px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .ad-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            cursor: pointer;
+        }
+
+        .ad-slide.active {
+            opacity: 1;
+        }
+
+        .ad-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ad-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 30px 20px 20px;
+        }
+
+        .ad-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .ad-description {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
+        }
+
+        /* Categories */
+        .categories-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #4ecdc4;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .categories-container {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 10px 0;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .categories-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-item {
+            min-width: 120px;
+            padding: 15px;
+            background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .category-item:hover,
+        .category-item.active {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.3);
+        }
+
+        .category-icon {
+            font-size: 30px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .category-name {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Channels Grid */
+        .channels-section {
+            display: none;
+        }
+
         .channels-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
             margin-top: 20px;
         }
 
         .channel-card {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
             border-radius: 15px;
-            padding: 20px;
-            position: relative;
             overflow: hidden;
             transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
         }
 
         .channel-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: #4ecdc4;
         }
 
-        .channel-header {
+        .channel-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            position: relative;
+        }
+
+        .channel-info {
+            padding: 15px;
+        }
+
+        .channel-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: white;
+        }
+
+        .channel-details {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .channel-category {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .channel-quality {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .channel-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 15px;
         }
 
-        .channel-info h3 {
-            font-size: 18px;
-            margin-bottom: 5px;
+        .premium-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #feca57, #ff9ff3);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
         }
 
-        .channel-info p {
-            color: rgba(255, 255, 255, 0.8);
+        .play-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Video Player */
+        .video-player {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        #videoElement {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .video-controls.show {
+            transform: translateY(0);
+        }
+
+        .controls-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .progress-container {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .time-display {
+            color: white;
+            font-size: 14px;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            border-radius: 2px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .quality-selector,
+        .speed-selector {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
             font-size: 12px;
         }
 
-        .channel-status {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 10px;
+        .cast-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
             font-weight: bold;
-        }
-
-        .status-live {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
-        }
-
-        .status-premium {
-            background: linear-gradient(135deg, #feca57, #ff9ff3);
-        }
-
-        .channel-actions {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
         }
 
-        .users-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        .cast-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .users-table th,
-        .users-table td {
+        .close-player-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
             padding: 15px;
-            text-align: right;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
         }
 
-        .users-table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-weight: bold;
+        .close-player-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
         }
 
-        .users-table tr:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
+        /* Login Modal */
         .modal {
             display: none;
             position: fixed;
@@ -449,76 +530,119 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal.show {
-            display: flex;
+            backdrop-filter: blur(10px);
+            z-index: 2000;
             align-items: center;
             justify-content: center;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .modal.show {
+            display: flex;
         }
 
         .modal-content {
-            background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
-            padding: 30px;
+            background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+            padding: 40px;
             border-radius: 20px;
             width: 90%;
-            max-width: 500px;
-            position: relative;
-            animation: slideIn 0.3s ease;
-            max-height: 80vh;
-            overflow-y: auto;
+            max-width: 400px;
+            text-align: center;
+            animation: modalSlideIn 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
-        @keyframes slideIn {
+        @keyframes modalSlideIn {
             from { transform: translateY(-50px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
 
-        .close {
+        .modal-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-align: right;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(78, 205, 196, 0.4);
+        }
+
+        .register-link {
+            color: #4ecdc4;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 14px;
+        }
+
+        .close-modal {
             position: absolute;
             top: 15px;
             left: 15px;
+            background: none;
+            border: none;
+            color: #ff6b6b;
             font-size: 24px;
             cursor: pointer;
-            color: #ff6b6b;
             transition: all 0.3s ease;
         }
 
-        .close:hover {
+        .close-modal:hover {
             transform: rotate(90deg);
             color: #ff4757;
         }
 
-        .alert {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .alert-success {
-            background: linear-gradient(135deg, #00b894, #00a085);
-            color: white;
-        }
-
-        .alert-error {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            color: white;
-        }
-
+        /* Loading Animation */
         .loading {
             display: inline-block;
             width: 20px;
@@ -533,155 +657,115 @@
             to { transform: rotate(360deg); }
         }
 
-        .connection-status {
-            padding: 10px 15px;
+        /* Alert */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
             border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
+            color: white;
             font-weight: bold;
+            z-index: 3000;
+            animation: alertSlide 0.3s ease;
+            max-width: 300px;
         }
 
-        .status-connected {
+        @keyframes alertSlide {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .alert-success {
             background: linear-gradient(135deg, #00b894, #00a085);
         }
 
-        .status-disconnected {
+        .alert-error {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
         }
 
-        .upload-results {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .upload-result-item {
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .upload-result-item:last-child {
-            border-bottom: none;
-        }
-
-        .result-icon {
-            font-size: 16px;
-        }
-
-        .result-success {
-            color: #00b894;
-        }
-
-        .result-warning {
-            color: #feca57;
-        }
-
-        .result-error {
-            color: #e74c3c;
-        }
-
-        /* Advertisements Grid */
-        .ads-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .ad-card {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            border-radius: 15px;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .ad-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .ad-image {
-            width: 100%;
-            height: 150px;
-            border-radius: 10px;
-            object-fit: cover;
-            margin-bottom: 15px;
-        }
-
-        .ad-placeholder {
-            width: 100%;
-            height: 150px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-            font-size: 48px;
-            color: white;
-        }
-
-        /* Categories Grid */
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .category-card {
-            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
-            border-radius: 15px;
-            padding: 20px;
+        /* Welcome Message */
+        .welcome-message {
             text-align: center;
-            transition: all 0.3s ease;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #2a2a2a 0%, #3a3a3a 100%);
+            border-radius: 20px;
+            margin: 30px 0;
         }
 
-        .category-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        .welcome-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .category-icon {
-            font-size: 48px;
+        .welcome-title {
+            font-size: 32px;
+            font-weight: bold;
             margin-bottom: 15px;
             color: white;
         }
 
-        /* Image Preview */
-        .image-preview {
-            max-width: 200px;
-            max-height: 150px;
-            border-radius: 10px;
-            margin: 10px 0;
-            object-fit: cover;
+        .welcome-subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            line-height: 1.6;
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
             .header-content {
                 flex-direction: column;
                 gap: 20px;
             }
 
-            .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            .channels-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 15px;
             }
 
-            .channels-grid, .ads-grid, .categories-grid {
-                grid-template-columns: 1fr;
+            .categories-container {
+                gap: 10px;
             }
 
-            .container {
-                padding: 10px;
+            .category-item {
+                min-width: 100px;
+                padding: 12px;
+            }
+
+            .ad-title {
+                font-size: 20px;
+            }
+
+            .ad-description {
+                font-size: 14px;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+
+            .video-controls {
+                padding: 15px 10px;
+            }
+
+            .controls-row {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .control-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
             }
         }
     </style>
@@ -694,322 +778,172 @@
                 <div class="logo">
                     <div class="logo-icon">📺</div>
                     <div class="logo-text">
-                        <h1>TvNa  </h1>
-                        <p>لوحة التحكم </p>
+                        <h1>TvNa</h1>
+                        <p>مشاهدة القنوات المباشرة</p>
                     </div>
                 </div>
-                <div class="admin-info">
-                    <p><strong>أمير حلواص</strong></p>
-                    <p>مدير النظام</p>
-                    <p id="currentDate"></p>
+                <div class="user-section">
+                    <button class="login-btn" id="loginBtn" onclick="openLoginModal()">
+                        🔑 تسجيل الدخول
+                    </button>
+                    <div class="user-info" id="userInfo">
+                        <p><strong id="userName">مرحباً</strong></p>
+                        <p><small id="userType">مستخدم عادي</small></p>
+                        <button class="login-btn" onclick="logout()" style="margin-top: 10px; font-size: 12px; padding: 8px 15px;">
+                            خروج
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Connection Status -->
-        <div id="connectionStatus" class="connection-status status-disconnected">
-            🔄 جاري الاتصال بقاعدة البيانات...
+        <!-- Advertisements Section -->
+        <div class="ads-section" id="adsSection">
+            <!-- Advertisements will be loaded here -->
         </div>
 
-        <!-- Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="totalChannels">0</div>
-                <div class="stat-label">📺 إجمالي القنوات</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalUsers">0</div>
-                <div class="stat-label">👥 المستخدمين المسجلين</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalAds">0</div>
-                <div class="stat-label">📢 الإعلانات النشطة</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalCategories">0</div>
-                <div class="stat-label">📂 التصنيفات</div>
-            </div>
+        <!-- Welcome Message (shown when not logged in) -->
+        <div class="welcome-message" id="welcomeMessage">
+            <div class="welcome-icon">📺</div>
+            <h2 class="welcome-title">مرحباً بك في TvNa</h2>
+            <p class="welcome-subtitle">
+                استمتع بمشاهدة آلاف القنوات التلفزيونية المباشرة بجودة عالية<br>
+                سجل دخولك الآن للوصول إلى جميع القنوات المتاحة
+            </p>
+            <button class="login-btn" onclick="openLoginModal()" style="padding: 15px 30px; font-size: 18px;">
+                🚀 ابدأ المشاهدة الآن
+            </button>
         </div>
 
-        <!-- Alert Container -->
-        <div id="alertContainer"></div>
-
-        <!-- Advertisements Management -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f);">📢</div>
-                <div>
-                    <div class="card-title">إدارة الإعلانات</div>
-                    <div class="card-subtitle">إضافة وتعديل الإعلانات المعروضة في التطبيق</div>
-                </div>
-                <button class="btn btn-primary" onclick="openAddAdModal()">➕ إعلان جديد</button>
-            </div>
-            
-            <div class="ads-grid" id="adsContainer">
-                <!-- Advertisements will be loaded here -->
-            </div>
-        </div>
-
-        <!-- Categories Management -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">📂</div>
-                <div>
-                    <div class="card-title">إدارة التصنيفات</div>
-                    <div class="card-subtitle">إضافة وتعديل تصنيفات القنوات</div>
-                </div>
-                <button class="btn btn-primary" onclick="openAddCategoryModal()">➕ تصنيف جديد</button>
-            </div>
-            
-            <div class="categories-grid" id="categoriesContainer">
+        <!-- Categories Section -->
+        <div class="categories-section" id="categoriesSection">
+            <h2 class="section-title">
+                📂 التصنيفات
+            </h2>
+            <div class="categories-container" id="categoriesContainer">
                 <!-- Categories will be loaded here -->
             </div>
         </div>
 
-        <!-- Add Channel Section with Image Upload -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon" style="background: linear-gradient(135deg, #4ecdc4, #44a08d);">📺</div>
-                <div>
-                    <div class="card-title">إضافة قناة جديدة</div>
-                    <div class="card-subtitle">أضف قناة جديدة مع إمكانية رفع صورة</div>
-                </div>
-            </div>
-            
-            <form id="addChannelForm">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                    <div class="form-group">
-                        <label class="form-label">اسم القناة (English)</label>
-                        <input type="text" class="form-input" id="channelName" placeholder="Channel Name" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">اسم القناة (العربية)</label>
-                        <input type="text" class="form-input" id="channelNameAr" placeholder="اسم القناة بالعربية" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">رابط القناة</label>
-                        <input type="url" class="form-input" id="channelUrl" placeholder="https://example.com/stream.m3u8" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">التصنيف</label>
-                        <select class="form-input" id="channelCategory" required>
-                            <option value="">اختر التصنيف</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">الجودة</label>
-                        <select class="form-input" id="channelQuality">
-                            <option value="HD">HD</option>
-                            <option value="FHD">FHD</option>
-                            <option value="4K">4K</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Image Upload Section -->
-                <div class="form-group">
-                    <label class="form-label">صورة القناة</label>
-                    <div class="file-upload-area" onclick="document.getElementById('channelImageFile').click()">
-                        <input type="file" id="channelImageFile" accept="image/*" style="display: none;">
-                        <div class="file-upload-icon">🖼️</div>
-                        <div class="file-upload-text">اضغط لاختيار صورة   </div>
-                        <div class="file-upload-hint">يدعم: JPG, PNG, GIF (حد أقصى 5MB)</div>
-                    </div>
-                    <img id="channelImagePreview" class="image-preview" style="display: none;">
-                    <input type="url" class="form-input" id="channelImageUrl" placeholder="أو أدخل رابط الصورة" style="margin-top: 10px;">
-                </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
-                    <div class="form-group">
-                        <label class="form-label">الوصف (English)</label>
-                        <textarea class="form-input" id="channelDescription" placeholder="Channel Description" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">الوصف (العربية)</label>
-                        <textarea class="form-input" id="channelDescriptionAr" placeholder="وصف القناة بالعربية" rows="3"></textarea>
-                    </div>
-                </div>
-
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="checkbox" id="isPremium">
-                        <span>⭐ قناة مميزة</span>
-                    </label>
-                </div>
-
-                <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
-                    <span id="addChannelText">➕ إضافة القناة</span>
-                    <span id="addChannelLoading" class="loading" style="display: none;"></span>
-                </button>
-            </form>
-        </div>
-
-        <!-- M3U Upload Section -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">📁</div>
-                <div>
-                    <div class="card-title">رفع ملف M3U</div>
-                    <div class="card-subtitle">قم برفع ملف M3U لإضافة القنوات تلقائياً</div>
-                </div>
-            </div>
-            
-            <div class="file-upload-area" onclick="document.getElementById('m3uFile').click()">
-                <input type="file" id="m3uFile" accept=".m3u,.m3u8" style="display: none;">
-                <div class="file-upload-icon">📁</div>
-                <div class="file-upload-text">اضغط لاختيار ملف M3U أو اسحبه هنا</div>
-                <div class="file-upload-hint">يدعم ملفات .m3u و .m3u8</div>
-            </div>
-
-            <div style="margin-top: 15px;">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: rgba(255,255,255,0.8);">
-                    <input type="checkbox" id="skipUrlValidation">
-                    <span>تخطي فحص صحة الروابط (إضافة جميع القنوات حتى لو كانت لا تعمل)</span>
-                </label>
-            </div>
-
-            <div class="progress-container" id="uploadProgress">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <div class="progress-text" id="progressText">جاري المعالجة...</div>
-            </div>
-
-            <div id="uploadResults" class="upload-results" style="display: none;">
-                <h4 style="margin-bottom: 15px; color: #4ecdc4;">نتائج الرفع:</h4>
-                <div id="uploadResultsList"></div>
-            </div>
-        </div>
-
-        <!-- Channels Management -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f);">📺</div>
-                <div>
-                    <div class="card-title">إدارة القنوات</div>
-                    <div class="card-subtitle">عرض وتعديل القنوات الموجودة</div>
-                </div>
-                <button class="btn btn-warning" onclick="loadChannels()">🔄 تحديث</button>
-            </div>
-            
-            <div id="channelsContainer" class="channels-grid">
+        <!-- Channels Section -->
+        <div class="channels-section" id="channelsSection">
+            <h2 class="section-title">
+                📺 القنوات المتاحة
+            </h2>
+            <div class="channels-grid" id="channelsContainer">
                 <!-- Channels will be loaded here -->
             </div>
         </div>
+    </div>
 
-        <!-- Users Management -->
-        <div class="card">
-            <div class="card-header">
-                <div class="card-icon" style="background: linear-gradient(135deg, #feca57, #ff9ff3);">👥</div>
-                <div>
-                    <div class="card-title">إدارة المستخدمين</div>
-                    <div class="card-subtitle">عرض وإدارة حسابات المستخدمين</div>
-                </div>
-                <button class="btn btn-warning" onclick="loadUsers()">🔄 تحديث</button>
-            </div>
+    <!-- Video Player -->
+    <div class="video-player" id="videoPlayer">
+        <div class="video-container">
+            <video id="videoElement" playsinline></video>
             
-            <div style="overflow-x: auto;">
-                <table class="users-table">
-                    <thead>
-                        <tr>
-                            <th>المستخدم</th>
-                            <th>البريد الإلكتروني</th>
-                            <th>نوع الحساب</th>
-                            <th>تاريخ التسجيل</th>
-                            <th>الحالة</th>
-                            <th>الإجراءات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                        <!-- Users will be loaded here -->
-                    </tbody>
-                </table>
+            <button class="close-player-btn" onclick="closePlayer()">✕</button>
+            
+            <div class="video-controls" id="videoControls">
+                <div class="controls-row">
+                    <button class="control-btn" id="playPauseBtn" onclick="togglePlayPause()">▶️</button>
+                    <button class="control-btn" onclick="skipBackward()">⏪</button>
+                    <button class="control-btn" onclick="skipForward()">⏩</button>
+                    
+                    <div class="progress-container" onclick="seek(event)">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    
+                    <div class="time-display" id="timeDisplay">00:00 / 00:00</div>
+                </div>
+                
+                <div class="controls-row">
+                    <div class="volume-container">
+                        <button class="control-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
+                        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100" onchange="setVolume(this.value)">
+                    </div>
+                    
+                    <select class="speed-selector" id="speedSelector" onchange="setPlaybackSpeed(this.value)">
+                        <option value="0.5">0.5x</option>
+                        <option value="0.75">0.75x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
+                    
+                    <select class="quality-selector" id="qualitySelector" onchange="setQuality(this.value)">
+                        <option value="auto">تلقائي</option>
+                        <option value="1080p">1080p</option>
+                        <option value="720p">720p</option>
+                        <option value="480p">480p</option>
+                    </select>
+                    
+                    <button class="cast-btn" onclick="castVideo()">
+                        📺 عرض على التلفاز
+                    </button>
+                    
+                    <button class="control-btn" onclick="toggleFullscreen()">⛶</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Add Advertisement Modal -->
-    <div id="addAdModal" class="modal">
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal('addAdModal')">&times;</span>
-            <h2>📢 إضافة إعلان جديد</h2>
-            <form id="addAdForm">
+            <button class="close-modal" onclick="closeLoginModal()">✕</button>
+            <h2 class="modal-title">تسجيل الدخول</h2>
+            <form id="loginForm">
                 <div class="form-group">
-                    <label class="form-label">عنوان الإعلان</label>
-                    <input type="text" class="form-input" id="adTitle" placeholder="عنوان الإعلان" required>
+                    <label class="form-label">اسم المستخدم</label>
+                    <input type="text" class="form-input" id="username" placeholder="أدخل اسم المستخدم" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">وصف الإعلان</label>
-                    <textarea class="form-input" id="adDescription" placeholder="وصف الإعلان" rows="3" required></textarea>
+                    <label class="form-label">كلمة المرور</label>
+                    <input type="password" class="form-input" id="password" placeholder="أدخل كلمة المرور" required>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">صورة الإعلان</label>
-                    <div class="file-upload-area" onclick="document.getElementById('adImageFile').click()">
-                        <input type="file" id="adImageFile" accept="image/*" style="display: none;">
-                        <div class="file-upload-icon">🖼️</div>
-                        <div class="file-upload-text">اضغط لاختيار صورة 
-                            
-                            هنا</div>
-                        <div class="file-upload-hint">يدعم: JPG, PNG, GIF (حد أقصى 5MB)</div>
-                    </div>
-                    <img id="adImagePreview" class="image-preview" style="display: none;">
-                    <input type="url" class="form-input" id="adImageUrl" placeholder="أو أدخل رابط الصورة" style="margin-top: 10px;">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">رابط الإعلان (اختياري)</label>
-                    <input type="url" class="form-input" id="adLink" placeholder="https://example.com">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">الأولوية</label>
-                    <select class="form-input" id="adPriority">
-                        <option value="0">عادي</option>
-                        <option value="5">متوسط</option>
-                        <option value="10">عالي</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">➕ إضافة الإعلان</button>
+                <button type="submit" class="submit-btn" id="loginSubmitBtn">
+                    <span id="loginText">تسجيل الدخول</span>
+                    <span id="loginLoading" class="loading" style="display: none;"></span>
+                </button>
+                <p class="register-link" onclick="switchToRegister()">
+                    ليس لديك حساب؟ سجل الآن
+                </p>
             </form>
         </div>
     </div>
 
-    <!-- Add Category Modal -->
-    <div id="addCategoryModal" class="modal">
+    <!-- Register Modal -->
+    <div class="modal" id="registerModal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal('addCategoryModal')">&times;</span>
-            <h2>📂 إضافة تصنيف جديد</h2>
-            <form id="addCategoryForm">
+            <button class="close-modal" onclick="closeRegisterModal()">✕</button>
+            <h2 class="modal-title">إنشاء حساب جديد</h2>
+            <form id="registerForm">
                 <div class="form-group">
-                    <label class="form-label">اسم التصنيف (English)</label>
-                    <input type="text" class="form-input" id="categoryName" placeholder="Category Name" required>
+                    <label class="form-label">اسم المستخدم</label>
+                    <input type="text" class="form-input" id="regUsername" placeholder="اختر اسم مستخدم" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">اسم التصنيف (العربية)</label>
-                    <input type="text" class="form-input" id="categoryNameAr" placeholder="اسم التصنيف بالعربية" required>
+                    <label class="form-label">البريد الإلكتروني</label>
+                    <input type="email" class="form-input" id="regEmail" placeholder="أدخل بريدك الإلكتروني">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">أيقونة التصنيف</label>
-                    <select class="form-input" id="categoryIcon">
-                        <option value="tv">📺 تلفاز</option>
-                        <option value="sports_soccer">⚽ كرة قدم</option>
-                        <option value="sports">🏃 رياضة</option>
-                        <option value="sports_basketball">🏀 كرة سلة</option>
-                        <option value="newspaper">📰 أخبار</option>
-                        <option value="movie">🎬 أفلام</option>
-                        <option value="music">🎵 موسيقى</option>
-                        <option value="child_care">👶 أطفال</option>
-                        <option value="school">🎓 تعليمي</option>
-                    </select>
+                    <label class="form-label">كلمة المرور</label>
+                    <input type="password" class="form-input" id="regPassword" placeholder="اختر كلمة مرور قوية" required>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">ترتيب التصنيف</label>
-                    <input type="number" class="form-input" id="categoryOrder" placeholder="0" min="0">
-                </div>
-                <button type="submit" class="btn btn-primary">➕ إضافة التصنيف</button>
+                <button type="submit" class="submit-btn" id="registerSubmitBtn">
+                    <span id="registerText">إنشاء الحساب</span>
+                    <span id="registerLoading" class="loading" style="display: none;"></span>
+                </button>
+                <p class="register-link" onclick="switchToLogin()">
+                    لديك حساب بالفعل؟ سجل دخولك
+                </p>
             </form>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
         // Supabase Configuration
         const SUPABASE_URL = 'https://vpvvjascwgivdjyyhzwp.supabase.co';
@@ -1019,76 +953,152 @@
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Global variables
+        let currentUser = null;
         let channels = [];
-        let users = [];
-        let advertisements = [];
         let categories = [];
+        let advertisements = [];
+        let currentCategory = 'all';
+        let currentVideoUrl = '';
+        let hls = null;
+        let currentAdIndex = 0;
+        let adInterval = null;
+        let controlsTimeout = null;
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
-            updateDateTime();
-            checkConnection();
-            loadCategories();
-            loadChannels();
-            loadUsers();
+            checkUserSession();
             loadAdvertisements();
-            updateStats();
-            setInterval(updateDateTime, 1000);
-            initializeFileUploads();
+            loadCategories();
+            initializeVideoPlayer();
+            initializeAdvanceAds();
         });
 
-        // Initialize file upload functionality
-        function initializeFileUploads() {
-            // M3U file upload
-            const m3uFileInput = document.getElementById('m3uFile');
-            const m3uUploadArea = document.querySelector('.file-upload-area');
-
-            m3uFileInput.addEventListener('change', handleM3UFileSelect);
-            m3uUploadArea.addEventListener('dragover', handleDragOver);
-            m3uUploadArea.addEventListener('dragleave', handleDragLeave);
-            m3uUploadArea.addEventListener('drop', handleM3UFileDrop);
-
-            // Channel image upload
-            const channelImageInput = document.getElementById('channelImageFile');
-            channelImageInput.addEventListener('change', function(e) {
-                handleImagePreview(e, 'channelImagePreview');
-            });
-
-            // Ad image upload
-            const adImageInput = document.getElementById('adImageFile');
-            adImageInput.addEventListener('change', function(e) {
-                handleImagePreview(e, 'adImagePreview');
-            });
-        }
-
-        // Handle image preview
-        function handleImagePreview(event, previewId) {
-            const file = event.target.files[0];
-            const preview = document.getElementById(previewId);
-            
-            if (file) {
-                if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                    showAlert('❌ حجم الصورة يجب أن يكون أقل من 5MB!', 'error');
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+        // Check if user is logged in
+        function checkUserSession() {
+            const savedUser = localStorage.getItem('tvna_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showUserLoggedIn();
+                loadChannels();
+            } else {
+                showUserLoggedOut();
             }
         }
 
-        // Upload image to a service (Cloudinary, AWS S3, etc.)
-        async function uploadImage(file) {
-            // This is a placeholder - implement actual image upload
-            // For now, we'll use a placeholder URL
-            return `https://via.placeholder.com/400x300?text=${encodeURIComponent(file.name)}`;
+        // Show user logged in state
+        function showUserLoggedIn() {
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'block';
+            document.getElementById('userName').textContent = currentUser.username;
+            document.getElementById('userType').textContent = currentUser.is_premium ? '⭐ مستخدم مميز' : '👤 مستخدم عادي';
+            
+            document.getElementById('welcomeMessage').style.display = 'none';
+            document.getElementById('categoriesSection').style.display = 'block';
+            document.getElementById('channelsSection').style.display = 'block';
         }
 
-        // Load categories from Supabase
+        // Show user logged out state
+        function showUserLoggedOut() {
+            document.getElementById('loginBtn').style.display = 'block';
+            document.getElementById('userInfo').style.display = 'none';
+            
+            document.getElementById('welcomeMessage').style.display = 'block';
+            document.getElementById('categoriesSection').style.display = 'none';
+            document.getElementById('channelsSection').style.display = 'none';
+        }
+
+        // Load advertisements
+        async function loadAdvertisements() {
+            try {
+                const { data, error } = await supabase
+                    .from('advertisements')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('priority', { ascending: false });
+
+                if (error) throw error;
+
+                advertisements = data || [];
+                displayAdvertisements();
+            } catch (error) {
+                console.error('Error loading advertisements:', error);
+                advertisements = getSampleAdvertisements();
+                displayAdvertisements();
+            }
+        }
+
+        // Get sample advertisements
+        function getSampleAdvertisements() {
+            return [
+                {
+                    id: '1',
+                    title: 'خصم 50% على الاشتراك المميز',
+                    description: 'احصل على جميع القنوات المميزة بخصم كبير لفترة محدودة',
+                    image_url: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=400',
+                    link: 'https://tvna.app/premium',
+                },
+                {
+                    id: '2',
+                    title: 'قنوات رياضية جديدة',
+                    description: 'مشاهدة حصرية لجميع مباريات كأس العالم',
+                    image_url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=400',
+                    link: 'https://tvna.app/sports',
+                }
+            ];
+        }
+
+        // Display advertisements
+        function displayAdvertisements() {
+            const container = document.getElementById('adsSection');
+            container.innerHTML = '';
+
+            if (advertisements.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            advertisements.forEach((ad, index) => {
+                const adDiv = document.createElement('div');
+                adDiv.className = `ad-slide ${index === 0 ? 'active' : ''}`;
+                adDiv.onclick = () => {
+                    if (ad.link) {
+                        window.open(ad.link, '_blank');
+                    }
+                };
+
+                adDiv.innerHTML = `
+                    <img src="${ad.image_url}" alt="${ad.title}" onerror="this.src='https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=400'">
+                    <div class="ad-content">
+                        <h3 class="ad-title">${ad.title}</h3>
+                        <p class="ad-description">${ad.description}</p>
+                    </div>
+                `;
+                container.appendChild(adDiv);
+            });
+
+            container.style.display = 'block';
+        }
+
+        // Initialize advanced ads rotation
+        function initializeAdvanceAds() {
+            if (advertisements.length > 1) {
+                adInterval = setInterval(() => {
+                    rotateAdvertisement();
+                }, 3000);
+            }
+        }
+
+        // Rotate advertisements
+        function rotateAdvertisement() {
+            const slides = document.querySelectorAll('.ad-slide');
+            if (slides.length <= 1) return;
+
+            slides[currentAdIndex].classList.remove('active');
+            currentAdIndex = (currentAdIndex + 1) % slides.length;
+            slides[currentAdIndex].classList.add('active');
+        }
+
+        // Load categories
         async function loadCategories() {
             try {
                 const { data, error } = await supabase
@@ -1101,27 +1111,21 @@
 
                 categories = data || [];
                 displayCategories();
-                updateCategorySelect();
-                updateStats();
             } catch (error) {
                 console.error('Error loading categories:', error);
-                // Create default categories if table doesn't exist
                 categories = getDefaultCategories();
                 displayCategories();
-                updateCategorySelect();
-                updateStats();
             }
         }
 
         // Get default categories
         function getDefaultCategories() {
             return [
-                { id: '1', name: 'beIN Sports', name_ar: 'بي ان سبورت', icon: 'sports_soccer', order_index: 1 },
-                { id: '2', name: 'SSC Sports', name_ar: 'السعودية الرياضية', icon: 'sports', order_index: 2 },
-                { id: '3', name: 'AD Sports', name_ar: 'أبوظبي الرياضية', icon: 'sports_basketball', order_index: 3 },
-                { id: '4', name: 'News', name_ar: 'الأخبار', icon: 'newspaper', order_index: 4 },
-                { id: '5', name: 'Entertainment', name_ar: 'الترفيه', icon: 'movie', order_index: 5 },
-                { id: '6', name: 'MBC', name_ar: 'ام بي سي', icon: 'tv', order_index: 6 },
+                { id: 'all', name: 'الكل', name_ar: 'الكل', icon: 'tv' },
+                { id: '1', name: 'beIN Sports', name_ar: 'بي ان سبورت', icon: 'sports_soccer' },
+                { id: '2', name: 'SSC Sports', name_ar: 'السعودية الرياضية', icon: 'sports' },
+                { id: '3', name: 'News', name_ar: 'الأخبار', icon: 'newspaper' },
+                { id: '4', name: 'Entertainment', name_ar: 'الترفيه', icon: 'movie' },
             ];
         }
 
@@ -1130,32 +1134,27 @@
             const container = document.getElementById('categoriesContainer');
             container.innerHTML = '';
 
+            // Add "All" category
+            const allCategory = document.createElement('div');
+            allCategory.className = 'category-item active';
+            allCategory.onclick = () => filterChannels('all');
+            allCategory.innerHTML = `
+                <span class="category-icon">📺</span>
+                <span class="category-name">الكل</span>
+            `;
+            container.appendChild(allCategory);
+
             categories.forEach(category => {
+                if (category.id === 'all') return;
+                
                 const categoryDiv = document.createElement('div');
-                categoryDiv.className = 'category-card';
+                categoryDiv.className = 'category-item';
+                categoryDiv.onclick = () => filterChannels(category.name);
                 categoryDiv.innerHTML = `
-                    <div class="category-icon">${getCategoryEmoji(category.icon)}</div>
-                    <h3>${category.name_ar}</h3>
-                    <p>${category.name}</p>
-                    <div style="margin-top: 15px;">
-                        <button class="btn btn-warning" onclick="editCategory('${category.id}')" style="padding: 8px 12px; font-size: 12px;">✏️ تعديل</button>
-                        <button class="btn btn-danger" onclick="deleteCategory('${category.id}')" style="padding: 8px 12px; font-size: 12px;">🗑️ حذف</button>
-                    </div>
+                    <span class="category-icon">${getCategoryEmoji(category.icon)}</span>
+                    <span class="category-name">${category.name_ar}</span>
                 `;
                 container.appendChild(categoryDiv);
-            });
-        }
-
-        // Update category select dropdown
-        function updateCategorySelect() {
-            const select = document.getElementById('channelCategory');
-            select.innerHTML = '<option value="">اختر التصنيف</option>';
-            
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category.name;
-                option.textContent = category.name_ar;
-                select.appendChild(option);
             });
         }
 
@@ -1175,308 +1174,23 @@
             return iconMap[icon] || '📺';
         }
 
-        // Load advertisements from Supabase
-        async function loadAdvertisements() {
-            try {
-                const { data, error } = await supabase
-                    .from('advertisements')
-                    .select('*')
-                    .eq('is_active', true)
-                    .order('priority', { ascending: false });
-
-                if (error) throw error;
-
-                advertisements = data || [];
-                displayAdvertisements();
-                updateStats();
-            } catch (error) {
-                console.error('Error loading advertisements:', error);
-                // Create sample advertisements if table doesn't exist
-                advertisements = getSampleAdvertisements();
-                displayAdvertisements();
-                updateStats();
-            }
-        }
-
-        // Get sample advertisements
-        function getSampleAdvertisements() {
-            return [
-                {
-                    id: '1',
-                    title: 'خصم 50% على الاشتراك المميز',
-                    description: 'احصل على جميع القنوات المميزة بخصم كبير لفترة محدودة',
-                    image_url: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200',
-                    link: 'https://tvna.app/premium',
-                    priority: 10,
-                    is_active: true
-                },
-                {
-                    id: '2',
-                    title: 'قنوات رياضية جديدة',
-                    description: 'مشاهدة حصرية لجميع مباريات كأس العالم',
-                    image_url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=200',
-                    link: 'https://tvna.app/sports',
-                    priority: 8,
-                    is_active: true
-                }
-            ];
-        }
-
-        // Display advertisements
-        function displayAdvertisements() {
-            const container = document.getElementById('adsContainer');
-            container.innerHTML = '';
-
-            if (advertisements.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">لا توجد إعلانات مضافة بعد</p>';
-                return;
-            }
-
-            advertisements.forEach(ad => {
-                const adDiv = document.createElement('div');
-                adDiv.className = 'ad-card';
-                adDiv.innerHTML = `
-                    ${ad.image_url ? 
-                        `<img src="${ad.image_url}" alt="${ad.title}" class="ad-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                         <div class="ad-placeholder" style="display: none;">📢</div>` :
-                        `<div class="ad-placeholder">📢</div>`
-                    }
-                    <h3>${ad.title}</h3>
-                    <p style="color: rgba(255,255,255,0.8); margin: 10px 0;">${ad.description}</p>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
-                        <span style="background: ${ad.priority >= 10 ? 'linear-gradient(135deg, #ff6b6b, #ee5a6f)' : ad.priority >= 5 ? 'linear-gradient(135deg, #feca57, #ff9ff3)' : 'linear-gradient(135deg, #4ecdc4, #44a08d)'}; padding: 4px 8px; border-radius: 8px; font-size: 10px;">
-                            أولوية: ${ad.priority >= 10 ? 'عالية' : ad.priority >= 5 ? 'متوسطة' : 'عادية'}
-                        </span>
-                        <div>
-                            <button class="btn btn-warning" onclick="editAd('${ad.id}')" style="padding: 6px 10px; font-size: 11px;">✏️ تعديل</button>
-                            <button class="btn btn-danger" onclick="deleteAd('${ad.id}')" style="padding: 6px 10px; font-size: 11px;">🗑️ حذف</button>
-                        </div>
-                    </div>
-                    ${ad.link ? `<p style="font-size: 11px; color: #4ecdc4; margin-top: 8px;">🔗 ${ad.link}</p>` : ''}
-                `;
-                container.appendChild(adDiv);
+        // Filter channels by category
+        function filterChannels(category) {
+            currentCategory = category;
+            
+            // Update active category
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.classList.remove('active');
             });
-        }
-
-        // Open add advertisement modal
-        function openAddAdModal() {
-            openModal('addAdModal');
-        }
-
-        // Open add category modal
-        function openAddCategoryModal() {
-            openModal('addCategoryModal');
-        }
-
-        // Add advertisement form submission
-        document.getElementById('addAdForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+            event.target.closest('.category-item').classList.add('active');
             
-            try {
-                let imageUrl = document.getElementById('adImageUrl').value;
-                
-                // Upload image if file is selected
-                const imageFile = document.getElementById('adImageFile').files[0];
-                if (imageFile) {
-                    imageUrl = await uploadImage(imageFile);
-                }
-
-                const adData = {
-                    title: document.getElementById('adTitle').value,
-                    description: document.getElementById('adDescription').value,
-                    image_url: imageUrl,
-                    link: document.getElementById('adLink').value || null,
-                    priority: parseInt(document.getElementById('adPriority').value),
-                    is_active: true
-                };
-
-                const { data, error } = await supabase
-                    .from('advertisements')
-                    .insert([adData])
-                    .select();
-
-                if (error) throw error;
-
-                showAlert('✅ تم إضافة الإعلان بنجاح!', 'success');
-                closeModal('addAdModal');
-                this.reset();
-                document.getElementById('adImagePreview').style.display = 'none';
-                loadAdvertisements();
-                
-            } catch (error) {
-                console.error('Error adding advertisement:', error);
-                showAlert('❌ خطأ في إضافة الإعلان!', 'error');
-            }
-        });
-
-        // Add category form submission
-        document.getElementById('addCategoryForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            try {
-                const categoryData = {
-                    name: document.getElementById('categoryName').value,
-                    name_ar: document.getElementById('categoryNameAr').value,
-                    icon: document.getElementById('categoryIcon').value,
-                    order_index: parseInt(document.getElementById('categoryOrder').value) || 0,
-                    is_active: true
-                };
-
-                const { data, error } = await supabase
-                    .from('categories')
-                    .insert([categoryData])
-                    .select();
-
-                if (error) throw error;
-
-                showAlert('✅ تم إضافة التصنيف بنجاح!', 'success');
-                closeModal('addCategoryModal');
-                this.reset();
-                loadCategories();
-                
-            } catch (error) {
-                console.error('Error adding category:', error);
-                showAlert('❌ خطأ في إضافة التصنيف!', 'error');
-            }
-        });
-
-        // Add channel form submission with image upload
-        document.getElementById('addChannelForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const submitBtn = document.getElementById('addChannelText');
-            const loadingBtn = document.getElementById('addChannelLoading');
-            
-            submitBtn.style.display = 'none';
-            loadingBtn.style.display = 'inline-block';
-            
-            try {
-                let imageUrl = document.getElementById('channelImageUrl').value || 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300';
-                
-                // Upload image if file is selected
-                const imageFile = document.getElementById('channelImageFile').files[0];
-                if (imageFile) {
-                    imageUrl = await uploadImage(imageFile);
-                }
-
-                const channelData = {
-                    name: document.getElementById('channelName').value,
-                    name_ar: document.getElementById('channelNameAr').value,
-                    url: document.getElementById('channelUrl').value,
-                    category: document.getElementById('channelCategory').value,
-                    image_url: imageUrl,
-                    description: document.getElementById('channelDescription').value,
-                    description_ar: document.getElementById('channelDescriptionAr').value,
-                    quality: document.getElementById('channelQuality').value,
-                    is_premium: document.getElementById('isPremium').checked,
-                    viewers_count: Math.floor(Math.random() * 100000),
-                    rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
-                    is_active: true
-                };
-
-                const { data, error } = await supabase
-                    .from('channels')
-                    .insert([channelData])
-                    .select();
-
-                if (error) throw error;
-
-                showAlert('✅ تم إضافة القناة بنجاح!', 'success');
-                this.reset();
-                document.getElementById('channelImagePreview').style.display = 'none';
-                loadChannels();
-                
-            } catch (error) {
-                console.error('Error adding channel:', error);
-                showAlert('❌ خطأ في إضافة القناة!', 'error');
-            } finally {
-                submitBtn.style.display = 'inline-block';
-                loadingBtn.style.display = 'none';
-            }
-        });
-
-        // Delete advertisement
-        async function deleteAd(adId) {
-            if (confirm('هل أنت متأكد من حذف هذا الإعلان؟')) {
-                try {
-                    const { error } = await supabase
-                        .from('advertisements')
-                        .update({ is_active: false })
-                        .eq('id', adId);
-
-                    if (error) throw error;
-
-                    showAlert('✅ تم حذف الإعلان بنجاح!', 'success');
-                    loadAdvertisements();
-                    
-                } catch (error) {
-                    console.error('Error deleting advertisement:', error);
-                    showAlert('❌ خطأ في حذف الإعلان!', 'error');
-                }
-            }
+            displayChannels();
         }
 
-        // Delete category
-        async function deleteCategory(categoryId) {
-            if (confirm('هل أنت متأكد من حذف هذا التصنيف؟\nسيتم حذف جميع القنوات التابعة لهذا التصنيف أيضاً.')) {
-                try {
-                    const { error } = await supabase
-                        .from('categories')
-                        .update({ is_active: false })
-                        .eq('id', categoryId);
-
-                    if (error) throw error;
-
-                    showAlert('✅ تم حذف التصنيف بنجاح!', 'success');
-                    loadCategories();
-                    
-                } catch (error) {
-                    console.error('Error deleting category:', error);
-                    showAlert('❌ خطأ في حذف التصنيف!', 'error');
-                }
-            }
-        }
-
-        // Rest of the original functions (checkConnection, loadChannels, loadUsers, etc.)
-        async function checkConnection() {
-            try {
-                const { data, error } = await supabase.from('channels').select('count').limit(1);
-                if (error) throw error;
-                
-                updateConnectionStatus(true);
-                showAlert('✅ تم الاتصال بقاعدة البيانات بنجاح!', 'success');
-            } catch (error) {
-                console.error('Connection error:', error);
-                updateConnectionStatus(false);
-                showAlert('❌ فشل في الاتصال بقاعدة البيانات!', 'error');
-            }
-        }
-
-        function updateConnectionStatus(connected) {
-            const statusElement = document.getElementById('connectionStatus');
-            if (connected) {
-                statusElement.className = 'connection-status status-connected';
-                statusElement.innerHTML = '✅ متصل بقاعدة البيانات - Ameer_7elwas ';
-            } else {
-                statusElement.className = 'connection-status status-disconnected';
-                statusElement.innerHTML = '❌ غير متصل بقاعدة البيانات!';
-            }
-        }
-
-        function updateDateTime() {
-            const now = new Date();
-            const options = { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit'
-            };
-            document.getElementById('currentDate').textContent = now.toLocaleDateString('ar-SA', options);
-        }
-
+        // Load channels
         async function loadChannels() {
+            if (!currentUser) return;
+
             try {
                 const { data, error } = await supabase
                     .from('channels')
@@ -1488,529 +1202,516 @@
 
                 channels = data || [];
                 displayChannels();
-                updateStats();
             } catch (error) {
                 console.error('Error loading channels:', error);
                 showAlert('❌ خطأ في تحميل القنوات!', 'error');
             }
         }
 
-        async function loadUsers() {
-            try {
-                const { data, error } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('is_active', true)
-                    .order('created_at', { ascending: false });
-
-                if (error) {
-                    console.error('Load users error:', error);
-                    if (error.code === '42P01') {
-                        showAlert('⚠️ جدول المستخدمين غير موجود. يرجى إنشاؤه أولاً.', 'error');
-                        users = [];
-                        displayUsers();
-                        updateStats();
-                        return;
-                    } else {
-                        throw error;
-                    }
-                }
-
-                users = data || [];
-                displayUsers();
-                updateStats();
-                
-            } catch (error) {
-                console.error('Error loading users:', error);
-                showAlert(`❌ خطأ في تحميل المستخدمين: ${error.message}`, 'error');
-                users = [];
-                displayUsers();
-                updateStats();
-            }
-        }
-
-        function updateStats() {
-            document.getElementById('totalChannels').textContent = channels.length;
-            document.getElementById('totalUsers').textContent = users.length;
-            document.getElementById('totalAds').textContent = advertisements.length;
-            document.getElementById('totalCategories').textContent = categories.length;
-        }
-
+        // Display channels
         function displayChannels() {
             const container = document.getElementById('channelsContainer');
             container.innerHTML = '';
-            
-            if (channels.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">لا توجد قنوات مضافة بعد</p>';
+
+            let filteredChannels = channels;
+            if (currentCategory !== 'all') {
+                filteredChannels = channels.filter(channel => channel.category === currentCategory);
+            }
+
+            // Filter premium channels for non-premium users
+            if (!currentUser?.is_premium) {
+                filteredChannels = filteredChannels.filter(channel => !channel.is_premium);
+            }
+
+            if (filteredChannels.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #666;">
+                        <div style="font-size: 64px; margin-bottom: 20px;">📺</div>
+                        <h3 style="margin-bottom: 10px;">لا توجد قنوات في هذا التصنيف</h3>
+                        <p>جرب تصنيف آخر أو تواصل مع الإدارة</p>
+                    </div>
+                `;
                 return;
             }
-            
-            channels.forEach(channel => {
+
+            filteredChannels.forEach(channel => {
                 const channelDiv = document.createElement('div');
                 channelDiv.className = 'channel-card';
                 channelDiv.innerHTML = `
-                    <div class="channel-header">
-                        <div class="channel-info">
-                            <h3>${channel.name_ar}</h3>
-                            <p>${channel.category} • ${channel.quality}</p>
-                        </div>
-                        <div>
-                            ${channel.is_premium ? '<span class="channel-status status-premium">⭐ مميز</span>' : ''}
-                        </div>
+                    <div style="position: relative;">
+                        <img src="${channel.image_url || 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300'}" 
+                             alt="${channel.name_ar}" class="channel-image"
+                             onerror="this.src='https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300'">
+                        ${channel.is_premium ? '<div class="premium-badge">⭐ مميز</div>' : ''}
                     </div>
-                    <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 10px 0;">${channel.description_ar}</p>
-                    <p style="color: rgba(255,255,255,0.6); font-size: 12px;">👥 ${channel.viewers_count.toLocaleString()} مشاهد • ⭐ ${channel.rating}</p>
-                    <div class="channel-actions">
-                        <button class="btn btn-primary" onclick="editChannel('${channel.id}')" style="padding: 8px 12px; font-size: 12px;">✏️ تعديل</button>
-                        <button class="btn btn-danger" onclick="deleteChannel('${channel.id}')" style="padding: 8px 12px; font-size: 12px;">🗑️ حذف</button>
-                        <button class="btn btn-warning" onclick="testChannel('${channel.url}')" style="padding: 8px 12px; font-size: 12px;">🔗 اختبار</button>
+                    <div class="channel-info">
+                        <h3 class="channel-name">${channel.name_ar}</h3>
+                        <div class="channel-details">
+                            <span class="channel-category">${channel.category}</span>
+                            <span class="channel-quality">${channel.quality}</span>
+                        </div>
+                        <div class="channel-stats">
+                            <span>👥 ${channel.viewers_count?.toLocaleString() || '0'} مشاهد</span>
+                            <span>⭐ ${channel.rating || '0'}</span>
+                        </div>
+                        <button class="play-btn" onclick="playChannel('${channel.url}', '${channel.name_ar}')">
+                            ▶️ مشاهدة مباشرة
+                        </button>
                     </div>
                 `;
                 container.appendChild(channelDiv);
             });
         }
 
-        function displayUsers() {
-            const tbody = document.getElementById('usersTableBody');
-            tbody.innerHTML = '';
-            
-            if (users.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px;">
-                            <div style="color: #666;">
-                                <div style="font-size: 48px; margin-bottom: 15px;">👥</div>
-                                <div style="font-size: 18px; margin-bottom: 10px;">لا يوجد مستخدمين مسجلين بعد</div>
-                                <div style="font-size: 14px; color: rgba(255,255,255,0.6);">قم بإضافة أول مستخدم</div>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+        // Play channel
+        function playChannel(url, channelName) {
+            if (!url) {
+                showAlert('❌ رابط القناة غير صحيح!', 'error');
                 return;
             }
+
+            currentVideoUrl = url;
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoElement = document.getElementById('videoElement');
             
-            users.forEach((user, index) => {
-                const tr = document.createElement('tr');
-                tr.style.opacity = '0';
-                tr.style.animation = `slideIn 0.3s ease forwards ${index * 0.1}s`;
-                
-                const createdDate = user.created_at ? new Date(user.created_at).toLocaleDateString('ar-SA') : 'غير محدد';
-                
-                tr.innerHTML = `
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <div style="width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">
-                                ${user.username.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                                <div style="font-weight: bold;">${user.username}</div>
-                                <div style="font-size: 11px; color: rgba(255,255,255,0.6);">ID: ${user.id?.substring(0, 8) || 'N/A'}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div>${user.email || '<span style="color: rgba(255,255,255,0.5);">غير محدد</span>'}</div>
-                    </td>
-                    <td>
-                        <span style="padding: 6px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; ${user.is_premium ? 
-                            'background: linear-gradient(135deg, #feca57, #ff9ff3); color: white;' : 
-                            'background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);'
-                        }">
-                            ${user.is_premium ? '⭐ مميز' : '👤 عادي'}
-                        </span>
-                    </td>
-                    <td>
-                        <div style="font-size: 13px;">${createdDate}</div>
-                    </td>
-                    <td>
-                        <span style="padding: 6px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; ${user.is_active ? 
-                            'background: linear-gradient(135deg, #00b894, #00a085); color: white;' : 
-                            'background: linear-gradient(135deg, #e74c3c, #c0392b); color: white;'
-                        }">
-                            ${user.is_active ? '✅ نشط' : '❌ غير نشط'}
-                        </span>
-                    </td>
-                    <td>
-                        <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-                            <button class="btn btn-danger" onclick="deleteUser('${user.id}')" style="padding: 6px 10px; font-size: 11px;">🗑️</button>
-                            <button class="btn ${user.is_premium ? 'btn-warning' : 'btn-primary'}" onclick="toggleUserPremium('${user.id}')" style="padding: 6px 10px; font-size: 11px;">
-                                ${user.is_premium ? '⬇️' : '⬆️'}
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+            videoPlayer.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+
+            // Initialize HLS if needed
+            if (Hls.isSupported() && url.includes('.m3u8')) {
+                if (hls) {
+                    hls.destroy();
+                }
+                hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(videoElement);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    videoElement.play();
+                });
+            } else if (videoElement.canPlayType('application/vnd.apple.mpegurl')) {
+                videoElement.src = url;
+                videoElement.play();
+            } else {
+                videoElement.src = url;
+                videoElement.play();
+            }
+
+            showAlert(`📺 تم تشغيل ${channelName}`, 'success');
+        }
+
+        // Initialize video player
+        function initializeVideoPlayer() {
+            const videoElement = document.getElementById('videoElement');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const controls = document.getElementById('videoControls');
+
+            // Show/hide controls on click
+            videoPlayer.addEventListener('click', function(e) {
+                if (e.target === videoElement || e.target === videoPlayer) {
+                    toggleControls();
+                }
             });
+
+            // Auto-hide controls after 3 seconds
+            videoPlayer.addEventListener('mousemove', function() {
+                showControls();
+                clearTimeout(controlsTimeout);
+                controlsTimeout = setTimeout(() => {
+                    hideControls();
+                }, 3000);
+            });
+
+            // Update progress bar
+            videoElement.addEventListener('timeupdate', updateProgress);
+            videoElement.addEventListener('loadedmetadata', updateDuration);
+
+            // Initial controls show
+            showControls();
         }
 
-        // Delete channel
-        async function deleteChannel(channelId) {
-            if (confirm('هل أنت متأكد من حذف هذه القناة؟')) {
-                try {
-                    const { error } = await supabase
-                        .from('channels')
-                        .update({ is_active: false })
-                        .eq('id', channelId);
-
-                    if (error) throw error;
-
-                    showAlert('✅ تم حذف القناة بنجاح!', 'success');
-                    loadChannels();
-                    
-                } catch (error) {
-                    console.error('Error deleting channel:', error);
-                    showAlert('❌ خطأ في حذف القناة!', 'error');
-                }
+        // Toggle video controls visibility
+        function toggleControls() {
+            const controls = document.getElementById('videoControls');
+            if (controls.classList.contains('show')) {
+                hideControls();
+            } else {
+                showControls();
             }
         }
 
-        // Delete user
-        async function deleteUser(userId) {
-            if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
-                try {
-                    const { error } = await supabase
-                        .from('users')
-                        .update({ is_active: false })
-                        .eq('id', userId);
+        // Show video controls
+        function showControls() {
+            const controls = document.getElementById('videoControls');
+            controls.classList.add('show');
+        }
 
-                    if (error) throw error;
+        // Hide video controls
+        function hideControls() {
+            const controls = document.getElementById('videoControls');
+            controls.classList.remove('show');
+        }
 
-                    showAlert('✅ تم حذف المستخدم بنجاح!', 'success');
-                    loadUsers();
-                    
-                } catch (error) {
-                    console.error('Error deleting user:', error);
-                    showAlert('❌ خطأ في حذف المستخدم!', 'error');
-                }
+        // Toggle play/pause
+        function togglePlayPause() {
+            const video = document.getElementById('videoElement');
+            const btn = document.getElementById('playPauseBtn');
+            
+            if (video.paused) {
+                video.play();
+                btn.textContent = '⏸️';
+            } else {
+                video.pause();
+                btn.textContent = '▶️';
             }
         }
 
-        // Toggle user premium status
-        async function toggleUserPremium(userId) {
-            try {
-                const user = users.find(u => u.id === userId);
-                if (!user) return;
+        // Skip backward
+        function skipBackward() {
+            const video = document.getElementById('videoElement');
+            video.currentTime = Math.max(0, video.currentTime - 10);
+        }
 
-                const newStatus = !user.is_premium;
-                const actionText = newStatus ? 'ترقية' : 'إزالة ترقية';
+        // Skip forward
+        function skipForward() {
+            const video = document.getElementById('videoElement');
+            video.currentTime = Math.min(video.duration, video.currentTime + 10);
+        }
 
-                const { error } = await supabase
-                    .from('users')
-                    .update({ 
-                        is_premium: newStatus,
-                        updated_at: new Date().toISOString()
+        // Seek to position
+        function seek(event) {
+            const video = document.getElementById('videoElement');
+            const progressContainer = event.currentTarget;
+            const rect = progressContainer.getBoundingClientRect();
+            const pos = (event.clientX - rect.left) / rect.width;
+            video.currentTime = pos * video.duration;
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const video = document.getElementById('videoElement');
+            const progressBar = document.getElementById('progressBar');
+            const timeDisplay = document.getElementById('timeDisplay');
+            
+            if (video.duration) {
+                const progress = (video.currentTime / video.duration) * 100;
+                progressBar.style.width = progress + '%';
+                
+                const current = formatTime(video.currentTime);
+                const total = formatTime(video.duration);
+                timeDisplay.textContent = `${current} / ${total}`;
+            }
+        }
+
+        // Update duration
+        function updateDuration() {
+            const video = document.getElementById('videoElement');
+            const timeDisplay = document.getElementById('timeDisplay');
+            
+            if (video.duration) {
+                const total = formatTime(video.duration);
+                timeDisplay.textContent = `00:00 / ${total}`;
+            }
+        }
+
+        // Format time
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            
+            if (hours > 0) {
+                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            } else {
+                return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // Toggle mute
+        function toggleMute() {
+            const video = document.getElementById('videoElement');
+            const muteBtn = document.getElementById('muteBtn');
+            const volumeSlider = document.getElementById('volumeSlider');
+            
+            if (video.muted) {
+                video.muted = false;
+                muteBtn.textContent = '🔊';
+                volumeSlider.value = video.volume * 100;
+            } else {
+                video.muted = true;
+                muteBtn.textContent = '🔇';
+                volumeSlider.value = 0;
+            }
+        }
+
+        // Set volume
+        function setVolume(value) {
+            const video = document.getElementById('videoElement');
+            const muteBtn = document.getElementById('muteBtn');
+            
+            video.volume = value / 100;
+            video.muted = value == 0;
+            
+            if (value == 0) {
+                muteBtn.textContent = '🔇';
+            } else if (value < 50) {
+                muteBtn.textContent = '🔉';
+            } else {
+                muteBtn.textContent = '🔊';
+            }
+        }
+
+        // Set playback speed
+        function setPlaybackSpeed(speed) {
+            const video = document.getElementById('videoElement');
+            video.playbackRate = parseFloat(speed);
+            showAlert(`⚡ تم تغيير السرعة إلى ${speed}x`, 'success');
+        }
+
+        // Set quality (placeholder - actual implementation depends on streaming service)
+        function setQuality(quality) {
+            showAlert(`📹 تم تغيير الجودة إلى ${quality}`, 'success');
+        }
+
+        // Cast video
+        function castVideo() {
+            if ('presentation' in navigator) {
+                navigator.presentation.defaultRequest = new PresentationRequest([currentVideoUrl]);
+                navigator.presentation.defaultRequest.start()
+                    .then(connection => {
+                        showAlert('📺 تم بدء العرض على التلفاز!', 'success');
                     })
-                    .eq('id', userId);
+                    .catch(error => {
+                        showAlert('❌ فشل في الاتصال بالتلفاز!', 'error');
+                    });
+            } else {
+                // Fallback - copy URL to clipboard
+                navigator.clipboard.writeText(currentVideoUrl).then(() => {
+                    showAlert('📋 تم نسخ رابط القناة! الصقه في تطبيق العرض على التلفاز', 'success');
+                }).catch(() => {
+                    showAlert('❌ ميزة العرض على التلفاز غير مدعومة في هذا المتصفح', 'error');
+                });
+            }
+        }
+
+        // Toggle fullscreen
+        function toggleFullscreen() {
+            const videoPlayer = document.getElementById('videoPlayer');
+            
+            if (!document.fullscreenElement) {
+                videoPlayer.requestFullscreen().catch(err => {
+                    showAlert('❌ فشل في تفعيل الشاشة الكاملة!', 'error');
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Close video player
+        function closePlayer() {
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoElement = document.getElementById('videoElement');
+            
+            videoPlayer.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            videoElement.pause();
+            if (hls) {
+                hls.destroy();
+                hls = null;
+            }
+            
+            // Clear timeout
+            clearTimeout(controlsTimeout);
+        }
+
+        // Authentication functions
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('show');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('show');
+        }
+
+        function openRegisterModal() {
+            document.getElementById('registerModal').classList.add('show');
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').classList.remove('show');
+        }
+
+        function switchToRegister() {
+            closeLoginModal();
+            openRegisterModal();
+        }
+
+        function switchToLogin() {
+            closeRegisterModal();
+            openLoginModal();
+        }
+
+        // Handle login form
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const loginText = document.getElementById('loginText');
+            const loginLoading = document.getElementById('loginLoading');
+            
+            loginText.style.display = 'none';
+            loginLoading.style.display = 'inline-block';
+            
+            try {
+                // Try to login with Supabase
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('username', username)
+                    .eq('is_active', true)
+                    .single();
+
+                if (error || !data) {
+                    throw new Error('اسم المستخدم أو كلمة المرور غير صحيحة');
+                }
+
+                // For demo purposes, we'll skip password verification
+                // In production, you should hash and verify passwords properly
+                
+                currentUser = data;
+                localStorage.setItem('tvna_user', JSON.stringify(currentUser));
+                
+                showAlert('✅ تم تسجيل الدخول بنجاح!', 'success');
+                closeLoginModal();
+                showUserLoggedIn();
+                loadChannels();
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert(`❌ ${error.message}`, 'error');
+            } finally {
+                loginText.style.display = 'inline-block';
+                loginLoading.style.display = 'none';
+            }
+        });
+
+        // Handle register form
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            
+            const registerText = document.getElementById('registerText');
+            const registerLoading = document.getElementById('registerLoading');
+            
+            registerText.style.display = 'none';
+            registerLoading.style.display = 'inline-block';
+            
+            try {
+                // Check if username already exists
+                const { data: existingUser } = await supabase
+                    .from('users')
+                    .select('id')
+                    .eq('username', username)
+                    .single();
+
+                if (existingUser) {
+                    throw new Error('اسم المستخدم موجود بالفعل');
+                }
+
+                // Create new user
+                const userData = {
+                    username: username,
+                    email: email || null,
+                    is_premium: false,
+                    is_active: true,
+                    created_at: new Date().toISOString()
+                };
+
+                const { data, error } = await supabase
+                    .from('users')
+                    .insert([userData])
+                    .select()
+                    .single();
 
                 if (error) throw error;
 
-                showAlert(`✅ تم ${actionText} المستخدم "${user.username}" بنجاح!`, 'success');
-                loadUsers();
+                currentUser = data;
+                localStorage.setItem('tvna_user', JSON.stringify(currentUser));
                 
-            } catch (error) {
-                console.error('Error updating user:', error);
-                showAlert(`❌ خطأ في تحديث المستخدم: ${error.message}`, 'error');
-            }
-        }
-
-        // Test channel
-        function testChannel(url) {
-            window.open(url, '_blank');
-            showAlert('🔗 تم فتح رابط القناة في نافذة جديدة', 'success');
-        }
-
-        // M3U file handling functions (unchanged)
-        function handleM3UFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                processM3UFile(file);
-            }
-        }
-
-        function handleDragOver(event) {
-            event.preventDefault();
-            event.currentTarget.classList.add('dragover');
-        }
-
-        function handleDragLeave(event) {
-            event.currentTarget.classList.remove('dragover');
-        }
-
-        function handleM3UFileDrop(event) {
-            event.preventDefault();
-            event.currentTarget.classList.remove('dragover');
-            
-            const files = event.dataTransfer.files;
-            if (files.length > 0 && (files[0].name.endsWith('.m3u') || files[0].name.endsWith('.m3u8'))) {
-                processM3UFile(files[0]);
-            } else {
-                showAlert('❌ يرجى رفع ملف M3U صحيح!', 'error');
-            }
-        }
-
-        // M3U processing function (simplified)
-        async function processM3UFile(file) {
-            showProgress(true);
-            updateProgress(0, 'جاري قراءة الملف...');
-
-            try {
-                const fileContent = await readFileContent(file);
-                const parsedChannels = parseM3UContent(fileContent);
-                
-                if (parsedChannels.length === 0) {
-                    throw new Error('لم يتم العثور على قنوات صالحة في الملف');
-                }
-
-                updateProgress(50, `تم العثور على ${parsedChannels.length} قناة، جاري الإضافة...`);
-                
-                const results = await addChannelsToDatabase(parsedChannels);
-                showUploadResults(results);
-                
-                updateProgress(100, 'تم الانتهاء!');
-                setTimeout(() => showProgress(false), 2000);
-
+                showAlert('✅ تم إنشاء الحساب بنجاح!', 'success');
+                closeRegisterModal();
+                showUserLoggedIn();
                 loadChannels();
-                showAlert(`✅ تم رفع ${results.success} قناة بنجاح من أصل ${parsedChannels.length}!`, 'success');
-
+                
             } catch (error) {
-                console.error('Error processing M3U file:', error);
-                showAlert(`❌ خطأ في معالجة الملف: ${error.message}`, 'error');
-                showProgress(false);
+                console.error('Register error:', error);
+                showAlert(`❌ ${error.message}`, 'error');
+            } finally {
+                registerText.style.display = 'inline-block';
+                registerLoading.style.display = 'none';
             }
+        });
+
+        // Logout function
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('tvna_user');
+            showUserLoggedOut();
+            showAlert('👋 تم تسجيل الخروج بنجاح!', 'success');
         }
 
-        function readFileContent(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.onerror = (e) => reject(new Error('خطأ في قراءة الملف'));
-                reader.readAsText(file, 'UTF-8');
-            });
-        }
-
-        function parseM3UContent(content) {
-            const lines = content.split('\n').map(line => line.trim()).filter(line => line);
-            const channels = [];
-            let currentChannel = {};
-
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i];
-
-                if (line.startsWith('#EXTINF:')) {
-                    const info = line.substring(8);
-                    const commaIndex = info.lastIndexOf(',');
-                    
-                    if (commaIndex !== -1) {
-                        const attributes = info.substring(0, commaIndex);
-                        const displayName = info.substring(commaIndex + 1).trim();
-
-                        currentChannel = {
-                            name: displayName,
-                            name_ar: displayName,
-                            description: '',
-                            description_ar: '',
-                            category: 'General',
-                            quality: 'HD',
-                            is_premium: false,
-                            image_url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300',
-                            viewers_count: Math.floor(Math.random() * 100000),
-                            rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
-                            is_active: true
-                        };
-
-                        const logoMatch = attributes.match(/tvg-logo="([^"]+)"/);
-                        if (logoMatch) {
-                            currentChannel.image_url = logoMatch[1];
-                        }
-
-                        const groupMatch = attributes.match(/group-title="([^"]+)"/);
-                        if (groupMatch) {
-                            currentChannel.category = groupMatch[1];
-                        }
-                    }
-                } else if (line.startsWith('http') && Object.keys(currentChannel).length > 0) {
-                    currentChannel.url = line;
-                    channels.push({...currentChannel});
-                    currentChannel = {};
-                }
-            }
-
-            return channels;
-        }
-
-        async function addChannelsToDatabase(channelsData) {
-            const results = {
-                success: 0,
-                errors: 0,
-                skipped: 0,
-                details: []
-            };
-
-            for (let i = 0; i < channelsData.length; i++) {
-                const channel = channelsData[i];
-                updateProgress(50 + (i / channelsData.length) * 50, `إضافة القناة ${i + 1} من ${channelsData.length}: ${channel.name}`);
-
-                try {
-                    const { data: existingChannels } = await supabase
-                        .from('channels')
-                        .select('id')
-                        .eq('url', channel.url)
-                        .eq('is_active', true);
-
-                    if (existingChannels && existingChannels.length > 0) {
-                        results.skipped++;
-                        results.details.push({
-                            name: channel.name,
-                            status: 'skipped',
-                            message: 'القناة موجودة بالفعل'
-                        });
-                        continue;
-                    }
-
-                    const { data, error } = await supabase
-                        .from('channels')
-                        .insert([channel])
-                        .select();
-
-                    if (error) throw error;
-
-                    results.success++;
-                    results.details.push({
-                        name: channel.name,
-                        status: 'success',
-                        message: 'تم إضافة القناة بنجاح'
-                    });
-
-                } catch (error) {
-                    console.error(`Error adding channel ${channel.name}:`, error);
-                    results.errors++;
-                    results.details.push({
-                        name: channel.name,
-                        status: 'error',
-                        message: error.message || 'خطأ غير معروف'
-                    });
-                }
-            }
-
-            return results;
-        }
-
-        function showProgress(show) {
-            const progressContainer = document.getElementById('uploadProgress');
-            progressContainer.style.display = show ? 'block' : 'none';
-            
-            if (!show) {
-                updateProgress(0, '');
-            }
-        }
-
-        function updateProgress(percent, text) {
-            const progressFill = document.getElementById('progressFill');
-            const progressText = document.getElementById('progressText');
-            
-            progressFill.style.width = percent + '%';
-            progressText.textContent = text;
-        }
-
-        function showUploadResults(results) {
-            const resultsContainer = document.getElementById('uploadResults');
-            const resultsList = document.getElementById('uploadResultsList');
-            
-            resultsList.innerHTML = '';
-
-            const summary = document.createElement('div');
-            summary.style.marginBottom = '15px';
-            summary.style.padding = '10px';
-            summary.style.borderRadius = '5px';
-            summary.style.background = 'rgba(78, 205, 196, 0.1)';
-            summary.innerHTML = `
-                <strong>ملخص النتائج:</strong><br>
-                ✅ تم إضافة ${results.success} قناة بنجاح<br>
-                ⚠️ تم تخطي ${results.skipped || 0} قناة (موجودة مسبقاً)<br>
-                ❌ فشل في إضافة ${results.errors} قناة
-            `;
-            resultsList.appendChild(summary);
-
-            results.details.forEach(detail => {
-                const item = document.createElement('div');
-                item.className = 'upload-result-item';
-                
-                let icon, colorClass;
-                switch(detail.status) {
-                    case 'success':
-                        icon = '✅';
-                        colorClass = 'result-success';
-                        break;
-                    case 'skipped':
-                        icon = '⚠️';
-                        colorClass = 'result-warning';
-                        break;
-                    case 'error':
-                        icon = '❌';
-                        colorClass = 'result-error';
-                        break;
-                    default:
-                        icon = '❓';
-                        colorClass = 'result-error';
-                }
-                
-                item.innerHTML = `
-                    <span class="result-icon ${colorClass}">${icon}</span>
-                    <div>
-                        <strong>${detail.name}</strong><br>
-                        <small style="color: rgba(255,255,255,0.7);">${detail.message}</small>
-                    </div>
-                `;
-                
-                resultsList.appendChild(item);
-            });
-
-            resultsContainer.style.display = 'block';
-        }
-
-        // Utility functions
+        // Show alert function
         function showAlert(message, type = 'success') {
-            const alertContainer = document.getElementById('alertContainer');
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type}`;
-            alertDiv.innerHTML = message;
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
             
-            alertContainer.appendChild(alertDiv);
+            document.body.appendChild(alert);
             
             setTimeout(() => {
-                alertDiv.remove();
+                alert.remove();
             }, 5000);
         }
 
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('show');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('show');
-        }
-
+        // Close modals when clicking outside
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.classList.remove('show');
             }
         }
 
-        // CSS animation keyframes
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from { 
-                    transform: translateY(-20px); 
-                    opacity: 0; 
-                }
-                to { 
-                    transform: translateY(0); 
-                    opacity: 1; 
+        // Keyboard shortcuts for video player
+        document.addEventListener('keydown', function(e) {
+            const videoPlayer = document.getElementById('videoPlayer');
+            if (videoPlayer.style.display === 'block') {
+                switch(e.code) {
+                    case 'Space':
+                        e.preventDefault();
+                        togglePlayPause();
+                        break;
+                    case 'Escape':
+                        closePlayer();
+                        break;
+                    case 'ArrowLeft':
+                        skipBackward();
+                        break;
+                    case 'ArrowRight':
+                        skipForward();
+                        break;
+                    case 'KeyM':
+                        toggleMute();
+                        break;
+                    case 'KeyF':
+                        toggleFullscreen();
+                        break;
                 }
             }
-        `;
-        document.head.appendChild(style);
+        });
     </script>
 </body>
 </html>
