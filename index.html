@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TvNa - لوحة التحكم</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -591,6 +592,21 @@
                 width: 95%;
             }
         }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -617,8 +633,8 @@
         </div>
 
         <!-- Connection Status -->
-        <div id="connectionStatus" class="connection-status status-connected">
-            ✅ متصل بقاعدة البيانات - Ameer_7elwas
+        <div id="connectionStatus" class="connection-status">
+            <span id="connectionText">جاري الاتصال بقاعدة البيانات...</span>
         </div>
 
         <!-- Statistics -->
@@ -728,7 +744,7 @@
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
+                <button type="submit" class="btn btn-primary" style="margin-top: 20px;" id="addUserBtn">
                     <i class="fas fa-plus"></i> إضافة المستخدم
                 </button>
             </form>
@@ -753,7 +769,7 @@
             </div>
             
             <div class="notifications-container" id="notificationsContainer">
-                <!-- Notifications will be populated dynamically -->
+                <p style="text-align: center; color: rgba(255,255,255,0.6);">جاري تحميل الإشعارات...</p>
             </div>
         </div>
 
@@ -776,7 +792,7 @@
             </div>
             
             <div class="ads-container" id="adsContainer">
-                <!-- Advertisements will be populated dynamically -->
+                <p style="text-align: center; color: rgba(255,255,255,0.6);">جاري تحميل الإعلانات...</p>
             </div>
         </div>
 
@@ -861,7 +877,7 @@
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
+                <button type="submit" class="btn btn-primary" style="margin-top: 20px;" id="addChannelBtn">
                     <i class="fas fa-plus"></i> إضافة القناة
                 </button>
             </form>
@@ -901,7 +917,7 @@
                         <span>الإشعار نشط</span>
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" id="addNotificationFormBtn">
                     <i class="fas fa-plus"></i> إضافة الإشعار
                 </button>
             </form>
@@ -942,7 +958,7 @@
                         <span>الإعلان نشط</span>
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" id="addAdFormBtn">
                     <i class="fas fa-plus"></i> إضافة الإعلان
                 </button>
             </form>
@@ -956,7 +972,9 @@
                 <h2 class="modal-title">قائمة المستخدمين</h2>
                 <span class="close" onclick="closeModal('usersModal')">&times;</span>
             </div>
-            <div id="usersContainer"></div>
+            <div id="usersContainer">
+                <p style="text-align: center; color: rgba(255,255,255,0.6);">جاري تحميل المستخدمين...</p>
+            </div>
         </div>
     </div>
 
@@ -967,17 +985,18 @@
                 <h2 class="modal-title">قائمة القنوات</h2>
                 <span class="close" onclick="closeModal('channelsModal')">&times;</span>
             </div>
-            <div id="channelsContainer"></div>
+            <div id="channelsContainer">
+                <p style="text-align: center; color: rgba(255,255,255,0.6);">جاري تحميل القنوات...</p>
+            </div>
         </div>
     </div>
 
     <script>
-        // Global Data Storage
-        let channels = [];
-        let users = [];
-        let notifications = [];
-        let advertisements = [];
-
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://vpvvjascwgvidjyylzwp.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwdnZqYXNjd2dpdmRqeXloendwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MDYxMjYsImV4cCI6MjA2NTM4MjEyNn0.6AR2-MG4x9ugNTXe9jUqx-IwGEtj1m6MCYwQkTsSbUQ';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
         // Update date and time
         function updateDateTime() {
             const now = new Date();
@@ -1026,12 +1045,38 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
-        // Update statistics
-        function updateStats() {
-            document.getElementById('totalChannels').textContent = channels.length;
-            document.getElementById('totalUsers').textContent = users.length;
-            document.getElementById('totalAds').textContent = advertisements.length;
-            document.getElementById('totalNotifications').textContent = notifications.length;
+        // Update statistics from Supabase
+        async function updateStats() {
+            try {
+                // Fetch counts from Supabase
+                const { count: channelsCount } = await supabase
+                    .from('channels')
+                    .select('*', { count: 'exact' });
+                
+                const { count: usersCount } = await supabase
+                    .from('users')
+                    .select('*', { count: 'exact' });
+                
+                const { count: adsCount } = await supabase
+                    .from('advertisements')
+                    .select('*', { count: 'exact' });
+                
+                const { count: notificationsCount } = await supabase
+                    .from('notifications')
+                    .select('*', { count: 'exact' });
+                
+                // Update DOM
+                document.getElementById('totalChannels').textContent = channelsCount;
+                document.getElementById('totalUsers').textContent = usersCount;
+                document.getElementById('totalAds').textContent = adsCount;
+                document.getElementById('totalNotifications').textContent = notificationsCount;
+                
+                return true;
+            } catch (error) {
+                console.error('Error updating stats:', error);
+                showAlert('حدث خطأ أثناء تحديث الإحصائيات', 'error');
+                return false;
+            }
         }
 
         // M3U Parser
@@ -1050,13 +1095,13 @@
                     
                     if (parts.length >= 2) {
                         currentChannel.name = parts[1].trim();
-                        currentChannel.nameAr = parts[1].trim();
+                        currentChannel.name_ar = parts[1].trim();
                         
                         // Extract additional info from attributes
                         const attributes = parts[0];
                         if (attributes.includes('tvg-logo=')) {
                             const logoMatch = attributes.match(/tvg-logo="([^"]+)"/);
-                            if (logoMatch) currentChannel.logo = logoMatch[1];
+                            if (logoMatch) currentChannel.logo_url = logoMatch[1];
                         }
                         
                         if (attributes.includes('group-title=')) {
@@ -1067,11 +1112,10 @@
                 } else if (line.startsWith('http')) {
                     // This is the stream URL
                     currentChannel.url = line;
-                    currentChannel.id = Date.now() + Math.random();
                     currentChannel.description = `قناة ${currentChannel.name}`;
-                    currentChannel.descriptionAr = `قناة ${currentChannel.nameAr}`;
-                    currentChannel.isPremium = false;
-                    currentChannel.supportsRecording = true;
+                    currentChannel.description_ar = `قناة ${currentChannel.name_ar}`;
+                    currentChannel.is_premium = false;
+                    currentChannel.supports_recording = true;
                     currentChannel.category = currentChannel.category || 'General';
                     
                     parsedChannels.push({ ...currentChannel });
@@ -1082,207 +1126,353 @@
             return parsedChannels;
         }
 
-        // Add channel
-        function addChannel(channelData) {
-            channelData.id = Date.now() + Math.random();
-            channels.push(channelData);
-            updateStats();
-            showAlert(`تم إضافة القناة "${channelData.nameAr || channelData.name}" بنجاح!`, 'success');
+        // Add channel to Supabase
+        async function addChannel(channelData) {
+            try {
+                const { data, error } = await supabase
+                    .from('channels')
+                    .insert([channelData]);
+                
+                if (error) throw error;
+                
+                showAlert(`تم إضافة القناة "${channelData.name_ar || channelData.name}" بنجاح!`, 'success');
+                return data[0];
+            } catch (error) {
+                console.error('Error adding channel:', error);
+                showAlert(`فشل إضافة القناة: ${error.message}`, 'error');
+                return null;
+            }
         }
 
-        // Add user
-        function addUser(userData) {
-            userData.id = Date.now() + Math.random();
-            userData.createdAt = new Date().toLocaleDateString('ar-SA');
-            users.push(userData);
-            updateStats();
-            showAlert(`تم إضافة المستخدم "${userData.username}" بنجاح!`, 'success');
+        // Add user to Supabase
+        async function addUser(userData) {
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .insert([userData]);
+                
+                if (error) throw error;
+                
+                showAlert(`تم إضافة المستخدم "${userData.username}" بنجاح!`, 'success');
+                return data[0];
+            } catch (error) {
+                console.error('Error adding user:', error);
+                showAlert(`فشل إضافة المستخدم: ${error.message}`, 'error');
+                return null;
+            }
         }
 
-        // Add notification
-        function addNotification(notificationData) {
-            notificationData.id = Date.now() + Math.random();
-            notificationData.createdAt = new Date().toLocaleDateString('ar-SA');
-            notifications.push(notificationData);
-            updateStats();
-            loadNotifications();
-            showAlert('تم إضافة الإشعار بنجاح!', 'success');
+        // Add notification to Supabase
+        async function addNotification(notificationData) {
+            try {
+                const { data, error } = await supabase
+                    .from('notifications')
+                    .insert([notificationData]);
+                
+                if (error) throw error;
+                
+                showAlert('تم إضافة الإشعار بنجاح!', 'success');
+                return data[0];
+            } catch (error) {
+                console.error('Error adding notification:', error);
+                showAlert(`فشل إضافة الإشعار: ${error.message}`, 'error');
+                return null;
+            }
         }
 
-        // Add advertisement
-        function addAdvertisement(adData) {
-            adData.id = Date.now() + Math.random();
-            adData.createdAt = new Date().toLocaleDateString('ar-SA');
-            advertisements.push(adData);
-            updateStats();
-            loadAdvertisements();
-            showAlert('تم إضافة الإعلان بنجاح!', 'success');
+        // Add advertisement to Supabase
+        async function addAdvertisement(adData) {
+            try {
+                const { data, error } = await supabase
+                    .from('advertisements')
+                    .insert([adData]);
+                
+                if (error) throw error;
+                
+                showAlert('تم إضافة الإعلان بنجاح!', 'success');
+                return data[0];
+            } catch (error) {
+                console.error('Error adding advertisement:', error);
+                showAlert(`فشل إضافة الإعلان: ${error.message}`, 'error');
+                return null;
+            }
         }
 
-        // Load notifications
-        function loadNotifications() {
+        // Load notifications from Supabase
+        async function loadNotifications() {
             const container = document.getElementById('notificationsContainer');
+            container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">جاري تحميل الإشعارات...</p>';
             
-            if (notifications.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">لا توجد إشعارات</p>';
-                return;
-            }
-            
-            container.innerHTML = notifications.map(notification => `
-                <div class="item-card">
-                    <div class="item-header">
-                        <div class="item-title">${notification.title}</div>
-                        <div class="item-actions">
-                            <button class="btn btn-small btn-danger" onclick="deleteNotification(${notification.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
+            try {
+                const { data: notifications, error } = await supabase
+                    .from('notifications')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (notifications.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">لا توجد إشعارات</p>';
+                    return;
+                }
+                
+                container.innerHTML = notifications.map(notification => `
+                    <div class="item-card">
+                        <div class="item-header">
+                            <div class="item-title">${notification.title}</div>
+                            <div class="item-actions">
+                                <button class="btn btn-small btn-danger" onclick="deleteNotification('${notification.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
+                        <p>${notification.content}</p>
+                        <small>النوع: ${notification.type} | ${notification.active ? 'نشط' : 'غير نشط'} | ${new Date(notification.created_at).toLocaleDateString('ar-SA')}</small>
                     </div>
-                    <p>${notification.content}</p>
-                    <small>النوع: ${notification.type} | ${notification.active ? 'نشط' : 'غير نشط'} | ${notification.createdAt}</small>
-                </div>
-            `).join('');
+                `).join('');
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+                container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">حدث خطأ أثناء تحميل الإشعارات</p>';
+                showAlert('حدث خطأ أثناء تحميل الإشعارات', 'error');
+            }
         }
 
-        // Load advertisements
-        function loadAdvertisements() {
+        // Load advertisements from Supabase
+        async function loadAdvertisements() {
             const container = document.getElementById('adsContainer');
+            container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">جاري تحميل الإعلانات...</p>';
             
-            if (advertisements.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">لا توجد إعلانات</p>';
-                return;
-            }
-            
-            container.innerHTML = advertisements.map(ad => `
-                <div class="item-card">
-                    <div class="item-header">
-                        <div class="item-title">${ad.title}</div>
-                        <div class="item-actions">
-                            <button class="btn btn-small btn-danger" onclick="deleteAdvertisement(${ad.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <p>${ad.description}</p>
-                    ${ad.url ? `<p><a href="${ad.url}" target="_blank" style="color: #4ecdc4;">${ad.url}</a></p>` : ''}
-                    <small>${ad.active ? 'نشط' : 'غير نشط'} | ${ad.createdAt}</small>
-                </div>
-            `).join('');
-        }
-
-        // Show users list
-        function showUsersList() {
-            const container = document.getElementById('usersContainer');
-            
-            if (users.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">لا توجد مستخدمين مسجلين</p>';
-            } else {
-                container.innerHTML = users.map(user => `
+            try {
+                const { data: advertisements, error } = await supabase
+                    .from('advertisements')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (advertisements.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">لا توجد إعلانات</p>';
+                    return;
+                }
+                
+                container.innerHTML = advertisements.map(ad => `
                     <div class="item-card">
                         <div class="item-header">
-                            <div class="item-title">${user.username}</div>
+                            <div class="item-title">${ad.title}</div>
                             <div class="item-actions">
-                                <button class="btn btn-small btn-danger" onclick="deleteUser(${user.id})">
+                                <button class="btn btn-small btn-danger" onclick="deleteAdvertisement('${ad.id}')">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </div>
-                        <p>البريد: ${user.email}</p>
-                        ${user.phone ? `<p>الهاتف: ${user.phone}</p>` : ''}
-                        <small>${user.isPremium ? '⭐ مميز' : '👤 عادي'} | ${user.isActive ? '✅ نشط' : '❌ غير نشط'} | ${user.createdAt}</small>
+                        <p>${ad.description}</p>
+                        ${ad.url ? `<p><a href="${ad.url}" target="_blank" style="color: #4ecdc4;">${ad.url}</a></p>` : ''}
+                        <small>${ad.active ? 'نشط' : 'غير نشط'} | ${new Date(ad.created_at).toLocaleDateString('ar-SA')}</small>
                     </div>
                 `).join('');
+            } catch (error) {
+                console.error('Error loading advertisements:', error);
+                container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">حدث خطأ أثناء تحميل الإعلانات</p>';
+                showAlert('حدث خطأ أثناء تحميل الإعلانات', 'error');
             }
-            
+        }
+
+        // Show users list from Supabase
+        async function showUsersList() {
             openModal('usersModal');
+            const container = document.getElementById('usersContainer');
+            container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">جاري تحميل المستخدمين...</p>';
+            
+            try {
+                const { data: users, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (users.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">لا توجد مستخدمين مسجلين</p>';
+                } else {
+                    container.innerHTML = users.map(user => `
+                        <div class="item-card">
+                            <div class="item-header">
+                                <div class="item-title">${user.username}</div>
+                                <div class="item-actions">
+                                    <button class="btn btn-small btn-danger" onclick="deleteUser('${user.id}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p>البريد: ${user.email}</p>
+                            ${user.phone ? `<p>الهاتف: ${user.phone}</p>` : ''}
+                            <small>${user.is_premium ? '⭐ مميز' : '👤 عادي'} | ${user.is_active ? '✅ نشط' : '❌ غير نشط'} | ${new Date(user.created_at).toLocaleDateString('ar-SA')}</small>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">حدث خطأ أثناء تحميل المستخدمين</p>';
+                showAlert('حدث خطأ أثناء تحميل المستخدمين', 'error');
+            }
         }
 
-        // Show channels list
-        function showChannelsList() {
-            const container = document.getElementById('channelsContainer');
-            
-            if (channels.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">لا توجد قنوات مضافة</p>';
-            } else {
-                container.innerHTML = channels.map(channel => `
-                    <div class="item-card">
-                        <div class="item-header">
-                            <div class="item-title">${channel.nameAr || channel.name}</div>
-                            <div class="item-actions">
-                                <button class="btn btn-small btn-danger" onclick="deleteChannel(${channel.id})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <p>التصنيف: ${channel.category}</p>
-                        <p style="word-break: break-all; font-size: 12px; color: rgba(255,255,255,0.7);">${channel.url}</p>
-                        <small>${channel.isPremium ? '⭐ مميزة' : '📺 عادية'} | ${channel.supportsRecording ? '📹 تسجيل' : '🚫 بدون تسجيل'}</small>
-                    </div>
-                `).join('');
-            }
-            
+        // Show channels list from Supabase
+        async function showChannelsList() {
             openModal('channelsModal');
+            const container = document.getElementById('channelsContainer');
+            container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">جاري تحميل القنوات...</p>';
+            
+            try {
+                const { data: channels, error } = await supabase
+                    .from('channels')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (channels.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">لا توجد قنوات مضافة</p>';
+                } else {
+                    container.innerHTML = channels.map(channel => `
+                        <div class="item-card">
+                            <div class="item-header">
+                                <div class="item-title">${channel.name_ar || channel.name}</div>
+                                <div class="item-actions">
+                                    <button class="btn btn-small btn-danger" onclick="deleteChannel('${channel.id}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <p>التصنيف: ${channel.category}</p>
+                            <p style="word-break: break-all; font-size: 12px; color: rgba(255,255,255,0.7);">${channel.url}</p>
+                            <small>${channel.is_premium ? '⭐ مميزة' : '📺 عادية'} | ${channel.supports_recording ? '📹 تسجيل' : '🚫 بدون تسجيل'}</small>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading channels:', error);
+                container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.6);">حدث خطأ أثناء تحميل القنوات</p>';
+                showAlert('حدث خطأ أثناء تحميل القنوات', 'error');
+            }
         }
 
         // Show notifications list
-        function showNotificationsList() {
-            if (notifications.length === 0) {
-                showAlert('لا توجد إشعارات للعرض', 'info');
-                return;
-            }
-            loadNotifications();
+        async function showNotificationsList() {
+            await loadNotifications();
         }
 
         // Show ads list
-        function showAdsList() {
-            if (advertisements.length === 0) {
-                showAlert('لا توجد إعلانات للعرض', 'info');
-                return;
-            }
-            loadAdvertisements();
+        async function showAdsList() {
+            await loadAdvertisements();
         }
 
         // Delete functions
-        function deleteUser(id) {
+        async function deleteUser(id) {
             if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
-                users = users.filter(user => user.id !== id);
-                updateStats();
-                showUsersList();
-                showAlert('تم حذف المستخدم بنجاح', 'success');
+                try {
+                    const { error } = await supabase
+                        .from('users')
+                        .delete()
+                        .eq('id', id);
+                    
+                    if (error) throw error;
+                    
+                    showAlert('تم حذف المستخدم بنجاح', 'success');
+                    await showUsersList();
+                    await updateStats();
+                } catch (error) {
+                    console.error('Error deleting user:', error);
+                    showAlert(`فشل حذف المستخدم: ${error.message}`, 'error');
+                }
             }
         }
 
-        function deleteChannel(id) {
+        async function deleteChannel(id) {
             if (confirm('هل أنت متأكد من حذف هذه القناة؟')) {
-                channels = channels.filter(channel => channel.id !== id);
-                updateStats();
-                showChannelsList();
-                showAlert('تم حذف القناة بنجاح', 'success');
+                try {
+                    const { error } = await supabase
+                        .from('channels')
+                        .delete()
+                        .eq('id', id);
+                    
+                    if (error) throw error;
+                    
+                    showAlert('تم حذف القناة بنجاح', 'success');
+                    await showChannelsList();
+                    await updateStats();
+                } catch (error) {
+                    console.error('Error deleting channel:', error);
+                    showAlert(`فشل حذف القناة: ${error.message}`, 'error');
+                }
             }
         }
 
-        function deleteNotification(id) {
+        async function deleteNotification(id) {
             if (confirm('هل أنت متأكد من حذف هذا الإشعار؟')) {
-                notifications = notifications.filter(notification => notification.id !== id);
-                updateStats();
-                loadNotifications();
-                showAlert('تم حذف الإشعار بنجاح', 'success');
+                try {
+                    const { error } = await supabase
+                        .from('notifications')
+                        .delete()
+                        .eq('id', id);
+                    
+                    if (error) throw error;
+                    
+                    showAlert('تم حذف الإشعار بنجاح', 'success');
+                    await loadNotifications();
+                    await updateStats();
+                } catch (error) {
+                    console.error('Error deleting notification:', error);
+                    showAlert(`فشل حذف الإشعار: ${error.message}`, 'error');
+                }
             }
         }
 
-        function deleteAdvertisement(id) {
+        async function deleteAdvertisement(id) {
             if (confirm('هل أنت متأكد من حذف هذا الإعلان؟')) {
-                advertisements = advertisements.filter(ad => ad.id !== id);
-                updateStats();
-                loadAdvertisements();
-                showAlert('تم حذف الإعلان بنجاح', 'success');
+                try {
+                    const { error } = await supabase
+                        .from('advertisements')
+                        .delete()
+                        .eq('id', id);
+                    
+                    if (error) throw error;
+                    
+                    showAlert('تم حذف الإعلان بنجاح', 'success');
+                    await loadAdvertisements();
+                    await updateStats();
+                } catch (error) {
+                    console.error('Error deleting advertisement:', error);
+                    showAlert(`فشل حذف الإعلان: ${error.message}`, 'error');
+                }
             }
         }
 
         // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             updateDateTime();
             setInterval(updateDateTime, 60000);
+            
+            // Check Supabase connection
+            try {
+                document.getElementById('connectionText').innerHTML = '<span class="loading-spinner"></span> جاري الاتصال بقاعدة البيانات...';
+                
+                const { error } = await supabase
+                    .from('channels')
+                    .select('*')
+                    .limit(1);
+                
+                if (error) throw error;
+                
+                document.getElementById('connectionStatus').className = 'connection-status status-connected';
+                document.getElementById('connectionText').textContent = '✅ متصل بقاعدة البيانات - Ameer_7elwas';
+                showAlert('تم الاتصال بنجاح بقاعدة البيانات', 'success');
+            } catch (error) {
+                console.error('Error connecting to Supabase:', error);
+                document.getElementById('connectionStatus').className = 'connection-status status-disconnected';
+                document.getElementById('connectionText').textContent = '❌ فشل الاتصال بقاعدة البيانات';
+                showAlert('فشل الاتصال بقاعدة البيانات: ' + error.message, 'error');
+            }
             
             // Initialize file uploads
             const channelImageUpload = document.getElementById('channelImageUpload');
@@ -1312,7 +1502,7 @@
                 m3uFile.click();
             });
             
-            m3uFile.addEventListener('change', function(e) {
+            m3uFile.addEventListener('change', async function(e) {
                 if (this.files && this.files[0]) {
                     const file = this.files[0];
                     const reader = new FileReader();
@@ -1326,22 +1516,31 @@
                         
                         if (progress >= 100) {
                             clearInterval(progressInterval);
+                        }
+                    }, 200);
+                    
+                    reader.onload = async function(e) {
+                        const content = e.target.result;
+                        const parsedChannels = parseM3U(content);
+                        
+                        try {
+                            const { data, error } = await supabase
+                                .from('channels')
+                                .insert(parsedChannels);
+                            
+                            if (error) throw error;
+                            
+                            showAlert(`تم إضافة ${parsedChannels.length} قناة من ملف M3U بنجاح!`, 'success');
+                            await updateStats();
+                        } catch (error) {
+                            console.error('Error adding channels from M3U:', error);
+                            showAlert(`فشل إضافة القنوات من ملف M3U: ${error.message}`, 'error');
+                        } finally {
                             document.getElementById('progressText').textContent = 'تم الانتهاء!';
                             setTimeout(() => {
                                 document.getElementById('m3uProgress').style.display = 'none';
                             }, 2000);
                         }
-                    }, 200);
-                    
-                    reader.onload = function(e) {
-                        const content = e.target.result;
-                        const parsedChannels = parseM3U(content);
-                        
-                        parsedChannels.forEach(channel => {
-                            addChannel(channel);
-                        });
-                        
-                        showAlert(`تم إضافة ${parsedChannels.length} قناة من ملف M3U بنجاح!`, 'success');
                     };
                     
                     reader.readAsText(file);
@@ -1357,43 +1556,64 @@
             });
             
             // Form submissions
-            document.getElementById('addUserForm').addEventListener('submit', function(e) {
+            document.getElementById('addUserForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
+                
+                const addUserBtn = document.getElementById('addUserBtn');
+                const originalText = addUserBtn.innerHTML;
+                addUserBtn.innerHTML = '<span class="loading-spinner"></span> جاري الإضافة...';
+                addUserBtn.disabled = true;
                 
                 const userData = {
                     username: document.getElementById('userName').value,
                     email: document.getElementById('userEmail').value,
                     password: document.getElementById('userPassword').value,
                     phone: document.getElementById('userPhone').value,
-                    isPremium: document.getElementById('userIsPremium').checked,
-                    isActive: document.getElementById('userIsActive').checked
+                    is_premium: document.getElementById('userIsPremium').checked,
+                    is_active: document.getElementById('userIsActive').checked
                 };
                 
-                addUser(userData);
+                await addUser(userData);
                 this.reset();
+                
+                addUserBtn.innerHTML = originalText;
+                addUserBtn.disabled = false;
             });
             
-            document.getElementById('addChannelForm').addEventListener('submit', function(e) {
+            document.getElementById('addChannelForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
+                
+                const addChannelBtn = document.getElementById('addChannelBtn');
+                const originalText = addChannelBtn.innerHTML;
+                addChannelBtn.innerHTML = '<span class="loading-spinner"></span> جاري الإضافة...';
+                addChannelBtn.disabled = true;
                 
                 const channelData = {
                     name: document.getElementById('channelName').value,
-                    nameAr: document.getElementById('channelNameAr').value,
+                    name_ar: document.getElementById('channelNameAr').value,
                     url: document.getElementById('channelUrl').value,
                     category: document.getElementById('channelCategory').value,
                     description: document.getElementById('channelDescription').value,
-                    descriptionAr: document.getElementById('channelDescriptionAr').value,
-                    isPremium: document.getElementById('isPremium').checked,
-                    supportsRecording: document.getElementById('supportsRecording').checked
+                    description_ar: document.getElementById('channelDescriptionAr').value,
+                    is_premium: document.getElementById('isPremium').checked,
+                    supports_recording: document.getElementById('supportsRecording').checked
                 };
                 
-                addChannel(channelData);
+                await addChannel(channelData);
                 this.reset();
                 channelImagePreview.style.display = 'none';
+                
+                addChannelBtn.innerHTML = originalText;
+                addChannelBtn.disabled = false;
             });
 
-            document.getElementById('notificationForm').addEventListener('submit', function(e) {
+            document.getElementById('notificationForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
+                
+                const addNotificationFormBtn = document.getElementById('addNotificationFormBtn');
+                const originalText = addNotificationFormBtn.innerHTML;
+                addNotificationFormBtn.innerHTML = '<span class="loading-spinner"></span> جاري الإضافة...';
+                addNotificationFormBtn.disabled = true;
                 
                 const notificationData = {
                     title: document.getElementById('notificationTitle').value,
@@ -1402,13 +1622,21 @@
                     active: document.getElementById('notificationActive').checked
                 };
                 
-                addNotification(notificationData);
+                await addNotification(notificationData);
                 this.reset();
                 closeModal('notificationModal');
+                
+                addNotificationFormBtn.innerHTML = originalText;
+                addNotificationFormBtn.disabled = false;
             });
 
-            document.getElementById('adForm').addEventListener('submit', function(e) {
+            document.getElementById('adForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
+                
+                const addAdFormBtn = document.getElementById('addAdFormBtn');
+                const originalText = addAdFormBtn.innerHTML;
+                addAdFormBtn.innerHTML = '<span class="loading-spinner"></span> جاري الإضافة...';
+                addAdFormBtn.disabled = true;
                 
                 const adData = {
                     title: document.getElementById('adTitle').value,
@@ -1417,9 +1645,12 @@
                     active: document.getElementById('adActive').checked
                 };
                 
-                addAdvertisement(adData);
+                await addAdvertisement(adData);
                 this.reset();
                 closeModal('adModal');
+                
+                addAdFormBtn.innerHTML = originalText;
+                addAdFormBtn.disabled = false;
             });
             
             // Button event listeners
@@ -1431,13 +1662,17 @@
                 openModal('adModal');
             });
             
-            document.getElementById('refreshNotificationsBtn').addEventListener('click', function() {
-                loadNotifications();
+            document.getElementById('refreshNotificationsBtn').addEventListener('click', async function() {
+                this.innerHTML = '<span class="loading-spinner"></span> جاري التحديث...';
+                await loadNotifications();
+                this.innerHTML = '<i class="fas fa-sync"></i> تحديث';
                 showAlert('تم تحديث قائمة الإشعارات', 'success');
             });
             
-            document.getElementById('refreshAdsBtn').addEventListener('click', function() {
-                loadAdvertisements();
+            document.getElementById('refreshAdsBtn').addEventListener('click', async function() {
+                this.innerHTML = '<span class="loading-spinner"></span> جاري التحديث...';
+                await loadAdvertisements();
+                this.innerHTML = '<i class="fas fa-sync"></i> تحديث';
                 showAlert('تم تحديث قائمة الإعلانات', 'success');
             });
 
@@ -1452,9 +1687,9 @@
             });
             
             // Initialize data
-            loadNotifications();
-            loadAdvertisements();
-            updateStats();
+            await updateStats();
+            await loadNotifications();
+            await loadAdvertisements();
             
             // Show initial alerts
             setTimeout(() => {
