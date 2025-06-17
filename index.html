@@ -180,6 +180,12 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
         }
 
         .stat-card::before {
@@ -320,6 +326,14 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .btn::before {
@@ -335,7 +349,7 @@
             transform: translate(-50%, -50%);
         }
 
-        .btn:hover::before {
+        .btn:hover:not(:disabled)::before {
             width: 300px;
             height: 300px;
         }
@@ -355,19 +369,19 @@
             color: white;
         }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
-        .channels-grid {
+        .channels-grid, .ads-grid, .categories-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
             margin-top: 20px;
         }
 
-        .channel-card {
+        .channel-card, .ad-card, .category-card {
             background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
             border-radius: 15px;
             padding: 20px;
@@ -376,7 +390,7 @@
             transition: all 0.3s ease;
         }
 
-        .channel-card:hover {
+        .channel-card:hover, .ad-card:hover, .category-card:hover {
             transform: scale(1.02);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
         }
@@ -417,6 +431,7 @@
             display: flex;
             gap: 10px;
             margin-top: 15px;
+            flex-wrap: wrap;
         }
 
         .users-table {
@@ -470,7 +485,7 @@
             padding: 30px;
             border-radius: 20px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             position: relative;
             animation: slideIn 0.3s ease;
             max-height: 80vh;
@@ -490,6 +505,7 @@
             cursor: pointer;
             color: #ff6b6b;
             transition: all 0.3s ease;
+            z-index: 10;
         }
 
         .close:hover {
@@ -502,6 +518,7 @@
             border-radius: 10px;
             margin-bottom: 20px;
             animation: slideDown 0.3s ease;
+            position: relative;
         }
 
         @keyframes slideDown {
@@ -586,28 +603,6 @@
             color: #e74c3c;
         }
 
-        /* Advertisements Grid */
-        .ads-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .ad-card {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            border-radius: 15px;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .ad-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-        }
-
         .ad-image {
             width: 100%;
             height: 150px;
@@ -629,34 +624,12 @@
             color: white;
         }
 
-        /* Categories Grid */
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .category-card {
-            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .category-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-        }
-
         .category-icon {
             font-size: 48px;
             margin-bottom: 15px;
             color: white;
         }
 
-        /* Image Preview */
         .image-preview {
             max-width: 200px;
             max-height: 150px;
@@ -683,6 +656,55 @@
             .container {
                 padding: 10px;
             }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .channel-actions {
+                justify-content: center;
+            }
+        }
+
+        /* Additional styles for better UX */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .action-buttons .btn {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 30px 0 20px 0;
+            color: #4ecdc4;
+            text-align: center;
         }
     </style>
 </head>
@@ -694,7 +716,7 @@
                 <div class="logo">
                     <div class="logo-icon">📺</div>
                     <div class="logo-text">
-                        <h1>TvNa  </h1>
+                        <h1>TvNa تيڤي نا</h1>
                         <p>لوحة التحكم المتطورة</p>
                     </div>
                 </div>
@@ -713,19 +735,19 @@
 
         <!-- Statistics -->
         <div class="stats-grid">
-            <div class="stat-card">
+            <div class="stat-card" onclick="scrollToSection('channelsSection')">
                 <div class="stat-number" id="totalChannels">0</div>
                 <div class="stat-label">📺 إجمالي القنوات</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" onclick="scrollToSection('usersSection')">
                 <div class="stat-number" id="totalUsers">0</div>
                 <div class="stat-label">👥 المستخدمين المسجلين</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" onclick="scrollToSection('adsSection')">
                 <div class="stat-number" id="totalAds">0</div>
                 <div class="stat-label">📢 الإعلانات النشطة</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" onclick="scrollToSection('categoriesSection')">
                 <div class="stat-number" id="totalCategories">0</div>
                 <div class="stat-label">📂 التصنيفات</div>
             </div>
@@ -735,10 +757,10 @@
         <div id="alertContainer"></div>
 
         <!-- Advertisements Management -->
-        <div class="card">
+        <div class="card" id="adsSection">
             <div class="card-header">
                 <div class="card-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f);">📢</div>
-                <div>
+                <div style="flex: 1;">
                     <div class="card-title">إدارة الإعلانات</div>
                     <div class="card-subtitle">إضافة وتعديل الإعلانات المعروضة في التطبيق</div>
                 </div>
@@ -746,15 +768,18 @@
             </div>
             
             <div class="ads-grid" id="adsContainer">
-                <!-- Advertisements will be loaded here -->
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                    <div class="loading"></div>
+                    <p style="margin-top: 15px; color: #4ecdc4;">جاري تحميل الإعلانات...</p>
+                </div>
             </div>
         </div>
 
         <!-- Categories Management -->
-        <div class="card">
+        <div class="card" id="categoriesSection">
             <div class="card-header">
                 <div class="card-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">📂</div>
-                <div>
+                <div style="flex: 1;">
                     <div class="card-title">إدارة التصنيفات</div>
                     <div class="card-subtitle">إضافة وتعديل تصنيفات القنوات</div>
                 </div>
@@ -762,11 +787,14 @@
             </div>
             
             <div class="categories-grid" id="categoriesContainer">
-                <!-- Categories will be loaded here -->
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                    <div class="loading"></div>
+                    <p style="margin-top: 15px; color: #4ecdc4;">جاري تحميل التصنيفات...</p>
+                </div>
             </div>
         </div>
 
-        <!-- Add Channel Section with Image Upload -->
+        <!-- Add Channel Section -->
         <div class="card">
             <div class="card-header">
                 <div class="card-icon" style="background: linear-gradient(135deg, #4ecdc4, #44a08d);">📺</div>
@@ -777,7 +805,7 @@
             </div>
             
             <form id="addChannelForm">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">اسم القناة (English)</label>
                         <input type="text" class="form-input" id="channelName" placeholder="Channel Name" required>
@@ -806,7 +834,6 @@
                     </div>
                 </div>
 
-                <!-- Image Upload Section -->
                 <div class="form-group">
                     <label class="form-label">صورة القناة</label>
                     <div class="file-upload-area" onclick="document.getElementById('channelImageFile').click()">
@@ -819,7 +846,7 @@
                     <input type="url" class="form-input" id="channelImageUrl" placeholder="أو أدخل رابط الصورة" style="margin-top: 10px;">
                 </div>
                 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">الوصف (English)</label>
                         <textarea class="form-input" id="channelDescription" placeholder="Channel Description" rows="3"></textarea>
@@ -830,16 +857,13 @@
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="checkbox" id="isPremium">
-                        <span>⭐ قناة مميزة</span>
-                    </label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="isPremium">
+                    <label for="isPremium">⭐ قناة مميزة</label>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
-                    <span id="addChannelText">➕ إضافة القناة</span>
-                    <span id="addChannelLoading" class="loading" style="display: none;"></span>
+                <button type="submit" class="btn btn-primary" style="margin-top: 20px;" id="addChannelBtn">
+                    ➕ إضافة القناة
                 </button>
             </form>
         </div>
@@ -854,18 +878,16 @@
                 </div>
             </div>
             
-            <div class="file-upload-area" onclick="document.getElementById('m3uFile').click()">
+            <div class="file-upload-area" id="m3uUploadArea">
                 <input type="file" id="m3uFile" accept=".m3u,.m3u8" style="display: none;">
                 <div class="file-upload-icon">📁</div>
                 <div class="file-upload-text">اضغط لاختيار ملف M3U أو اسحبه هنا</div>
                 <div class="file-upload-hint">يدعم ملفات .m3u و .m3u8</div>
             </div>
 
-            <div style="margin-top: 15px;">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: rgba(255,255,255,0.8);">
-                    <input type="checkbox" id="skipUrlValidation">
-                    <span>تخطي فحص صحة الروابط (إضافة جميع القنوات حتى لو كانت لا تعمل)</span>
-                </label>
+            <div class="checkbox-group">
+                <input type="checkbox" id="skipUrlValidation">
+                <label for="skipUrlValidation">تخطي فحص صحة الروابط</label>
             </div>
 
             <div class="progress-container" id="uploadProgress">
@@ -882,10 +904,10 @@
         </div>
 
         <!-- Channels Management -->
-        <div class="card">
+        <div class="card" id="channelsSection">
             <div class="card-header">
                 <div class="card-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f);">📺</div>
-                <div>
+                <div style="flex: 1;">
                     <div class="card-title">إدارة القنوات</div>
                     <div class="card-subtitle">عرض وتعديل القنوات الموجودة</div>
                 </div>
@@ -893,15 +915,18 @@
             </div>
             
             <div id="channelsContainer" class="channels-grid">
-                <!-- Channels will be loaded here -->
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                    <div class="loading"></div>
+                    <p style="margin-top: 15px; color: #4ecdc4;">جاري تحميل القنوات...</p>
+                </div>
             </div>
         </div>
 
         <!-- Users Management -->
-        <div class="card">
+        <div class="card" id="usersSection">
             <div class="card-header">
                 <div class="card-icon" style="background: linear-gradient(135deg, #feca57, #ff9ff3);">👥</div>
-                <div>
+                <div style="flex: 1;">
                     <div class="card-title">إدارة المستخدمين</div>
                     <div class="card-subtitle">عرض وإدارة حسابات المستخدمين</div>
                 </div>
@@ -921,7 +946,12 @@
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
-                        <!-- Users will be loaded here -->
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px;">
+                                <div class="loading"></div>
+                                <p style="margin-top: 15px; color: #4ecdc4;">جاري تحميل المستخدمين...</p>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -932,7 +962,7 @@
     <div id="addAdModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('addAdModal')">&times;</span>
-            <h2>📢 إضافة إعلان جديد</h2>
+            <h2 style="margin-bottom: 25px; color: #4ecdc4;">📢 إضافة إعلان جديد</h2>
             <form id="addAdForm">
                 <div class="form-group">
                     <label class="form-label">عنوان الإعلان</label>
@@ -947,8 +977,8 @@
                     <div class="file-upload-area" onclick="document.getElementById('adImageFile').click()">
                         <input type="file" id="adImageFile" accept="image/*" style="display: none;">
                         <div class="file-upload-icon">🖼️</div>
-                        <div class="file-upload-text">اضغط لاختيار صورة أو اسحبها هنا</div>
-                        <div class="file-upload-hint">يدعم: JPG, PNG, GIF (حد أقصى 5MB)</div>
+                        <div class="file-upload-text">اضغط لاختيار صورة</div>
+                        <div class="file-upload-hint">JPG, PNG, GIF (حد أقصى 5MB)</div>
                     </div>
                     <img id="adImagePreview" class="image-preview" style="display: none;">
                     <input type="url" class="form-input" id="adImageUrl" placeholder="أو أدخل رابط الصورة" style="margin-top: 10px;">
@@ -965,7 +995,43 @@
                         <option value="10">عالي</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary">➕ إضافة الإعلان</button>
+                <button type="submit" class="btn btn-primary" id="addAdBtn">➕ إضافة الإعلان</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Advertisement Modal -->
+    <div id="editAdModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editAdModal')">&times;</span>
+            <h2 style="margin-bottom: 25px; color: #4ecdc4;">✏️ تعديل الإعلان</h2>
+            <form id="editAdForm">
+                <input type="hidden" id="editAdId">
+                <div class="form-group">
+                    <label class="form-label">عنوان الإعلان</label>
+                    <input type="text" class="form-input" id="editAdTitle" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">وصف الإعلان</label>
+                    <textarea class="form-input" id="editAdDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">صورة الإعلان</label>
+                    <input type="url" class="form-input" id="editAdImageUrl" placeholder="رابط الصورة">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">رابط الإعلان</label>
+                    <input type="url" class="form-input" id="editAdLink" placeholder="https://example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الأولوية</label>
+                    <select class="form-input" id="editAdPriority">
+                        <option value="0">عادي</option>
+                        <option value="5">متوسط</option>
+                        <option value="10">عالي</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" id="editAdBtn">💾 حفظ التعديلات</button>
             </form>
         </div>
     </div>
@@ -974,7 +1040,7 @@
     <div id="addCategoryModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('addCategoryModal')">&times;</span>
-            <h2>📂 إضافة تصنيف جديد</h2>
+            <h2 style="margin-bottom: 25px; color: #4ecdc4;">📂 إضافة تصنيف جديد</h2>
             <form id="addCategoryForm">
                 <div class="form-group">
                     <label class="form-label">اسم التصنيف (English)</label>
@@ -1002,7 +1068,105 @@
                     <label class="form-label">ترتيب التصنيف</label>
                     <input type="number" class="form-input" id="categoryOrder" placeholder="0" min="0">
                 </div>
-                <button type="submit" class="btn btn-primary">➕ إضافة التصنيف</button>
+                <button type="submit" class="btn btn-primary" id="addCategoryBtn">➕ إضافة التصنيف</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Category Modal -->
+    <div id="editCategoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editCategoryModal')">&times;</span>
+            <h2 style="margin-bottom: 25px; color: #4ecdc4;">✏️ تعديل التصنيف</h2>
+            <form id="editCategoryForm">
+                <input type="hidden" id="editCategoryId">
+                <div class="form-group">
+                    <label class="form-label">اسم التصنيف (English)</label>
+                    <input type="text" class="form-input" id="editCategoryName" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">اسم التصنيف (العربية)</label>
+                    <input type="text" class="form-input" id="editCategoryNameAr" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">أيقونة التصنيف</label>
+                    <select class="form-input" id="editCategoryIcon">
+                        <option value="tv">📺 تلفاز</option>
+                        <option value="sports_soccer">⚽ كرة قدم</option>
+                        <option value="sports">🏃 رياضة</option>
+                        <option value="sports_basketball">🏀 كرة سلة</option>
+                        <option value="newspaper">📰 أخبار</option>
+                        <option value="movie">🎬 أفلام</option>
+                        <option value="music">🎵 موسيقى</option>
+                        <option value="child_care">👶 أطفال</option>
+                        <option value="school">🎓 تعليمي</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ترتيب التصنيف</label>
+                    <input type="number" class="form-input" id="editCategoryOrder" min="0">
+                </div>
+                <button type="submit" class="btn btn-primary" id="editCategoryBtn">💾 حفظ التعديلات</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Channel Modal -->
+    <div id="editChannelModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editChannelModal')">&times;</span>
+            <h2 style="margin-bottom: 25px; color: #4ecdc4;">✏️ تعديل القناة</h2>
+            <form id="editChannelForm">
+                <input type="hidden" id="editChannelId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">اسم القناة (English)</label>
+                        <input type="text" class="form-input" id="editChannelName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">اسم القناة (العربية)</label>
+                        <input type="text" class="form-input" id="editChannelNameAr" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">رابط القناة</label>
+                    <input type="url" class="form-input" id="editChannelUrl" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">التصنيف</label>
+                        <select class="form-input" id="editChannelCategory" required>
+                            <option value="">اختر التصنيف</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الجودة</label>
+                        <select class="form-input" id="editChannelQuality">
+                            <option value="HD">HD</option>
+                            <option value="FHD">FHD</option>
+                            <option value="4K">4K</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">صورة القناة</label>
+                    <input type="url" class="form-input" id="editChannelImageUrl" placeholder="رابط الصورة">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">الوصف (English)</label>
+                        <textarea class="form-input" id="editChannelDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الوصف (العربية)</label>
+                        <textarea class="form-input" id="editChannelDescriptionAr" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="editChannelIsPremium">
+                    <label for="editChannelIsPremium">⭐ قناة مميزة</label>
+                </div>
+                <button type="submit" class="btn btn-primary" id="editChannelBtn" style="margin-top: 20px;">💾 حفظ التعديلات</button>
             </form>
         </div>
     </div>
@@ -1024,427 +1188,89 @@
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing TvNa Admin Panel...');
             updateDateTime();
             checkConnection();
-            loadCategories();
-            loadChannels();
-            loadUsers();
-            loadAdvertisements();
-            updateStats();
-            setInterval(updateDateTime, 1000);
             initializeFileUploads();
+            initializeEventListeners();
+            loadAllData();
+            setInterval(updateDateTime, 1000);
         });
+
+        // Initialize event listeners
+        function initializeEventListeners() {
+            console.log('📝 Setting up event listeners...');
+            
+            // Form submissions
+            document.getElementById('addChannelForm').addEventListener('submit', handleAddChannel);
+            document.getElementById('addAdForm').addEventListener('submit', handleAddAd);
+            document.getElementById('editAdForm').addEventListener('submit', handleEditAd);
+            document.getElementById('addCategoryForm').addEventListener('submit', handleAddCategory);
+            document.getElementById('editCategoryForm').addEventListener('submit', handleEditCategory);
+            document.getElementById('editChannelForm').addEventListener('submit', handleEditChannel);
+            
+            // Modal close events
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.classList.remove('show');
+                }
+            });
+        }
 
         // Initialize file upload functionality
         function initializeFileUploads() {
+            console.log('📁 Setting up file uploads...');
+            
             // M3U file upload
             const m3uFileInput = document.getElementById('m3uFile');
-            const m3uUploadArea = document.querySelector('.file-upload-area');
+            const m3uUploadArea = document.getElementById('m3uUploadArea');
 
+            m3uUploadArea.addEventListener('click', () => m3uFileInput.click());
             m3uFileInput.addEventListener('change', handleM3UFileSelect);
             m3uUploadArea.addEventListener('dragover', handleDragOver);
             m3uUploadArea.addEventListener('dragleave', handleDragLeave);
             m3uUploadArea.addEventListener('drop', handleM3UFileDrop);
 
-            // Channel image upload
-            const channelImageInput = document.getElementById('channelImageFile');
-            channelImageInput.addEventListener('change', function(e) {
+            // Image uploads
+            document.getElementById('channelImageFile').addEventListener('change', function(e) {
                 handleImagePreview(e, 'channelImagePreview');
             });
 
-            // Ad image upload
-            const adImageInput = document.getElementById('adImageFile');
-            adImageInput.addEventListener('change', function(e) {
+            document.getElementById('adImageFile').addEventListener('change', function(e) {
                 handleImagePreview(e, 'adImagePreview');
             });
         }
 
-        // Handle image preview
-        function handleImagePreview(event, previewId) {
-            const file = event.target.files[0];
-            const preview = document.getElementById(previewId);
-            
-            if (file) {
-                if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                    showAlert('❌ حجم الصورة يجب أن يكون أقل من 5MB!', 'error');
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Upload image to a service (Cloudinary, AWS S3, etc.)
-        async function uploadImage(file) {
-            // This is a placeholder - implement actual image upload
-            // For now, we'll use a placeholder URL
-            return `https://via.placeholder.com/400x300?text=${encodeURIComponent(file.name)}`;
-        }
-
-        // Load categories from Supabase
-        async function loadCategories() {
+        // Load all data
+        async function loadAllData() {
+            console.log('📊 Loading all data...');
             try {
-                const { data, error } = await supabase
-                    .from('categories')
-                    .select('*')
-                    .eq('is_active', true)
-                    .order('order_index', { ascending: true });
-
-                if (error) throw error;
-
-                categories = data || [];
-                displayCategories();
-                updateCategorySelect();
+                await Promise.all([
+                    loadCategories(),
+                    loadChannels(),
+                    loadUsers(),
+                    loadAdvertisements()
+                ]);
                 updateStats();
+                console.log('✅ All data loaded successfully');
             } catch (error) {
-                console.error('Error loading categories:', error);
-                // Create default categories if table doesn't exist
-                categories = getDefaultCategories();
-                displayCategories();
-                updateCategorySelect();
-                updateStats();
+                console.error('❌ Error loading data:', error);
+                showAlert('❌ خطأ في تحميل البيانات', 'error');
             }
         }
 
-        // Get default categories
-        function getDefaultCategories() {
-            return [
-                { id: '1', name: 'beIN Sports', name_ar: 'بي ان سبورت', icon: 'sports_soccer', order_index: 1 },
-                { id: '2', name: 'SSC Sports', name_ar: 'السعودية الرياضية', icon: 'sports', order_index: 2 },
-                { id: '3', name: 'AD Sports', name_ar: 'أبوظبي الرياضية', icon: 'sports_basketball', order_index: 3 },
-                { id: '4', name: 'News', name_ar: 'الأخبار', icon: 'newspaper', order_index: 4 },
-                { id: '5', name: 'Entertainment', name_ar: 'الترفيه', icon: 'movie', order_index: 5 },
-                { id: '6', name: 'MBC', name_ar: 'ام بي سي', icon: 'tv', order_index: 6 },
-            ];
-        }
-
-        // Display categories
-        function displayCategories() {
-            const container = document.getElementById('categoriesContainer');
-            container.innerHTML = '';
-
-            categories.forEach(category => {
-                const categoryDiv = document.createElement('div');
-                categoryDiv.className = 'category-card';
-                categoryDiv.innerHTML = `
-                    <div class="category-icon">${getCategoryEmoji(category.icon)}</div>
-                    <h3>${category.name_ar}</h3>
-                    <p>${category.name}</p>
-                    <div style="margin-top: 15px;">
-                        <button class="btn btn-warning" onclick="editCategory('${category.id}')" style="padding: 8px 12px; font-size: 12px;">✏️ تعديل</button>
-                        <button class="btn btn-danger" onclick="deleteCategory('${category.id}')" style="padding: 8px 12px; font-size: 12px;">🗑️ حذف</button>
-                    </div>
-                `;
-                container.appendChild(categoryDiv);
-            });
-        }
-
-        // Update category select dropdown
-        function updateCategorySelect() {
-            const select = document.getElementById('channelCategory');
-            select.innerHTML = '<option value="">اختر التصنيف</option>';
-            
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category.name;
-                option.textContent = category.name_ar;
-                select.appendChild(option);
-            });
-        }
-
-        // Get category emoji
-        function getCategoryEmoji(icon) {
-            const iconMap = {
-                'tv': '📺',
-                'sports_soccer': '⚽',
-                'sports': '🏃',
-                'sports_basketball': '🏀',
-                'newspaper': '📰',
-                'movie': '🎬',
-                'music': '🎵',
-                'child_care': '👶',
-                'school': '🎓'
-            };
-            return iconMap[icon] || '📺';
-        }
-
-        // Load advertisements from Supabase
-        async function loadAdvertisements() {
-            try {
-                const { data, error } = await supabase
-                    .from('advertisements')
-                    .select('*')
-                    .eq('is_active', true)
-                    .order('priority', { ascending: false });
-
-                if (error) throw error;
-
-                advertisements = data || [];
-                displayAdvertisements();
-                updateStats();
-            } catch (error) {
-                console.error('Error loading advertisements:', error);
-                // Create sample advertisements if table doesn't exist
-                advertisements = getSampleAdvertisements();
-                displayAdvertisements();
-                updateStats();
-            }
-        }
-
-        // Get sample advertisements
-        function getSampleAdvertisements() {
-            return [
-                {
-                    id: '1',
-                    title: 'خصم 50% على الاشتراك المميز',
-                    description: 'احصل على جميع القنوات المميزة بخصم كبير لفترة محدودة',
-                    image_url: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200',
-                    link: 'https://tvna.app/premium',
-                    priority: 10,
-                    is_active: true
-                },
-                {
-                    id: '2',
-                    title: 'قنوات رياضية جديدة',
-                    description: 'مشاهدة حصرية لجميع مباريات كأس العالم',
-                    image_url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=200',
-                    link: 'https://tvna.app/sports',
-                    priority: 8,
-                    is_active: true
-                }
-            ];
-        }
-
-        // Display advertisements
-        function displayAdvertisements() {
-            const container = document.getElementById('adsContainer');
-            container.innerHTML = '';
-
-            if (advertisements.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">لا توجد إعلانات مضافة بعد</p>';
-                return;
-            }
-
-            advertisements.forEach(ad => {
-                const adDiv = document.createElement('div');
-                adDiv.className = 'ad-card';
-                adDiv.innerHTML = `
-                    ${ad.image_url ? 
-                        `<img src="${ad.image_url}" alt="${ad.title}" class="ad-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                         <div class="ad-placeholder" style="display: none;">📢</div>` :
-                        `<div class="ad-placeholder">📢</div>`
-                    }
-                    <h3>${ad.title}</h3>
-                    <p style="color: rgba(255,255,255,0.8); margin: 10px 0;">${ad.description}</p>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
-                        <span style="background: ${ad.priority >= 10 ? 'linear-gradient(135deg, #ff6b6b, #ee5a6f)' : ad.priority >= 5 ? 'linear-gradient(135deg, #feca57, #ff9ff3)' : 'linear-gradient(135deg, #4ecdc4, #44a08d)'}; padding: 4px 8px; border-radius: 8px; font-size: 10px;">
-                            أولوية: ${ad.priority >= 10 ? 'عالية' : ad.priority >= 5 ? 'متوسطة' : 'عادية'}
-                        </span>
-                        <div>
-                            <button class="btn btn-warning" onclick="editAd('${ad.id}')" style="padding: 6px 10px; font-size: 11px;">✏️ تعديل</button>
-                            <button class="btn btn-danger" onclick="deleteAd('${ad.id}')" style="padding: 6px 10px; font-size: 11px;">🗑️ حذف</button>
-                        </div>
-                    </div>
-                    ${ad.link ? `<p style="font-size: 11px; color: #4ecdc4; margin-top: 8px;">🔗 ${ad.link}</p>` : ''}
-                `;
-                container.appendChild(adDiv);
-            });
-        }
-
-        // Open add advertisement modal
-        function openAddAdModal() {
-            openModal('addAdModal');
-        }
-
-        // Open add category modal
-        function openAddCategoryModal() {
-            openModal('addCategoryModal');
-        }
-
-        // Add advertisement form submission
-        document.getElementById('addAdForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            try {
-                let imageUrl = document.getElementById('adImageUrl').value;
-                
-                // Upload image if file is selected
-                const imageFile = document.getElementById('adImageFile').files[0];
-                if (imageFile) {
-                    imageUrl = await uploadImage(imageFile);
-                }
-
-                const adData = {
-                    title: document.getElementById('adTitle').value,
-                    description: document.getElementById('adDescription').value,
-                    image_url: imageUrl,
-                    link: document.getElementById('adLink').value || null,
-                    priority: parseInt(document.getElementById('adPriority').value),
-                    is_active: true
-                };
-
-                const { data, error } = await supabase
-                    .from('advertisements')
-                    .insert([adData])
-                    .select();
-
-                if (error) throw error;
-
-                showAlert('✅ تم إضافة الإعلان بنجاح!', 'success');
-                closeModal('addAdModal');
-                this.reset();
-                document.getElementById('adImagePreview').style.display = 'none';
-                loadAdvertisements();
-                
-            } catch (error) {
-                console.error('Error adding advertisement:', error);
-                showAlert('❌ خطأ في إضافة الإعلان!', 'error');
-            }
-        });
-
-        // Add category form submission
-        document.getElementById('addCategoryForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            try {
-                const categoryData = {
-                    name: document.getElementById('categoryName').value,
-                    name_ar: document.getElementById('categoryNameAr').value,
-                    icon: document.getElementById('categoryIcon').value,
-                    order_index: parseInt(document.getElementById('categoryOrder').value) || 0,
-                    is_active: true
-                };
-
-                const { data, error } = await supabase
-                    .from('categories')
-                    .insert([categoryData])
-                    .select();
-
-                if (error) throw error;
-
-                showAlert('✅ تم إضافة التصنيف بنجاح!', 'success');
-                closeModal('addCategoryModal');
-                this.reset();
-                loadCategories();
-                
-            } catch (error) {
-                console.error('Error adding category:', error);
-                showAlert('❌ خطأ في إضافة التصنيف!', 'error');
-            }
-        });
-
-        // Add channel form submission with image upload
-        document.getElementById('addChannelForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const submitBtn = document.getElementById('addChannelText');
-            const loadingBtn = document.getElementById('addChannelLoading');
-            
-            submitBtn.style.display = 'none';
-            loadingBtn.style.display = 'inline-block';
-            
-            try {
-                let imageUrl = document.getElementById('channelImageUrl').value || 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300';
-                
-                // Upload image if file is selected
-                const imageFile = document.getElementById('channelImageFile').files[0];
-                if (imageFile) {
-                    imageUrl = await uploadImage(imageFile);
-                }
-
-                const channelData = {
-                    name: document.getElementById('channelName').value,
-                    name_ar: document.getElementById('channelNameAr').value,
-                    url: document.getElementById('channelUrl').value,
-                    category: document.getElementById('channelCategory').value,
-                    image_url: imageUrl,
-                    description: document.getElementById('channelDescription').value,
-                    description_ar: document.getElementById('channelDescriptionAr').value,
-                    quality: document.getElementById('channelQuality').value,
-                    is_premium: document.getElementById('isPremium').checked,
-                    viewers_count: Math.floor(Math.random() * 100000),
-                    rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
-                    is_active: true
-                };
-
-                const { data, error } = await supabase
-                    .from('channels')
-                    .insert([channelData])
-                    .select();
-
-                if (error) throw error;
-
-                showAlert('✅ تم إضافة القناة بنجاح!', 'success');
-                this.reset();
-                document.getElementById('channelImagePreview').style.display = 'none';
-                loadChannels();
-                
-            } catch (error) {
-                console.error('Error adding channel:', error);
-                showAlert('❌ خطأ في إضافة القناة!', 'error');
-            } finally {
-                submitBtn.style.display = 'inline-block';
-                loadingBtn.style.display = 'none';
-            }
-        });
-
-        // Delete advertisement
-        async function deleteAd(adId) {
-            if (confirm('هل أنت متأكد من حذف هذا الإعلان؟')) {
-                try {
-                    const { error } = await supabase
-                        .from('advertisements')
-                        .update({ is_active: false })
-                        .eq('id', adId);
-
-                    if (error) throw error;
-
-                    showAlert('✅ تم حذف الإعلان بنجاح!', 'success');
-                    loadAdvertisements();
-                    
-                } catch (error) {
-                    console.error('Error deleting advertisement:', error);
-                    showAlert('❌ خطأ في حذف الإعلان!', 'error');
-                }
-            }
-        }
-
-        // Delete category
-        async function deleteCategory(categoryId) {
-            if (confirm('هل أنت متأكد من حذف هذا التصنيف؟\nسيتم حذف جميع القنوات التابعة لهذا التصنيف أيضاً.')) {
-                try {
-                    const { error } = await supabase
-                        .from('categories')
-                        .update({ is_active: false })
-                        .eq('id', categoryId);
-
-                    if (error) throw error;
-
-                    showAlert('✅ تم حذف التصنيف بنجاح!', 'success');
-                    loadCategories();
-                    
-                } catch (error) {
-                    console.error('Error deleting category:', error);
-                    showAlert('❌ خطأ في حذف التصنيف!', 'error');
-                }
-            }
-        }
-
-        // Rest of the original functions (checkConnection, loadChannels, loadUsers, etc.)
+        // Check connection to Supabase
         async function checkConnection() {
+            console.log('🔗 Checking connection to Supabase...');
             try {
                 const { data, error } = await supabase.from('channels').select('count').limit(1);
                 if (error) throw error;
                 
                 updateConnectionStatus(true);
+                console.log('✅ Connected to Supabase successfully');
                 showAlert('✅ تم الاتصال بقاعدة البيانات بنجاح!', 'success');
             } catch (error) {
-                console.error('Connection error:', error);
+                console.error('❌ Connection error:', error);
                 updateConnectionStatus(false);
                 showAlert('❌ فشل في الاتصال بقاعدة البيانات!', 'error');
             }
@@ -1474,7 +1300,421 @@
             document.getElementById('currentDate').textContent = now.toLocaleDateString('ar-SA', options);
         }
 
+        function updateStats() {
+            document.getElementById('totalChannels').textContent = channels.length;
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalAds').textContent = advertisements.length;
+            document.getElementById('totalCategories').textContent = categories.length;
+        }
+
+        // Scroll to section
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ==================== CATEGORIES ====================
+        async function loadCategories() {
+            console.log('📂 Loading categories...');
+            try {
+                const { data, error } = await supabase
+                    .from('categories')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('order_index', { ascending: true });
+
+                if (error) {
+                    console.warn('Categories table might not exist, using default categories');
+                    categories = getDefaultCategories();
+                } else {
+                    categories = data || getDefaultCategories();
+                }
+                
+                displayCategories();
+                updateCategorySelect();
+                console.log(`✅ Loaded ${categories.length} categories`);
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                categories = getDefaultCategories();
+                displayCategories();
+                updateCategorySelect();
+            }
+        }
+
+        function getDefaultCategories() {
+            return [
+                { id: '1', name: 'beIN Sports', name_ar: 'بي ان سبورت', icon: 'sports_soccer', order_index: 1 },
+                { id: '2', name: 'SSC Sports', name_ar: 'السعودية الرياضية', icon: 'sports', order_index: 2 },
+                { id: '3', name: 'AD Sports', name_ar: 'أبوظبي الرياضية', icon: 'sports_basketball', order_index: 3 },
+                { id: '4', name: 'News', name_ar: 'الأخبار', icon: 'newspaper', order_index: 4 },
+                { id: '5', name: 'Entertainment', name_ar: 'الترفيه', icon: 'movie', order_index: 5 },
+                { id: '6', name: 'MBC', name_ar: 'ام بي سي', icon: 'tv', order_index: 6 },
+            ];
+        }
+
+        function displayCategories() {
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = '';
+
+            if (categories.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">لا توجد تصنيفات مضافة بعد</p>';
+                return;
+            }
+
+            categories.forEach(category => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category-card';
+                categoryDiv.innerHTML = `
+                    <div class="category-icon">${getCategoryEmoji(category.icon)}</div>
+                    <h3>${category.name_ar}</h3>
+                    <p>${category.name}</p>
+                    <div class="action-buttons">
+                        <button class="btn btn-warning" onclick="editCategory('${category.id}')">✏️ تعديل</button>
+                        <button class="btn btn-danger" onclick="deleteCategory('${category.id}')">🗑️ حذف</button>
+                    </div>
+                `;
+                container.appendChild(categoryDiv);
+            });
+        }
+
+        function updateCategorySelect() {
+            const selects = [
+                document.getElementById('channelCategory'),
+                document.getElementById('editChannelCategory')
+            ];
+            
+            selects.forEach(select => {
+                if (select) {
+                    select.innerHTML = '<option value="">اختر التصنيف</option>';
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.name;
+                        option.textContent = category.name_ar;
+                        select.appendChild(option);
+                    });
+                }
+            });
+        }
+
+        function getCategoryEmoji(icon) {
+            const iconMap = {
+                'tv': '📺',
+                'sports_soccer': '⚽',
+                'sports': '🏃',
+                'sports_basketball': '🏀',
+                'newspaper': '📰',
+                'movie': '🎬',
+                'music': '🎵',
+                'child_care': '👶',
+                'school': '🎓'
+            };
+            return iconMap[icon] || '📺';
+        }
+
+        function openAddCategoryModal() {
+            openModal('addCategoryModal');
+        }
+
+        async function handleAddCategory(e) {
+            e.preventDefault();
+            const btn = document.getElementById('addCategoryBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> جاري الإضافة...';
+            
+            try {
+                const categoryData = {
+                    name: document.getElementById('categoryName').value,
+                    name_ar: document.getElementById('categoryNameAr').value,
+                    icon: document.getElementById('categoryIcon').value,
+                    order_index: parseInt(document.getElementById('categoryOrder').value) || 0,
+                    is_active: true
+                };
+
+                const { data, error } = await supabase
+                    .from('categories')
+                    .insert([categoryData])
+                    .select();
+
+                if (error) throw error;
+
+                showAlert('✅ تم إضافة التصنيف بنجاح!', 'success');
+                closeModal('addCategoryModal');
+                document.getElementById('addCategoryForm').reset();
+                loadCategories();
+                
+            } catch (error) {
+                console.error('Error adding category:', error);
+                showAlert('❌ خطأ في إضافة التصنيف!', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '➕ إضافة التصنيف';
+            }
+        }
+
+        function editCategory(categoryId) {
+            const category = categories.find(c => c.id == categoryId);
+            if (!category) return;
+
+            document.getElementById('editCategoryId').value = category.id;
+            document.getElementById('editCategoryName').value = category.name;
+            document.getElementById('editCategoryNameAr').value = category.name_ar;
+            document.getElementById('editCategoryIcon').value = category.icon;
+            document.getElementById('editCategoryOrder').value = category.order_index || 0;
+            
+            openModal('editCategoryModal');
+        }
+
+        async function handleEditCategory(e) {
+            e.preventDefault();
+            const btn = document.getElementById('editCategoryBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> جاري الحفظ...';
+            
+            try {
+                const categoryId = document.getElementById('editCategoryId').value;
+                const categoryData = {
+                    name: document.getElementById('editCategoryName').value,
+                    name_ar: document.getElementById('editCategoryNameAr').value,
+                    icon: document.getElementById('editCategoryIcon').value,
+                    order_index: parseInt(document.getElementById('editCategoryOrder').value) || 0
+                };
+
+                const { error } = await supabase
+                    .from('categories')
+                    .update(categoryData)
+                    .eq('id', categoryId);
+
+                if (error) throw error;
+
+                showAlert('✅ تم تحديث التصنيف بنجاح!', 'success');
+                closeModal('editCategoryModal');
+                loadCategories();
+                
+            } catch (error) {
+                console.error('Error updating category:', error);
+                showAlert('❌ خطأ في تحديث التصنيف!', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '💾 حفظ التعديلات';
+            }
+        }
+
+        async function deleteCategory(categoryId) {
+            if (confirm('هل أنت متأكد من حذف هذا التصنيف؟\nسيتم حذف جميع القنوات التابعة لهذا التصنيف أيضاً.')) {
+                try {
+                    const { error } = await supabase
+                        .from('categories')
+                        .update({ is_active: false })
+                        .eq('id', categoryId);
+
+                    if (error) throw error;
+
+                    showAlert('✅ تم حذف التصنيف بنجاح!', 'success');
+                    loadCategories();
+                    
+                } catch (error) {
+                    console.error('Error deleting category:', error);
+                    showAlert('❌ خطأ في حذف التصنيف!', 'error');
+                }
+            }
+        }
+
+        // ==================== ADVERTISEMENTS ====================
+        async function loadAdvertisements() {
+            console.log('📢 Loading advertisements...');
+            try {
+                const { data, error } = await supabase
+                    .from('advertisements')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('priority', { ascending: false });
+
+                if (error) {
+                    console.warn('Advertisements table might not exist, using sample data');
+                    advertisements = getSampleAdvertisements();
+                } else {
+                    advertisements = data || [];
+                }
+                
+                displayAdvertisements();
+                console.log(`✅ Loaded ${advertisements.length} advertisements`);
+            } catch (error) {
+                console.error('Error loading advertisements:', error);
+                advertisements = getSampleAdvertisements();
+                displayAdvertisements();
+            }
+        }
+
+        function getSampleAdvertisements() {
+            return [
+                {
+                    id: '1',
+                    title: 'خصم 50% على الاشتراك المميز',
+                    description: 'احصل على جميع القنوات المميزة بخصم كبير لفترة محدودة',
+                    image_url: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200',
+                    link: 'https://tvna.app/premium',
+                    priority: 10,
+                    is_active: true
+                }
+            ];
+        }
+
+        function displayAdvertisements() {
+            const container = document.getElementById('adsContainer');
+            container.innerHTML = '';
+
+            if (advertisements.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">لا توجد إعلانات مضافة بعد</p>';
+                return;
+            }
+
+            advertisements.forEach(ad => {
+                const adDiv = document.createElement('div');
+                adDiv.className = 'ad-card';
+                adDiv.innerHTML = `
+                    ${ad.image_url ? 
+                        `<img src="${ad.image_url}" alt="${ad.title}" class="ad-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                         <div class="ad-placeholder" style="display: none;">📢</div>` :
+                        `<div class="ad-placeholder">📢</div>`
+                    }
+                    <h3>${ad.title}</h3>
+                    <p style="color: rgba(255,255,255,0.8); margin: 10px 0;">${ad.description}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                        <span style="background: ${ad.priority >= 10 ? 'linear-gradient(135deg, #ff6b6b, #ee5a6f)' : ad.priority >= 5 ? 'linear-gradient(135deg, #feca57, #ff9ff3)' : 'linear-gradient(135deg, #4ecdc4, #44a08d)'}; padding: 4px 8px; border-radius: 8px; font-size: 10px;">
+                            أولوية: ${ad.priority >= 10 ? 'عالية' : ad.priority >= 5 ? 'متوسطة' : 'عادية'}
+                        </span>
+                    </div>
+                    ${ad.link ? `<p style="font-size: 11px; color: #4ecdc4; margin-top: 8px;">🔗 ${ad.link}</p>` : ''}
+                    <div class="action-buttons">
+                        <button class="btn btn-warning" onclick="editAd('${ad.id}')">✏️ تعديل</button>
+                        <button class="btn btn-danger" onclick="deleteAd('${ad.id}')">🗑️ حذف</button>
+                    </div>
+                `;
+                container.appendChild(adDiv);
+            });
+        }
+
+        function openAddAdModal() {
+            openModal('addAdModal');
+        }
+
+        async function handleAddAd(e) {
+            e.preventDefault();
+            const btn = document.getElementById('addAdBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> جاري الإضافة...';
+            
+            try {
+                let imageUrl = document.getElementById('adImageUrl').value;
+                
+                const imageFile = document.getElementById('adImageFile').files[0];
+                if (imageFile) {
+                    imageUrl = await uploadImage(imageFile);
+                }
+
+                const adData = {
+                    title: document.getElementById('adTitle').value,
+                    description: document.getElementById('adDescription').value,
+                    image_url: imageUrl,
+                    link: document.getElementById('adLink').value || null,
+                    priority: parseInt(document.getElementById('adPriority').value),
+                    is_active: true
+                };
+
+                const { data, error } = await supabase
+                    .from('advertisements')
+                    .insert([adData])
+                    .select();
+
+                if (error) throw error;
+
+                showAlert('✅ تم إضافة الإعلان بنجاح!', 'success');
+                closeModal('addAdModal');
+                document.getElementById('addAdForm').reset();
+                document.getElementById('adImagePreview').style.display = 'none';
+                loadAdvertisements();
+                
+            } catch (error) {
+                console.error('Error adding advertisement:', error);
+                showAlert('❌ خطأ في إضافة الإعلان!', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '➕ إضافة الإعلان';
+            }
+        }
+
+        function editAd(adId) {
+            const ad = advertisements.find(a => a.id == adId);
+            if (!ad) return;
+
+            document.getElementById('editAdId').value = ad.id;
+            document.getElementById('editAdTitle').value = ad.title;
+            document.getElementById('editAdDescription').value = ad.description;
+            document.getElementById('editAdImageUrl').value = ad.image_url || '';
+            document.getElementById('editAdLink').value = ad.link || '';
+            document.getElementById('editAdPriority').value = ad.priority;
+            
+            openModal('editAdModal');
+        }
+
+        async function handleEditAd(e) {
+            e.preventDefault();
+            const btn = document.getElementById('editAdBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> جاري الحفظ...';
+            
+            try {
+                const adId = document.getElementById('editAdId').value;
+                const adData = {
+                    title: document.getElementById('editAdTitle').value,
+                    description: document.getElementById('editAdDescription').value,
+                    image_url: document.getElementById('editAdImageUrl').value,
+                    link: document.getElementById('editAdLink').value || null,
+                    priority: parseInt(document.getElementById('editAdPriority').value)
+                };
+
+                const { error } = await supabase
+                    .from('advertisements')
+                    .update(adData)
+                    .eq('id', adId);
+
+                if (error) throw error;
+
+                showAlert('✅ تم تحديث الإعلان بنجاح!', 'success');
+                closeModal('editAdModal');
+                loadAdvertisements();
+                
+            } catch (error) {
+                console.error('Error updating advertisement:', error);
+                showAlert('❌ خطأ في تحديث الإعلان!', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '💾 حفظ التعديلات';
+            }
+        }
+
+        async function deleteAd(adId) {
+            if (confirm('هل أنت متأكد من حذف هذا الإعلان؟')) {
+                try {
+                    const { error } = await supabase
+                        .from('advertisements')
+                        .update({ is_active: false })
+                        .eq('id', adId);
+
+                    if (error) throw error;
+
+                    showAlert('✅ تم حذف الإعلان بنجاح!', 'success');
+                    loadAdvertisements();
+                    
+                } catch (error) {
+                    console.error('Error deleting advertisement:', error);
+                    showAlert('❌ خطأ في حذف الإعلان!', 'error');
+                }
+            }
+        }
+
+        // ==================== CHANNELS ====================
         async function loadChannels() {
+            console.log('📺 Loading channels...');
             try {
                 const { data, error } = await supabase
                     .from('channels')
@@ -1486,52 +1726,11 @@
 
                 channels = data || [];
                 displayChannels();
-                updateStats();
+                console.log(`✅ Loaded ${channels.length} channels`);
             } catch (error) {
                 console.error('Error loading channels:', error);
                 showAlert('❌ خطأ في تحميل القنوات!', 'error');
             }
-        }
-
-        async function loadUsers() {
-            try {
-                const { data, error } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('is_active', true)
-                    .order('created_at', { ascending: false });
-
-                if (error) {
-                    console.error('Load users error:', error);
-                    if (error.code === '42P01') {
-                        showAlert('⚠️ جدول المستخدمين غير موجود. يرجى إنشاؤه أولاً.', 'error');
-                        users = [];
-                        displayUsers();
-                        updateStats();
-                        return;
-                    } else {
-                        throw error;
-                    }
-                }
-
-                users = data || [];
-                displayUsers();
-                updateStats();
-                
-            } catch (error) {
-                console.error('Error loading users:', error);
-                showAlert(`❌ خطأ في تحميل المستخدمين: ${error.message}`, 'error');
-                users = [];
-                displayUsers();
-                updateStats();
-            }
-        }
-
-        function updateStats() {
-            document.getElementById('totalChannels').textContent = channels.length;
-            document.getElementById('totalUsers').textContent = users.length;
-            document.getElementById('totalAds').textContent = advertisements.length;
-            document.getElementById('totalCategories').textContent = categories.length;
         }
 
         function displayChannels() {
@@ -1556,16 +1755,175 @@
                             ${channel.is_premium ? '<span class="channel-status status-premium">⭐ مميز</span>' : ''}
                         </div>
                     </div>
-                    <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 10px 0;">${channel.description_ar}</p>
-                    <p style="color: rgba(255,255,255,0.6); font-size: 12px;">👥 ${channel.viewers_count.toLocaleString()} مشاهد • ⭐ ${channel.rating}</p>
-                    <div class="channel-actions">
-                        <button class="btn btn-primary" onclick="editChannel('${channel.id}')" style="padding: 8px 12px; font-size: 12px;">✏️ تعديل</button>
-                        <button class="btn btn-danger" onclick="deleteChannel('${channel.id}')" style="padding: 8px 12px; font-size: 12px;">🗑️ حذف</button>
-                        <button class="btn btn-warning" onclick="testChannel('${channel.url}')" style="padding: 8px 12px; font-size: 12px;">🔗 اختبار</button>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin: 10px 0;">${channel.description_ar || 'لا يوجد وصف'}</p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 12px;">👥 ${(channel.viewers_count || 0).toLocaleString()} مشاهد • ⭐ ${channel.rating || 0}</p>
+                    <div class="action-buttons">
+                        <button class="btn btn-warning" onclick="editChannel('${channel.id}')">✏️ تعديل</button>
+                        <button class="btn btn-danger" onclick="deleteChannel('${channel.id}')">🗑️ حذف</button>
+                        <button class="btn btn-primary" onclick="testChannel('${channel.url}')">🔗 اختبار</button>
                     </div>
                 `;
                 container.appendChild(channelDiv);
             });
+        }
+
+        async function handleAddChannel(e) {
+            e.preventDefault();
+            const btn = document.getElementById('addChannelBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> جاري الإضافة...';
+            
+            try {
+                let imageUrl = document.getElementById('channelImageUrl').value || 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300';
+                
+                const imageFile = document.getElementById('channelImageFile').files[0];
+                if (imageFile) {
+                    imageUrl = await uploadImage(imageFile);
+                }
+
+                const channelData = {
+                    name: document.getElementById('channelName').value,
+                    name_ar: document.getElementById('channelNameAr').value,
+                    url: document.getElementById('channelUrl').value,
+                    category: document.getElementById('channelCategory').value,
+                    image_url: imageUrl,
+                    description: document.getElementById('channelDescription').value,
+                    description_ar: document.getElementById('channelDescriptionAr').value,
+                    quality: document.getElementById('channelQuality').value,
+                    is_premium: document.getElementById('isPremium').checked,
+                    viewers_count: Math.floor(Math.random() * 100000),
+                    rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
+                    is_active: true
+                };
+
+                const { data, error } = await supabase
+                    .from('channels')
+                    .insert([channelData])
+                    .select();
+
+                if (error) throw error;
+
+                showAlert('✅ تم إضافة القناة بنجاح!', 'success');
+                document.getElementById('addChannelForm').reset();
+                document.getElementById('channelImagePreview').style.display = 'none';
+                loadChannels();
+                
+            } catch (error) {
+                console.error('Error adding channel:', error);
+                showAlert('❌ خطأ في إضافة القناة!', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '➕ إضافة القناة';
+            }
+        }
+
+        function editChannel(channelId) {
+            const channel = channels.find(c => c.id == channelId);
+            if (!channel) return;
+
+            document.getElementById('editChannelId').value = channel.id;
+            document.getElementById('editChannelName').value = channel.name;
+            document.getElementById('editChannelNameAr').value = channel.name_ar;
+            document.getElementById('editChannelUrl').value = channel.url;
+            document.getElementById('editChannelCategory').value = channel.category;
+            document.getElementById('editChannelQuality').value = channel.quality;
+            document.getElementById('editChannelImageUrl').value = channel.image_url || '';
+            document.getElementById('editChannelDescription').value = channel.description || '';
+            document.getElementById('editChannelDescriptionAr').value = channel.description_ar || '';
+            document.getElementById('editChannelIsPremium').checked = channel.is_premium || false;
+            
+            openModal('editChannelModal');
+        }
+
+        async function handleEditChannel(e) {
+            e.preventDefault();
+            const btn = document.getElementById('editChannelBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> جاري الحفظ...';
+            
+            try {
+                const channelId = document.getElementById('editChannelId').value;
+                const channelData = {
+                    name: document.getElementById('editChannelName').value,
+                    name_ar: document.getElementById('editChannelNameAr').value,
+                    url: document.getElementById('editChannelUrl').value,
+                    category: document.getElementById('editChannelCategory').value,
+                    quality: document.getElementById('editChannelQuality').value,
+                    image_url: document.getElementById('editChannelImageUrl').value,
+                    description: document.getElementById('editChannelDescription').value,
+                    description_ar: document.getElementById('editChannelDescriptionAr').value,
+                    is_premium: document.getElementById('editChannelIsPremium').checked
+                };
+
+                const { error } = await supabase
+                    .from('channels')
+                    .update(channelData)
+                    .eq('id', channelId);
+
+                if (error) throw error;
+
+                showAlert('✅ تم تحديث القناة بنجاح!', 'success');
+                closeModal('editChannelModal');
+                loadChannels();
+                
+            } catch (error) {
+                console.error('Error updating channel:', error);
+                showAlert('❌ خطأ في تحديث القناة!', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '💾 حفظ التعديلات';
+            }
+        }
+
+        async function deleteChannel(channelId) {
+            if (confirm('هل أنت متأكد من حذف هذه القناة؟')) {
+                try {
+                    const { error } = await supabase
+                        .from('channels')
+                        .update({ is_active: false })
+                        .eq('id', channelId);
+
+                    if (error) throw error;
+
+                    showAlert('✅ تم حذف القناة بنجاح!', 'success');
+                    loadChannels();
+                    
+                } catch (error) {
+                    console.error('Error deleting channel:', error);
+                    showAlert('❌ خطأ في حذف القناة!', 'error');
+                }
+            }
+        }
+
+        function testChannel(url) {
+            window.open(url, '_blank');
+            showAlert('🔗 تم فتح رابط القناة في نافذة جديدة', 'success');
+        }
+
+        // ==================== USERS ====================
+        async function loadUsers() {
+            console.log('👥 Loading users...');
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.warn('Users table might not exist or is empty');
+                    users = [];
+                } else {
+                    users = data || [];
+                }
+                
+                displayUsers();
+                console.log(`✅ Loaded ${users.length} users`);
+            } catch (error) {
+                console.error('Error loading users:', error);
+                users = [];
+                displayUsers();
+            }
         }
 
         function displayUsers() {
@@ -1579,7 +1937,7 @@
                             <div style="color: #666;">
                                 <div style="font-size: 48px; margin-bottom: 15px;">👥</div>
                                 <div style="font-size: 18px; margin-bottom: 10px;">لا يوجد مستخدمين مسجلين بعد</div>
-                                <div style="font-size: 14px; color: rgba(255,255,255,0.6);">قم بإضافة أول مستخدم</div>
+                                <div style="font-size: 14px; color: rgba(255,255,255,0.6);">سيظهر المستخدمون هنا عند التسجيل في التطبيق</div>
                             </div>
                         </td>
                     </tr>
@@ -1641,28 +1999,6 @@
             });
         }
 
-        // Delete channel
-        async function deleteChannel(channelId) {
-            if (confirm('هل أنت متأكد من حذف هذه القناة؟')) {
-                try {
-                    const { error } = await supabase
-                        .from('channels')
-                        .update({ is_active: false })
-                        .eq('id', channelId);
-
-                    if (error) throw error;
-
-                    showAlert('✅ تم حذف القناة بنجاح!', 'success');
-                    loadChannels();
-                    
-                } catch (error) {
-                    console.error('Error deleting channel:', error);
-                    showAlert('❌ خطأ في حذف القناة!', 'error');
-                }
-            }
-        }
-
-        // Delete user
         async function deleteUser(userId) {
             if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
                 try {
@@ -1683,7 +2019,6 @@
             }
         }
 
-        // Toggle user premium status
         async function toggleUserPremium(userId) {
             try {
                 const user = users.find(u => u.id === userId);
@@ -1711,13 +2046,34 @@
             }
         }
 
-        // Test channel
-        function testChannel(url) {
-            window.open(url, '_blank');
-            showAlert('🔗 تم فتح رابط القناة في نافذة جديدة', 'success');
+        // ==================== FILE UPLOAD ====================
+        function handleImagePreview(event, previewId) {
+            const file = event.target.files[0];
+            const preview = document.getElementById(previewId);
+            
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showAlert('❌ حجم الصورة يجب أن يكون أقل من 5MB!', 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
-        // M3U file handling functions (unchanged)
+        async function uploadImage(file) {
+            // This is a placeholder for image upload functionality
+            // In a real application, you would upload to a service like Cloudinary, AWS S3, etc.
+            console.log('Uploading image:', file.name);
+            return `https://via.placeholder.com/400x300?text=${encodeURIComponent(file.name)}`;
+        }
+
+        // M3U file handling
         function handleM3UFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
@@ -1746,7 +2102,6 @@
             }
         }
 
-        // M3U processing function (simplified)
         async function processM3UFile(file) {
             showProgress(true);
             updateProgress(0, 'جاري قراءة الملف...');
@@ -1801,214 +2156,3 @@
                     if (commaIndex !== -1) {
                         const attributes = info.substring(0, commaIndex);
                         const displayName = info.substring(commaIndex + 1).trim();
-
-                        currentChannel = {
-                            name: displayName,
-                            name_ar: displayName,
-                            description: '',
-                            description_ar: '',
-                            category: 'General',
-                            quality: 'HD',
-                            is_premium: false,
-                            image_url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300',
-                            viewers_count: Math.floor(Math.random() * 100000),
-                            rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
-                            is_active: true
-                        };
-
-                        const logoMatch = attributes.match(/tvg-logo="([^"]+)"/);
-                        if (logoMatch) {
-                            currentChannel.image_url = logoMatch[1];
-                        }
-
-                        const groupMatch = attributes.match(/group-title="([^"]+)"/);
-                        if (groupMatch) {
-                            currentChannel.category = groupMatch[1];
-                        }
-                    }
-                } else if (line.startsWith('http') && Object.keys(currentChannel).length > 0) {
-                    currentChannel.url = line;
-                    channels.push({...currentChannel});
-                    currentChannel = {};
-                }
-            }
-
-            return channels;
-        }
-
-        async function addChannelsToDatabase(channelsData) {
-            const results = {
-                success: 0,
-                errors: 0,
-                skipped: 0,
-                details: []
-            };
-
-            for (let i = 0; i < channelsData.length; i++) {
-                const channel = channelsData[i];
-                updateProgress(50 + (i / channelsData.length) * 50, `إضافة القناة ${i + 1} من ${channelsData.length}: ${channel.name}`);
-
-                try {
-                    const { data: existingChannels } = await supabase
-                        .from('channels')
-                        .select('id')
-                        .eq('url', channel.url)
-                        .eq('is_active', true);
-
-                    if (existingChannels && existingChannels.length > 0) {
-                        results.skipped++;
-                        results.details.push({
-                            name: channel.name,
-                            status: 'skipped',
-                            message: 'القناة موجودة بالفعل'
-                        });
-                        continue;
-                    }
-
-                    const { data, error } = await supabase
-                        .from('channels')
-                        .insert([channel])
-                        .select();
-
-                    if (error) throw error;
-
-                    results.success++;
-                    results.details.push({
-                        name: channel.name,
-                        status: 'success',
-                        message: 'تم إضافة القناة بنجاح'
-                    });
-
-                } catch (error) {
-                    console.error(`Error adding channel ${channel.name}:`, error);
-                    results.errors++;
-                    results.details.push({
-                        name: channel.name,
-                        status: 'error',
-                        message: error.message || 'خطأ غير معروف'
-                    });
-                }
-            }
-
-            return results;
-        }
-
-        function showProgress(show) {
-            const progressContainer = document.getElementById('uploadProgress');
-            progressContainer.style.display = show ? 'block' : 'none';
-            
-            if (!show) {
-                updateProgress(0, '');
-            }
-        }
-
-        function updateProgress(percent, text) {
-            const progressFill = document.getElementById('progressFill');
-            const progressText = document.getElementById('progressText');
-            
-            progressFill.style.width = percent + '%';
-            progressText.textContent = text;
-        }
-
-        function showUploadResults(results) {
-            const resultsContainer = document.getElementById('uploadResults');
-            const resultsList = document.getElementById('uploadResultsList');
-            
-            resultsList.innerHTML = '';
-
-            const summary = document.createElement('div');
-            summary.style.marginBottom = '15px';
-            summary.style.padding = '10px';
-            summary.style.borderRadius = '5px';
-            summary.style.background = 'rgba(78, 205, 196, 0.1)';
-            summary.innerHTML = `
-                <strong>ملخص النتائج:</strong><br>
-                ✅ تم إضافة ${results.success} قناة بنجاح<br>
-                ⚠️ تم تخطي ${results.skipped || 0} قناة (موجودة مسبقاً)<br>
-                ❌ فشل في إضافة ${results.errors} قناة
-            `;
-            resultsList.appendChild(summary);
-
-            results.details.forEach(detail => {
-                const item = document.createElement('div');
-                item.className = 'upload-result-item';
-                
-                let icon, colorClass;
-                switch(detail.status) {
-                    case 'success':
-                        icon = '✅';
-                        colorClass = 'result-success';
-                        break;
-                    case 'skipped':
-                        icon = '⚠️';
-                        colorClass = 'result-warning';
-                        break;
-                    case 'error':
-                        icon = '❌';
-                        colorClass = 'result-error';
-                        break;
-                    default:
-                        icon = '❓';
-                        colorClass = 'result-error';
-                }
-                
-                item.innerHTML = `
-                    <span class="result-icon ${colorClass}">${icon}</span>
-                    <div>
-                        <strong>${detail.name}</strong><br>
-                        <small style="color: rgba(255,255,255,0.7);">${detail.message}</small>
-                    </div>
-                `;
-                
-                resultsList.appendChild(item);
-            });
-
-            resultsContainer.style.display = 'block';
-        }
-
-        // Utility functions
-        function showAlert(message, type = 'success') {
-            const alertContainer = document.getElementById('alertContainer');
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type}`;
-            alertDiv.innerHTML = message;
-            
-            alertContainer.appendChild(alertDiv);
-            
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 5000);
-        }
-
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('show');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('show');
-        }
-
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('show');
-            }
-        }
-
-        // CSS animation keyframes
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from { 
-                    transform: translateY(-20px); 
-                    opacity: 0; 
-                }
-                to { 
-                    transform: translateY(0); 
-                    opacity: 1; 
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
-</body>
-</html>
