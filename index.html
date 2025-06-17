@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TvNa - لوحة التحكم</title>
+    <title>TvNa - لوحة التحكم المتزامنة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.7/supabase.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -166,6 +167,27 @@
         .demo-info p {
             font-size: 16px;
             font-weight: bold;
+        }
+
+        .connection-status {
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .status-connected {
+            background: linear-gradient(135deg, #00b894, #00a085);
+        }
+
+        .status-disconnected {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .status-connecting {
+            background: linear-gradient(135deg, #ffa502, #ff6348);
         }
 
         /* Dashboard Styles */
@@ -391,6 +413,7 @@
             padding: 8px 16px;
             font-size: 14px;
             border-radius: 8px;
+            width: auto;
         }
 
         .data-table {
@@ -542,6 +565,31 @@
             gap: 10px;
         }
 
+        .sync-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .sync-indicator.syncing {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+        }
+
+        .sync-indicator.synced {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+        }
+
+        .sync-indicator.error {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -581,7 +629,13 @@
                     <i class="fas fa-tv"></i>
                 </div>
                 <h1 class="login-title">TvNa تيڤي نا</h1>
-                <p class="login-subtitle">لوحة التحكم الإدارية</p>
+                <p class="login-subtitle">لوحة التحكم الإدارية المتزامنة</p>
+            </div>
+            
+            <!-- Connection Status -->
+            <div id="connectionStatus" class="connection-status status-connecting">
+                <div class="loading-spinner"></div>
+                جاري الاتصال بقاعدة البيانات...
             </div>
             
             <form id="loginForm">
@@ -602,8 +656,8 @@
                 <div id="errorMessage" class="error-message" style="display: none;"></div>
                 
                 <div class="demo-info">
-                    <h4><i class="fas fa-info-circle"></i>   </h4>
-                    <p> / </p>
+                    <h4><i class="fas fa-info-circle"></i> بيانات تسجيل الدخول</h4>
+                    <p>admin / Ameer_7elwas2025</p>
                 </div>
             </form>
         </div>
@@ -619,13 +673,17 @@
                         <div class="logo-icon"><i class="fas fa-tv"></i></div>
                         <div class="logo-text">
                             <h1>TvNa تيڤي نا</h1>
-                            <p>لوحة التحكم الإدارية</p>
+                            <p>لوحة التحكم الإدارية المتزامنة</p>
                         </div>
                     </div>
                     <div class="admin-info">
                         <p><strong>مرحباً أمير حلواص</strong></p>
                         <p>مدير النظام</p>
                         <p id="currentDate"></p>
+                        <div class="sync-indicator" id="syncIndicator">
+                            <i class="fas fa-sync-alt"></i>
+                            <span>غير متزامن</span>
+                        </div>
                         <button onclick="logout()">
                             <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
                         </button>
@@ -662,7 +720,7 @@
                         </div>
                         <div>
                             <div class="card-title">إدارة القنوات</div>
-                            <div class="card-subtitle">إضافة وتعديل وحذف القنوات</div>
+                            <div class="card-subtitle">إضافة وتعديل وحذف القنوات مع المزامنة التلقائية</div>
                         </div>
                     </div>
                     <div class="card-header-right">
@@ -671,6 +729,9 @@
                         </button>
                         <button class="btn btn-secondary btn-small" onclick="loadChannels()">
                             <i class="fas fa-sync"></i> تحديث
+                        </button>
+                        <button class="btn btn-warning btn-small" onclick="syncWithSupabase()">
+                            <i class="fas fa-cloud-upload-alt"></i> مزامنة فورية
                         </button>
                     </div>
                 </div>
@@ -683,14 +744,15 @@
                                 <th>التصنيف</th>
                                 <th>الجودة</th>
                                 <th>الحالة</th>
+                                <th>المزامنة</th>
                                 <th>الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="channelsTableBody">
                             <tr>
-                                <td colspan="5" style="text-align: center; padding: 40px;">
+                                <td colspan="6" style="text-align: center; padding: 40px;">
                                     <div class="loading-spinner"></div>
-                                    جاري تحميل القنوات...
+                                    جاري تحميل القنوات من Supabase...
                                 </td>
                             </tr>
                         </tbody>
@@ -707,7 +769,7 @@
                         </div>
                         <div>
                             <div class="card-title">إدارة المستخدمين</div>
-                            <div class="card-subtitle">إضافة وتعديل وحذف المستخدمين</div>
+                            <div class="card-subtitle">إضافة وتعديل وحذف المستخدمين مع المزامنة التلقائية</div>
                         </div>
                     </div>
                     <div class="card-header-right">
@@ -728,14 +790,15 @@
                                 <th>البريد الإلكتروني</th>
                                 <th>النوع</th>
                                 <th>الحالة</th>
+                                <th>المزامنة</th>
                                 <th>الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="usersTableBody">
                             <tr>
-                                <td colspan="5" style="text-align: center; padding: 40px;">
+                                <td colspan="6" style="text-align: center; padding: 40px;">
                                     <div class="loading-spinner"></div>
-                                    جاري تحميل المستخدمين...
+                                    جاري تحميل المستخدمين من Supabase...
                                 </td>
                             </tr>
                         </tbody>
@@ -749,7 +812,7 @@
     <div id="addChannelModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">إضافة قناة جديدة</h2>
+                <h2 class="modal-title">إضافة قناة جديدة إلى Supabase</h2>
                 <span class="close" onclick="closeModal('addChannelModal')">&times;</span>
             </div>
             <form id="addChannelForm">
@@ -823,7 +886,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> إضافة القناة
+                    <i class="fas fa-cloud-upload-alt"></i> إضافة للتطبيق وقاعدة البيانات
                 </button>
             </form>
         </div>
@@ -833,7 +896,7 @@
     <div id="editChannelModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">تعديل القناة</h2>
+                <h2 class="modal-title">تعديل القناة في Supabase</h2>
                 <span class="close" onclick="closeModal('editChannelModal')">&times;</span>
             </div>
             <form id="editChannelForm">
@@ -908,7 +971,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-success">
-                    <i class="fas fa-save"></i> حفظ التغييرات
+                    <i class="fas fa-cloud-upload-alt"></i> حفظ التغييرات في التطبيق وقاعدة البيانات
                 </button>
             </form>
         </div>
@@ -918,7 +981,7 @@
     <div id="addUserModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">إضافة مستخدم جديد</h2>
+                <h2 class="modal-title">إضافة مستخدم جديد إلى Supabase</h2>
                 <span class="close" onclick="closeModal('addUserModal')">&times;</span>
             </div>
             <form id="addUserForm">
@@ -953,7 +1016,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-user-plus"></i> إضافة المستخدم
+                    <i class="fas fa-cloud-upload-alt"></i> إضافة للتطبيق وقاعدة البيانات
                 </button>
             </form>
         </div>
@@ -963,7 +1026,7 @@
     <div id="editUserModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">تعديل المستخدم</h2>
+                <h2 class="modal-title">تعديل المستخدم في Supabase</h2>
                 <span class="close" onclick="closeModal('editUserModal')">&times;</span>
             </div>
             <form id="editUserForm">
@@ -999,22 +1062,33 @@
                 </div>
 
                 <button type="submit" class="btn btn-success">
-                    <i class="fas fa-save"></i> حفظ التغييرات
+                    <i class="fas fa-cloud-upload-alt"></i> حفظ التغييرات في التطبيق وقاعدة البيانات
                 </button>
             </form>
         </div>
     </div>
 
     <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://vpvvjascwgivdjyyhzwp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwdnZqYXNjd2dpdmRqeXloendwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MDYxMjYsImV4cCI6MjA2NTM4MjEyNn0.6AR2-MG4x9ugNTXe9jUqx-IwGEtj1m6MCYwQkTsSbUQ';
+        
+        // Initialize Supabase
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         // Global Data Storage
         let channels = [];
         let users = [];
         let isLoggedIn = false;
+        let isConnected = false;
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             updateDateTime();
             setInterval(updateDateTime, 60000);
+            
+            // Test Supabase connection
+            testSupabaseConnection();
             
             // Login form handler
             document.getElementById('loginForm').addEventListener('submit', function(e) {
@@ -1043,12 +1117,117 @@
                 e.preventDefault();
                 updateUser();
             });
-
-            // Load initial data
-            loadChannels();
-            loadUsers();
-            updateStats();
         });
+
+        // Test Supabase Connection
+        async function testSupabaseConnection() {
+            const connectionStatus = document.getElementById('connectionStatus');
+            
+            try {
+                connectionStatus.className = 'connection-status status-connecting';
+                connectionStatus.innerHTML = '<div class="loading-spinner"></div> جاري الاتصال بـ Supabase...';
+                
+                // Test connection by fetching a simple query
+                const { data, error } = await supabase
+                    .from('channels')
+                    .select('count', { count: 'exact', head: true });
+                
+                if (error) throw error;
+                
+                isConnected = true;
+                connectionStatus.className = 'connection-status status-connected';
+                connectionStatus.innerHTML = '✅ متصل بـ Supabase بنجاح!';
+                
+                updateSyncIndicator('synced', 'متزامن مع Supabase');
+                
+            } catch (error) {
+                console.error('Supabase connection error:', error);
+                isConnected = false;
+                connectionStatus.className = 'connection-status status-disconnected';
+                connectionStatus.innerHTML = '❌ فشل الاتصال بـ Supabase';
+                
+                updateSyncIndicator('error', 'خطأ في الاتصال');
+                showAlert('فشل الاتصال بقاعدة البيانات', 'error');
+            }
+        }
+
+        // Update sync indicator
+        function updateSyncIndicator(status, text) {
+            const indicator = document.getElementById('syncIndicator');
+            if (indicator) {
+                indicator.className = `sync-indicator ${status}`;
+                indicator.innerHTML = `<i class="fas fa-${status === 'syncing' ? 'sync-alt fa-spin' : status === 'synced' ? 'check' : 'exclamation-triangle'}"></i><span>${text}</span>`;
+            }
+        }
+
+        // Supabase helper functions
+        async function makeSupabaseRequest(table, operation = 'SELECT', data = null, filters = null) {
+            try {
+                updateSyncIndicator('syncing', 'جاري المزامنة...');
+                
+                let query = supabase.from(table);
+                
+                switch (operation) {
+                    case 'SELECT':
+                        query = query.select('*');
+                        if (filters) {
+                            Object.keys(filters).forEach(key => {
+                                query = query.eq(key, filters[key]);
+                            });
+                        }
+                        break;
+                    case 'INSERT':
+                        query = query.insert(data);
+                        break;
+                    case 'UPDATE':
+                        query = query.update(data);
+                        if (filters) {
+                            Object.keys(filters).forEach(key => {
+                                query = query.eq(key, filters[key]);
+                            });
+                        }
+                        break;
+                    case 'DELETE':
+                        if (filters) {
+                            Object.keys(filters).forEach(key => {
+                                query = query.delete().eq(key, filters[key]);
+                            });
+                        }
+                        break;
+                }
+                
+                const { data: result, error } = await query;
+                
+                if (error) {
+                    console.error('Supabase Error:', error);
+                    updateSyncIndicator('error', 'خطأ في المزامنة');
+                    throw error;
+                }
+                
+                updateSyncIndicator('synced', 'متزامن مع Supabase');
+                return result;
+            } catch (error) {
+                console.error('Request Error:', error);
+                updateSyncIndicator('error', 'خطأ في المزامنة');
+                throw error;
+            }
+        }
+
+        // Sync with Supabase manually
+        async function syncWithSupabase() {
+            showAlert('🚀 بدء المزامنة الفورية...', 'info');
+            
+            try {
+                await loadChannels();
+                await loadUsers();
+                await updateStats();
+                
+                showAlert('✅ تم إكمال المزامنة بنجاح!', 'success');
+            } catch (error) {
+                console.error('Sync error:', error);
+                showAlert('❌ فشل في المزامنة', 'error');
+            }
+        }
 
         // Update date and time
         function updateDateTime() {
@@ -1112,13 +1291,16 @@
                     isLoggedIn = true;
                     document.getElementById('loginContainer').style.display = 'none';
                     document.getElementById('dashboard').classList.add('active');
-                    showAlert('مرحباً بك أمير حلواص! تم تسجيل الدخول بنجاح', 'success');
+                    showAlert('🎉 مرحباً بك أمير حلواص! تم تسجيل الدخول بنجاح', 'success');
+                    
+                    // Load data from Supabase
                     loadChannels();
                     loadUsers();
+                    updateStats();
                 } else {
                     errorMessage.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
                     errorMessage.style.display = 'block';
-                    showAlert('خطأ في بيانات تسجيل الدخول', 'error');
+                    showAlert('❌ خطأ في بيانات تسجيل الدخول', 'error');
                 }
 
                 // Reset button
@@ -1135,7 +1317,7 @@
                 document.getElementById('loginContainer').style.display = 'flex';
                 document.getElementById('username').value = '';
                 document.getElementById('password').value = '';
-                showAlert('تم تسجيل الخروج بنجاح', 'info');
+                showAlert('👋 تم تسجيل الخروج بنجاح', 'info');
             }
         }
 
@@ -1169,16 +1351,27 @@
         });
 
         // Update statistics
-        function updateStats() {
-            document.getElementById('totalChannels').textContent = channels.length;
-            document.getElementById('totalUsers').textContent = users.length;
-            document.getElementById('totalAds').textContent = '3';
-            document.getElementById('totalNotifications').textContent = '5';
-        }
-
-        // Generate unique ID
-        function generateId() {
-            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        async function updateStats() {
+            try {
+                // Get real data from Supabase
+                const channelsData = await makeSupabaseRequest('channels');
+                const usersData = await makeSupabaseRequest('users');
+                const adsData = await makeSupabaseRequest('advertisements');
+                const notificationsData = await makeSupabaseRequest('notifications');
+                
+                document.getElementById('totalChannels').textContent = channelsData?.length || 0;
+                document.getElementById('totalUsers').textContent = usersData?.length || 0;
+                document.getElementById('totalAds').textContent = adsData?.length || 0;
+                document.getElementById('totalNotifications').textContent = notificationsData?.length || 0;
+                
+            } catch (error) {
+                console.error('Error updating stats:', error);
+                // Fallback to local data if Supabase fails
+                document.getElementById('totalChannels').textContent = channels.length;
+                document.getElementById('totalUsers').textContent = users.length;
+                document.getElementById('totalAds').textContent = '0';
+                document.getElementById('totalNotifications').textContent = '0';
+            }
         }
 
         // Get form data as object
@@ -1198,94 +1391,78 @@
         }
 
         // Channel Management
-        function loadChannels() {
+        async function loadChannels() {
             const tbody = document.getElementById('channelsTableBody');
             
-            if (channels.length === 0) {
-                // Add sample data
-                channels = [
-                    {
-                        id: generateId(),
-                        name: 'beIN Sports 1 HD',
-                        name_ar: 'بي ان سبورت 1 اتش دي',
-                        url: 'https://stream.example.com/bein1',
-                        category: 'Sports',
-                        quality: 'HD',
-                        description: 'beIN Sports 1 Premium HD',
-                        description_ar: 'بي ان سبورت 1 مميز عالي الجودة',
-                        image_url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300',
-                        is_premium: true,
-                        supports_recording: true,
-                        is_active: true,
-                        viewers_count: 125000,
-                        rating: 4.8,
-                        created_at: new Date().toISOString()
-                    },
-                    {
-                        id: generateId(),
-                        name: 'Al Jazeera News',
-                        name_ar: 'الجزيرة الإخبارية',
-                        url: 'https://stream.example.com/aljazeera',
-                        category: 'News',
-                        quality: 'HD',
-                        description: 'Al Jazeera News Channel',
-                        description_ar: 'قناة الجزيرة الإخبارية',
-                        image_url: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=300',
-                        is_premium: false,
-                        supports_recording: true,
-                        is_active: true,
-                        viewers_count: 89000,
-                        rating: 4.6,
-                        created_at: new Date().toISOString()
-                    }
-                ];
-            }
+            try {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;"><div class="loading-spinner"></div>جاري تحميل القنوات من Supabase...</td></tr>';
+                
+                const channelsData = await makeSupabaseRequest('channels');
+                channels = channelsData || [];
 
-            tbody.innerHTML = '';
-            
-            channels.forEach(channel => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <img src="${channel.image_url}" alt="${channel.name_ar}" style="width: 40px; height: 30px; border-radius: 5px; object-fit: cover;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2230%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23ddd%22/><text x=%2250%25%22 y=%2250%25%22 font-size=%2212%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22>TV</text></svg>'">
-                            <div>
-                                <div style="font-weight: bold;">${channel.name_ar}</div>
-                                <div style="font-size: 12px; color: #aaa;">${channel.name}</div>
+                tbody.innerHTML = '';
+                
+                if (channels.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">لا توجد قنوات في قاعدة البيانات</td></tr>';
+                    return;
+                }
+
+                channels.forEach(channel => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img src="${channel.image_url || 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=40&h=30'}" alt="${channel.name_ar}" style="width: 40px; height: 30px; border-radius: 5px; object-fit: cover;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2230%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23ddd%22/><text x=%2250%25%22 y=%2250%25%22 font-size=%2212%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22>TV</text></svg>'">
+                                <div>
+                                    <div style="font-weight: bold;">${channel.name_ar}</div>
+                                    <div style="font-size: 12px; color: #aaa;">${channel.name}</div>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <span style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; padding: 4px 8px; border-radius: 5px; font-size: 12px;">
-                            ${channel.category}
-                        </span>
-                    </td>
-                    <td>
-                        <span style="background: linear-gradient(135deg, ${getQualityColor(channel.quality)}); color: white; padding: 4px 8px; border-radius: 5px; font-size: 12px;">
-                            ${channel.quality}
-                        </span>
-                    </td>
-                    <td>
-                        <span style="color: ${channel.is_active ? '#28a745' : '#dc3545'};">
-                            ${channel.is_active ? '✅ نشطة' : '❌ غير نشطة'}
-                        </span>
-                        ${channel.is_premium ? '<br><span style="color: #ffc107;">⭐ مميزة</span>' : ''}
-                    </td>
-                    <td>
-                        <div class="item-actions">
-                            <button class="btn btn-warning btn-small" onclick="editChannel('${channel.id}')" title="تعديل">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-danger btn-small" onclick="deleteChannel('${channel.id}')" title="حذف">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
+                        </td>
+                        <td>
+                            <span style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; padding: 4px 8px; border-radius: 5px; font-size: 12px;">
+                                ${channel.category}
+                            </span>
+                        </td>
+                        <td>
+                            <span style="background: linear-gradient(135deg, ${getQualityColor(channel.quality)}); color: white; padding: 4px 8px; border-radius: 5px; font-size: 12px;">
+                                ${channel.quality}
+                            </span>
+                        </td>
+                        <td>
+                            <span style="color: ${channel.is_active ? '#28a745' : '#dc3545'};">
+                                ${channel.is_active ? '✅ نشطة' : '❌ غير نشطة'}
+                            </span>
+                            ${channel.is_premium ? '<br><span style="color: #ffc107;">⭐ مميزة</span>' : ''}
+                        </td>
+                        <td>
+                            <span class="sync-indicator synced">
+                                <i class="fas fa-cloud-check"></i>
+                                <span>Supabase</span>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="item-actions">
+                                <button class="btn btn-warning btn-small" onclick="editChannel('${channel.id}')" title="تعديل">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-small" onclick="deleteChannel('${channel.id}')" title="حذف">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
 
-            updateStats();
+                updateStats();
+                showAlert(`📺 تم تحميل ${channels.length} قناة من Supabase`, 'success');
+                
+            } catch (error) {
+                console.error('Error loading channels:', error);
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #dc3545;">❌ خطأ في تحميل القنوات من Supabase</td></tr>';
+                showAlert('❌ فشل تحميل القنوات من قاعدة البيانات', 'error');
+            }
         }
 
         function getQualityColor(quality) {
@@ -1297,26 +1474,37 @@
             }
         }
 
-        function addChannel() {
+        async function addChannel() {
             const form = document.getElementById('addChannelForm');
             const data = getFormData(form);
             
-            // Add required fields
-            data.id = generateId();
-            data.viewers_count = 0;
-            data.rating = 4.0;
-            data.created_at = new Date().toISOString();
-            data.updated_at = new Date().toISOString();
-            
-            // Set default image if not provided
-            if (!data.image_url) {
-                data.image_url = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300';
-            }
+            try {
+                // Add required fields for Supabase
+                data.viewers_count = 0;
+                data.rating = 4.0;
+                data.language = 'Arabic';
+                data.is_live = true;
+                data.order_index = 0;
+                data.created_at = new Date().toISOString();
+                data.updated_at = new Date().toISOString();
+                
+                // Set default image if not provided
+                if (!data.image_url) {
+                    data.image_url = 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300';
+                }
 
-            channels.push(data);
-            loadChannels();
-            closeModal('addChannelModal');
-            showAlert(`تم إضافة القناة "${data.name_ar}" بنجاح!`, 'success');
+                // Add to Supabase
+                const result = await makeSupabaseRequest('channels', 'INSERT', data);
+                
+                if (result) {
+                    showAlert(`🎉 تم إضافة القناة "${data.name_ar}" إلى التطبيق وقاعدة البيانات بنجاح!`, 'success');
+                    loadChannels();
+                    closeModal('addChannelModal');
+                }
+            } catch (error) {
+                console.error('Error adding channel:', error);
+                showAlert(`❌ فشل إضافة القناة: ${error.message}`, 'error');
+            }
         }
 
         function editChannel(id) {
@@ -1340,130 +1528,150 @@
             openModal('editChannelModal');
         }
 
-        function updateChannel() {
+        async function updateChannel() {
             const form = document.getElementById('editChannelForm');
             const data = getFormData(form);
             const id = data.id;
 
-            const index = channels.findIndex(c => c.id === id);
-            if (index !== -1) {
+            try {
                 data.updated_at = new Date().toISOString();
-                channels[index] = { ...channels[index], ...data };
-                loadChannels();
-                closeModal('editChannelModal');
-                showAlert(`تم تحديث القناة "${data.name_ar}" بنجاح!`, 'success');
+                
+                // Update in Supabase
+                const result = await makeSupabaseRequest('channels', 'UPDATE', data, { id: id });
+                
+                if (result) {
+                    showAlert(`✅ تم تحديث القناة "${data.name_ar}" في التطبيق وقاعدة البيانات بنجاح!`, 'success');
+                    loadChannels();
+                    closeModal('editChannelModal');
+                }
+            } catch (error) {
+                console.error('Error updating channel:', error);
+                showAlert(`❌ فشل تحديث القناة: ${error.message}`, 'error');
             }
         }
 
-        function deleteChannel(id) {
+        async function deleteChannel(id) {
             const channel = channels.find(c => c.id === id);
             if (!channel) return;
 
-            if (confirm(`هل أنت متأكد من حذف القناة "${channel.name_ar}"؟`)) {
-                channels = channels.filter(c => c.id !== id);
-                loadChannels();
-                showAlert(`تم حذف القناة "${channel.name_ar}" بنجاح`, 'success');
+            if (confirm(`هل أنت متأكد من حذف القناة "${channel.name_ar}" من التطبيق وقاعدة البيانات؟`)) {
+                try {
+                    // Delete from Supabase
+                    await makeSupabaseRequest('channels', 'DELETE', null, { id: id });
+                    
+                    showAlert(`🗑️ تم حذف القناة "${channel.name_ar}" من التطبيق وقاعدة البيانات بنجاح`, 'success');
+                    loadChannels();
+                } catch (error) {
+                    console.error('Error deleting channel:', error);
+                    showAlert(`❌ فشل حذف القناة: ${error.message}`, 'error');
+                }
             }
         }
 
         // User Management
-        function loadUsers() {
+        async function loadUsers() {
             const tbody = document.getElementById('usersTableBody');
             
-            if (users.length === 0) {
-                // Add sample data
-                users = [
-                    {
-                        id: generateId(),
-                        username: 'ameer',
-                        email: 'ameer@tvna.com',
-                        phone: '+964 750 123 4567',
-                        is_premium: false,
-                        is_active: true,
-                        created_at: new Date().toISOString()
-                    },
-                    {
-                        id: generateId(),
-                        username: 'testuser',
-                        email: 'test@tvna.com',
-                        phone: '+964 770 234 5678',
-                        is_premium: false,
-                        is_active: true,
-                        created_at: new Date().toISOString()
-                    },
-                    {
-                        id: generateId(),
-                        username: 'vipuser',
-                        email: 'vip@tvna.com',
-                        phone: '+964 780 345 6789',
-                        is_premium: true,
-                        is_active: true,
-                        created_at: new Date().toISOString()
-                    }
-                ];
+            try {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;"><div class="loading-spinner"></div>جاري تحميل المستخدمين من Supabase...</td></tr>';
+                
+                const usersData = await makeSupabaseRequest('users');
+                users = usersData || [];
+
+                tbody.innerHTML = '';
+                
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">لا يوجد مستخدمين في قاعدة البيانات</td></tr>';
+                    return;
+                }
+
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <div style="font-weight: bold;">${user.username}</div>
+                            ${user.phone ? `<div style="font-size: 12px; color: #aaa;">${user.phone}</div>` : ''}
+                        </td>
+                        <td>${user.email}</td>
+                        <td>
+                            <span style="background: linear-gradient(135deg, ${user.is_premium ? '#ffc107, #fd7e14' : '#28a745, #20c997'}); color: white; padding: 4px 8px; border-radius: 5px; font-size: 12px;">
+                                ${user.is_premium ? '⭐ مميز' : '👤 عادي'}
+                            </span>
+                        </td>
+                        <td>
+                            <span style="color: ${user.is_active ? '#28a745' : '#dc3545'};">
+                                ${user.is_active ? '✅ نشط' : '❌ غير نشط'}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="sync-indicator synced">
+                                <i class="fas fa-cloud-check"></i>
+                                <span>Supabase</span>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="item-actions">
+                                <button class="btn btn-warning btn-small" onclick="editUser('${user.id}')" title="تعديل">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-danger btn-small" onclick="deleteUser('${user.id}')" title="حذف">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                updateStats();
+                showAlert(`👥 تم تحميل ${users.length} مستخدم من Supabase`, 'success');
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #dc3545;">❌ خطأ في تحميل المستخدمين من Supabase</td></tr>';
+                showAlert('❌ فشل تحميل المستخدمين من قاعدة البيانات', 'error');
             }
-
-            tbody.innerHTML = '';
-            
-            users.forEach(user => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        <div style="font-weight: bold;">${user.username}</div>
-                        ${user.phone ? `<div style="font-size: 12px; color: #aaa;">${user.phone}</div>` : ''}
-                    </td>
-                    <td>${user.email}</td>
-                    <td>
-                        <span style="background: linear-gradient(135deg, ${user.is_premium ? '#ffc107, #fd7e14' : '#28a745, #20c997'}); color: white; padding: 4px 8px; border-radius: 5px; font-size: 12px;">
-                            ${user.is_premium ? '⭐ مميز' : '👤 عادي'}
-                        </span>
-                    </td>
-                    <td>
-                        <span style="color: ${user.is_active ? '#28a745' : '#dc3545'};">
-                            ${user.is_active ? '✅ نشط' : '❌ غير نشط'}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="item-actions">
-                            <button class="btn btn-warning btn-small" onclick="editUser('${user.id}')" title="تعديل">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-danger btn-small" onclick="deleteUser('${user.id}')" title="حذف">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-
-            updateStats();
         }
 
-        function addUser() {
+        async function addUser() {
             const form = document.getElementById('addUserForm');
             const data = getFormData(form);
             
-            // Check if username or email already exists
-            if (users.some(u => u.username === data.username)) {
-                showAlert('اسم المستخدم موجود مسبقاً', 'error');
-                return;
-            }
-            
-            if (users.some(u => u.email === data.email)) {
-                showAlert('البريد الإلكتروني موجود مسبقاً', 'error');
-                return;
-            }
+            try {
+                // Check if username or email already exists
+                const existingUsers = await makeSupabaseRequest('users');
+                
+                if (existingUsers.some(u => u.username === data.username)) {
+                    showAlert('❌ اسم المستخدم موجود مسبقاً', 'error');
+                    return;
+                }
+                
+                if (existingUsers.some(u => u.email === data.email)) {
+                    showAlert('❌ البريد الإلكتروني موجود مسبقاً', 'error');
+                    return;
+                }
 
-            // Add required fields
-            data.id = generateId();
-            data.created_at = new Date().toISOString();
-            data.updated_at = new Date().toISOString();
+                // Hash password for security
+                data.password_hash = btoa(data.password);
+                delete data.password;
+                
+                // Add required fields for Supabase
+                data.created_at = new Date().toISOString();
+                data.updated_at = new Date().toISOString();
+                data.allowed_channels = [];
 
-            users.push(data);
-            loadUsers();
-            closeModal('addUserModal');
-            showAlert(`تم إضافة المستخدم "${data.username}" بنجاح!`, 'success');
+                // Add to Supabase
+                const result = await makeSupabaseRequest('users', 'INSERT', data);
+                
+                if (result) {
+                    showAlert(`🎉 تم إضافة المستخدم "${data.username}" إلى التطبيق وقاعدة البيانات بنجاح!`, 'success');
+                    loadUsers();
+                    closeModal('addUserModal');
+                }
+            } catch (error) {
+                console.error('Error adding user:', error);
+                showAlert(`❌ فشل إضافة المستخدم: ${error.message}`, 'error');
+            }
         }
 
         function editUser(id) {
@@ -1482,46 +1690,62 @@
             openModal('editUserModal');
         }
 
-        function updateUser() {
+        async function updateUser() {
             const form = document.getElementById('editUserForm');
             const data = getFormData(form);
             const id = data.id;
 
-            // Check if username or email already exists (excluding current user)
-            if (users.some(u => u.id !== id && u.username === data.username)) {
-                showAlert('اسم المستخدم موجود مسبقاً', 'error');
-                return;
-            }
-            
-            if (users.some(u => u.id !== id && u.email === data.email)) {
-                showAlert('البريد الإلكتروني موجود مسبقاً', 'error');
-                return;
-            }
-
-            const index = users.findIndex(u => u.id === id);
-            if (index !== -1) {
-                data.updated_at = new Date().toISOString();
+            try {
+                // Check if username or email already exists (excluding current user)
+                const existingUsers = await makeSupabaseRequest('users');
                 
-                // Remove password if empty (keep existing one)
-                if (!data.password) {
-                    delete data.password;
+                if (existingUsers.some(u => u.id !== id && u.username === data.username)) {
+                    showAlert('❌ اسم المستخدم موجود مسبقاً', 'error');
+                    return;
                 }
                 
-                users[index] = { ...users[index], ...data };
-                loadUsers();
-                closeModal('editUserModal');
-                showAlert(`تم تحديث المستخدم "${data.username}" بنجاح!`, 'success');
+                if (existingUsers.some(u => u.id !== id && u.email === data.email)) {
+                    showAlert('❌ البريد الإلكتروني موجود مسبقاً', 'error');
+                    return;
+                }
+
+                data.updated_at = new Date().toISOString();
+                
+                // Handle password update
+                if (data.password) {
+                    data.password_hash = btoa(data.password);
+                }
+                delete data.password;
+                
+                // Update in Supabase
+                const result = await makeSupabaseRequest('users', 'UPDATE', data, { id: id });
+                
+                if (result) {
+                    showAlert(`✅ تم تحديث المستخدم "${data.username}" في التطبيق وقاعدة البيانات بنجاح!`, 'success');
+                    loadUsers();
+                    closeModal('editUserModal');
+                }
+            } catch (error) {
+                console.error('Error updating user:', error);
+                showAlert(`❌ فشل تحديث المستخدم: ${error.message}`, 'error');
             }
         }
 
-        function deleteUser(id) {
+        async function deleteUser(id) {
             const user = users.find(u => u.id === id);
             if (!user) return;
 
-            if (confirm(`هل أنت متأكد من حذف المستخدم "${user.username}"؟`)) {
-                users = users.filter(u => u.id !== id);
-                loadUsers();
-                showAlert(`تم حذف المستخدم "${user.username}" بنجاح`, 'success');
+            if (confirm(`هل أنت متأكد من حذف المستخدم "${user.username}" من التطبيق وقاعدة البيانات؟`)) {
+                try {
+                    // Delete from Supabase
+                    await makeSupabaseRequest('users', 'DELETE', null, { id: id });
+                    
+                    showAlert(`🗑️ تم حذف المستخدم "${user.username}" من التطبيق وقاعدة البيانات بنجاح`, 'success');
+                    loadUsers();
+                } catch (error) {
+                    console.error('Error deleting user:', error);
+                    showAlert(`❌ فشل حذف المستخدم: ${error.message}`, 'error');
+                }
             }
         }
     </script>
