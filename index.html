@@ -2240,3 +2240,666 @@
         function handleDragStart(e) {
             draggedElement = this;
             this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            if (draggedElement !== this) {
+                const draggedId = draggedElement.getAttribute('data-channel-id');
+                const targetId = this.getAttribute('data-channel-id');
+                reorderChannels(draggedId, targetId);
+            }
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            draggedElement = null;
+        }
+
+        // Reorder channels
+        async function reorderChannels(draggedId, targetId) {
+            const draggedIndex = channels.findIndex(c => c.id === draggedId);
+            const targetIndex = channels.findIndex(c => c.id === targetId);
+            
+            if (draggedIndex === -1 || targetIndex === -1) return;
+
+            // Update order in local array
+            const draggedChannel = channels[draggedIndex];
+            channels.splice(draggedIndex, 1);
+            channels.splice(targetIndex, 0, draggedChannel);
+
+            // Update order_index in database
+            try {
+                for (let i = 0; i < channels.length; i++) {
+                    await supabase
+                        .from('channels')
+                        .update({ order_index: i })
+                        .eq('id', channels[i].id);
+                }
+
+                showAlert('✅ تم تحديث ترتيب القنوات!', 'success');
+                displayChannels();
+            } catch (error) {
+                console.error('Error updating channel order:', error);
+                showAlert('❌ خطأ في تحديث ترتيب القنوات!', 'error');
+                loadChannels(); // Reload to restore original order
+            }
+        }
+
+        // Edit channel
+        function editChannel(channelId) {
+            const channel = channels.find(c => c.id === channelId);
+            if (!channel) return;
+
+            document.getElementById('editChannelId').value = channel.id;
+            document.getElementById('editChannelName').value = channel.name;
+            document.getElementById('editChannelNameAr').value = channel.name_ar;
+            document.getElementById('editChannelUrl').value = channel.url;
+            document.getElementById('editChannelCategory').value = channel.category;
+            document.getElementById('editChannelQuality').value = channel.quality;
+            document.getElementById('editChannelOrder').value = channel.order_index || 0;
+            document.getElementById('editChannelImageUrl').value = channel.image_url || '';
+            document.getElementById('editIsPremium').checked = channel.is_premium;
+
+            openModal('editChannelModal');
+        }
+
+        // Edit channel form submission
+        document.getElementById('editChannelForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const channelId = document.getElementById('editChannelId').value;
+                const channelData = {
+                    name: document.getElementById('editChannelName').value,
+                    name_ar: document.getElementById('editChannelNameAr').value,
+                    url: document.getElementById('editChannelUrl').value,
+                    category: document.getElementById('editChannelCategory').value,
+                    quality: document.getElementById('editChannelQuality').value,
+                    order_index: parseInt(document.getElementById('editChannelOrder').value) || 0,
+                    image_url: document.getElementById('editChannelImageUrl').value,
+                    is_premium: document.getElementById('editIsPremium').checked
+                };
+
+                const { error } = await supabase
+                    .from('channels')
+                    .update(channelData)
+                    .eq('id', channelId);
+
+                if (error) throw error;
+
+                showAlert('✅ تم تحديث القناة بنجاح!', 'success');
+                closeModal('editChannelModal');
+                loadChannels();
+                
+            } catch (error) {
+                console.error('Error updating channel:', error);
+                showAlert('❌ خطأ في تحديث القناة!', 'error');
+            }
+        });
+
+        // Rest of the original functions
+        async function checkConnection() {
+            try {
+                const { data, error } = await supabase.from('channels').select('count').limit(1);
+                if (error) throw error;
+                
+                updateConnectionStatus(true);
+                showAlert('✅ تم الاتصال بقاعدة البيانات بنجاح!', 'success');
+            } catch (error) {
+                console.error('Connection error:', error);
+                updateConnectionStatus(false);
+                showAlert('❌ فشل في الاتصال بقاعدة البيانات!', 'error');
+            }
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusElement = document.getElementById('connectionStatus');
+            if (connected) {
+                statusElement.className = 'connection-status status-connected';
+                statusElement.innerHTML = '✅ متصل بقاعدة البيانات - Ameer_7elwas ';
+            } else {
+                statusElement.className = 'connection-status status-disconnected';
+                statusElement.innerHTML = '❌ غير متصل بقاعدة البيانات!';
+            }
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('ar-SA', options);
+        }
+
+        async function loadUsers() {
+            try {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('Load users error:', error);
+                    if (error.code === '42P01') {
+                        showAlert('⚠️ جدول المستخدمين غير موجود. يرجى إنشاؤه أولاً.', 'error');
+                        users = [];
+                        displayUsers();
+                        updateStats();
+                        return;
+                    } else {
+                        throw error;
+                    }
+                }
+
+                users = data || [];
+                displayUsers();
+                updateStats();
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showAlert(`❌ خطأ في تحميل المستخدمين: ${error.message}`, 'error');
+                users = [];
+                displayUsers();
+                updateStats();
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalChannels').textContent = channels.length;
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalAds').textContent = advertisements.length;
+            document.getElementById('totalCategories').textContent = categories.length;
+        }
+
+        function displayUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            if (users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px;">
+                            <div style="color: #666;">
+                                <div style="font-size: 48px; margin-bottom: 15px;">👥</div>
+                                <div style="font-size: 18px; margin-bottom: 10px;">لا يوجد مستخدمين مسجلين بعد</div>
+                                <div style="font-size: 14px; color: rgba(255,255,255,0.6);">قم بإضافة أول مستخدم</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            users.forEach((user, index) => {
+                const tr = document.createElement('tr');
+                tr.style.opacity = '0';
+                tr.style.animation = `slideIn 0.3s ease forwards ${index * 0.1}s`;
+                
+                const createdDate = user.created_at ? new Date(user.created_at).toLocaleDateString('ar-SA') : 'غير محدد';
+                
+                tr.innerHTML = `
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">
+                                ${user.username.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <div style="font-weight: bold;">${user.username}</div>
+                                <div style="font-size: 11px; color: rgba(255,255,255,0.6);">ID: ${user.id?.substring(0, 8) || 'N/A'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div>${user.email || '<span style="color: rgba(255,255,255,0.5);">غير محدد</span>'}</div>
+                    </td>
+                    <td>
+                        <div>${user.phone || '<span style="color: rgba(255,255,255,0.5);">غير محدد</span>'}</div>
+                    </td>
+                    <td>
+                        <span style="padding: 6px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; ${user.is_premium ? 
+                            'background: linear-gradient(135deg, #feca57, #ff9ff3); color: white;' : 
+                            'background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);'
+                        }">
+                            ${user.is_premium ? '⭐ مميز' : '👤 عادي'}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="font-size: 13px;">${createdDate}</div>
+                    </td>
+                    <td>
+                        <span style="padding: 6px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; ${user.is_active ? 
+                            'background: linear-gradient(135deg, #00b894, #00a085); color: white;' : 
+                            'background: linear-gradient(135deg, #e74c3c, #c0392b); color: white;'
+                        }">
+                            ${user.is_active ? '✅ نشط' : '❌ غير نشط'}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                            <button class="btn btn-danger btn-small" onclick="deleteUser('${user.id}')" title="حذف">🗑️</button>
+                            <button class="btn ${user.is_premium ? 'btn-warning' : 'btn-primary'} btn-small" onclick="toggleUserPremium('${user.id}')" title="${user.is_premium ? 'إزالة الترقية' : 'ترقية'}">
+                                ${user.is_premium ? '⬇️' : '⬆️'}
+                            </button>
+                            <button class="btn ${user.is_active ? 'btn-secondary' : 'btn-success'} btn-small" onclick="toggleUserStatus('${user.id}')" title="${user.is_active ? 'تعطيل' : 'تفعيل'}">
+                                ${user.is_active ? '❌' : '✅'}
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Delete channel
+        async function deleteChannel(channelId) {
+            if (confirm('هل أنت متأكد من حذف هذه القناة؟')) {
+                try {
+                    const { error } = await supabase
+                        .from('channels')
+                        .update({ is_active: false })
+                        .eq('id', channelId);
+
+                    if (error) throw error;
+
+                    showAlert('✅ تم حذف القناة بنجاح!', 'success');
+                    loadChannels();
+                    
+                } catch (error) {
+                    console.error('Error deleting channel:', error);
+                    showAlert('❌ خطأ في حذف القناة!', 'error');
+                }
+            }
+        }
+
+        // Delete user
+        async function deleteUser(userId) {
+            if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+                try {
+                    const { error } = await supabase
+                        .from('users')
+                        .update({ is_active: false })
+                        .eq('id', userId);
+
+                    if (error) throw error;
+
+                    showAlert('✅ تم حذف المستخدم بنجاح!', 'success');
+                    loadUsers();
+                    
+                } catch (error) {
+                    console.error('Error deleting user:', error);
+                    showAlert('❌ خطأ في حذف المستخدم!', 'error');
+                }
+            }
+        }
+
+        // Toggle user premium status
+        async function toggleUserPremium(userId) {
+            try {
+                const user = users.find(u => u.id === userId);
+                if (!user) return;
+
+                const newStatus = !user.is_premium;
+                const actionText = newStatus ? 'ترقية' : 'إزالة ترقية';
+
+                const { error } = await supabase
+                    .from('users')
+                    .update({ 
+                        is_premium: newStatus,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', userId);
+
+                if (error) throw error;
+
+                showAlert(`✅ تم ${actionText} المستخدم "${user.username}" بنجاح!`, 'success');
+                loadUsers();
+                
+            } catch (error) {
+                console.error('Error updating user:', error);
+                showAlert(`❌ خطأ في تحديث المستخدم: ${error.message}`, 'error');
+            }
+        }
+
+        // Toggle user active status
+        async function toggleUserStatus(userId) {
+            try {
+                const user = users.find(u => u.id === userId);
+                if (!user) return;
+
+                const newStatus = !user.is_active;
+                const actionText = newStatus ? 'تفعيل' : 'تعطيل';
+
+                const { error } = await supabase
+                    .from('users')
+                    .update({ 
+                        is_active: newStatus,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', userId);
+
+                if (error) throw error;
+
+                showAlert(`✅ تم ${actionText} المستخدم "${user.username}" بنجاح!`, 'success');
+                loadUsers();
+                
+            } catch (error) {
+                console.error('Error updating user status:', error);
+                showAlert(`❌ خطأ في تحديث حالة المستخدم: ${error.message}`, 'error');
+            }
+        }
+
+        // Test channel
+        function testChannel(url) {
+            window.open(url, '_blank');
+            showAlert('🔗 تم فتح رابط القناة في نافذة جديدة', 'success');
+        }
+
+        // M3U file handling functions
+        function handleM3UFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                processM3UFile(file);
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('dragover');
+        }
+
+        function handleM3UFileDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            
+            const files = event.dataTransfer.files;
+            if (files.length > 0 && (files[0].name.endsWith('.m3u') || files[0].name.endsWith('.m3u8'))) {
+                processM3UFile(files[0]);
+            } else {
+                showAlert('❌ يرجى رفع ملف M3U صحيح!', 'error');
+            }
+        }
+
+        // M3U processing function
+        async function processM3UFile(file) {
+            showProgress(true);
+            updateProgress(0, 'جاري قراءة الملف...');
+
+            try {
+                const fileContent = await readFileContent(file);
+                const parsedChannels = parseM3UContent(fileContent);
+                
+                if (parsedChannels.length === 0) {
+                    throw new Error('لم يتم العثور على قنوات صالحة في الملف');
+                }
+
+                updateProgress(50, `تم العثور على ${parsedChannels.length} قناة، جاري الإضافة...`);
+                
+                const results = await addChannelsToDatabase(parsedChannels);
+                showUploadResults(results);
+                
+                updateProgress(100, 'تم الانتهاء!');
+                setTimeout(() => showProgress(false), 2000);
+
+                loadChannels();
+                showAlert(`✅ تم رفع ${results.success} قناة بنجاح من أصل ${parsedChannels.length}!`, 'success');
+
+            } catch (error) {
+                console.error('Error processing M3U file:', error);
+                showAlert(`❌ خطأ في معالجة الملف: ${error.message}`, 'error');
+                showProgress(false);
+            }
+        }
+
+        function readFileContent(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(new Error('خطأ في قراءة الملف'));
+                reader.readAsText(file, 'UTF-8');
+            });
+        }
+
+        function parseM3UContent(content) {
+            const lines = content.split('\n').map(line => line.trim()).filter(line => line);
+            const channels = [];
+            let currentChannel = {};
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+
+                if (line.startsWith('#EXTINF:')) {
+                    const info = line.substring(8);
+                    const commaIndex = info.lastIndexOf(',');
+                    
+                    if (commaIndex !== -1) {
+                        const attributes = info.substring(0, commaIndex);
+                        const displayName = info.substring(commaIndex + 1).trim();
+
+                        currentChannel = {
+                            name: displayName,
+                            name_ar: displayName,
+                            description: '',
+                            description_ar: '',
+                            category: 'General',
+                            quality: 'HD',
+                            is_premium: false,
+                            order_index: 0,
+                            image_url: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300',
+                            viewers_count: Math.floor(Math.random() * 100000),
+                            rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
+                            is_active: true
+                        };
+
+                        const logoMatch = attributes.match(/tvg-logo="([^"]+)"/);
+                        if (logoMatch) {
+                            currentChannel.image_url = logoMatch[1];
+                        }
+
+                        const groupMatch = attributes.match(/group-title="([^"]+)"/);
+                        if (groupMatch) {
+                            currentChannel.category = groupMatch[1];
+                        }
+                    }
+                } else if (line.startsWith('http') && Object.keys(currentChannel).length > 0) {
+                    currentChannel.url = line;
+                    channels.push({...currentChannel});
+                    currentChannel = {};
+                }
+            }
+
+            return channels;
+        }
+
+        async function addChannelsToDatabase(channelsData) {
+            const results = {
+                success: 0,
+                errors: 0,
+                skipped: 0,
+                details: []
+            };
+
+            for (let i = 0; i < channelsData.length; i++) {
+                const channel = channelsData[i];
+                updateProgress(50 + (i / channelsData.length) * 50, `إضافة القناة ${i + 1} من ${channelsData.length}: ${channel.name}`);
+
+                try {
+                    const { data: existingChannels } = await supabase
+                        .from('channels')
+                        .select('id')
+                        .eq('url', channel.url)
+                        .eq('is_active', true);
+
+                    if (existingChannels && existingChannels.length > 0) {
+                        results.skipped++;
+                        results.details.push({
+                            name: channel.name,
+                            status: 'skipped',
+                            message: 'القناة موجودة بالفعل'
+                        });
+                        continue;
+                    }
+
+                    const { data, error } = await supabase
+                        .from('channels')
+                        .insert([channel])
+                        .select();
+
+                    if (error) throw error;
+
+                    results.success++;
+                    results.details.push({
+                        name: channel.name,
+                        status: 'success',
+                        message: 'تم إضافة القناة بنجاح'
+                    });
+
+                } catch (error) {
+                    console.error(`Error adding channel ${channel.name}:`, error);
+                    results.errors++;
+                    results.details.push({
+                        name: channel.name,
+                        status: 'error',
+                        message: error.message || 'خطأ غير معروف'
+                    });
+                }
+            }
+
+            return results;
+        }
+
+        function showProgress(show) {
+            const progressContainer = document.getElementById('uploadProgress');
+            progressContainer.style.display = show ? 'block' : 'none';
+            
+            if (!show) {
+                updateProgress(0, '');
+            }
+        }
+
+        function updateProgress(percent, text) {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            progressFill.style.width = percent + '%';
+            progressText.textContent = text;
+        }
+
+        function showUploadResults(results) {
+            const resultsContainer = document.getElementById('uploadResults');
+            const resultsList = document.getElementById('uploadResultsList');
+            
+            resultsList.innerHTML = '';
+
+            const summary = document.createElement('div');
+            summary.style.marginBottom = '15px';
+            summary.style.padding = '10px';
+            summary.style.borderRadius = '5px';
+            summary.style.background = 'rgba(78, 205, 196, 0.1)';
+            summary.innerHTML = `
+                <strong>ملخص النتائج:</strong><br>
+                ✅ تم إضافة ${results.success} قناة بنجاح<br>
+                ⚠️ تم تخطي ${results.skipped || 0} قناة (موجودة مسبقاً)<br>
+                ❌ فشل في إضافة ${results.errors} قناة
+            `;
+            resultsList.appendChild(summary);
+
+            results.details.forEach(detail => {
+                const item = document.createElement('div');
+                item.className = 'upload-result-item';
+                
+                let icon, colorClass;
+                switch(detail.status) {
+                    case 'success':
+                        icon = '✅';
+                        colorClass = 'result-success';
+                        break;
+                    case 'skipped':
+                        icon = '⚠️';
+                        colorClass = 'result-warning';
+                        break;
+                    case 'error':
+                        icon = '❌';
+                        colorClass = 'result-error';
+                        break;
+                    default:
+                        icon = '❓';
+                        colorClass = 'result-error';
+                }
+                
+                item.innerHTML = `
+                    <span class="result-icon ${colorClass}">${icon}</span>
+                    <div>
+                        <strong>${detail.name}</strong><br>
+                        <small style="color: rgba(255,255,255,0.7);">${detail.message}</small>
+                    </div>
+                `;
+                
+                resultsList.appendChild(item);
+            });
+
+            resultsContainer.style.display = 'block';
+        }
+
+        // Utility functions
+        function showAlert(message, type = 'success') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = message;
+            
+            alertContainer.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('show');
+            }
+        }
+
+        // CSS animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { 
+                    transform: translateY(-20px); 
+                    opacity: 0; 
+                }
+                to { 
+                    transform: translateY(0); 
+                    opacity: 1; 
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
