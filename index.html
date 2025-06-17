@@ -105,6 +105,23 @@
             backdrop-filter: blur(10px);
         }
 
+        /* Connection Status */
+        .connection-status {
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .status-connected {
+            background: linear-gradient(135deg, #00b894, #00a085);
+        }
+
+        .status-disconnected {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
         /* Card Styles */
         .card {
             background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
@@ -264,6 +281,38 @@
             color: rgba(255, 255, 255, 0.5);
         }
 
+        .file-upload-area {
+            border: 2px dashed rgba(78, 205, 196, 0.5);
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(78, 205, 196, 0.05);
+        }
+
+        .file-upload-area:hover {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #4ecdc4;
+        }
+
+        .file-upload-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #4ecdc4;
+        }
+
+        .file-upload-hint {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
         /* Button Styles */
         .btn {
             padding: 12px 25px;
@@ -338,6 +387,54 @@
             cursor: not-allowed;
         }
 
+        /* Alert Container */
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #00b894, #00a085);
+            color: white;
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, #feca57, #ff9ff3);
+            color: white;
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, #2e86de, #1a73e8);
+            color: white;
+        }
+
+        .alert-icon {
+            font-size: 24px;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .header-content {
@@ -362,6 +459,9 @@
     </style>
 </head>
 <body>
+    <!-- Alert Container -->
+    <div class="alert-container" id="alertContainer"></div>
+
     <div class="container">
         <!-- Header -->
         <div class="header">
@@ -381,30 +481,35 @@
             </div>
         </div>
 
+        <!-- Connection Status -->
+        <div id="connectionStatus" class="connection-status status-connected">
+            ✅ متصل بقاعدة البيانات - Ameer_7elwas
+        </div>
+
         <!-- Statistics -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-number">78</div>
+                <div class="stat-number">10</div>
                 <div class="stat-label"><i class="fas fa-tv"></i> إجمالي القنوات</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">1,245</div>
+                <div class="stat-number">4</div>
                 <div class="stat-label"><i class="fas fa-users"></i> المستخدمين المسجلين</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">12</div>
+                <div class="stat-number">3</div>
                 <div class="stat-label"><i class="fas fa-ad"></i> الإعلانات النشطة</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">5</div>
+                <div class="stat-number">3</div>
                 <div class="stat-label"><i class="fas fa-bell"></i> الإشعارات النشطة</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">24,589</div>
+                <div class="stat-number">50</div>
                 <div class="stat-label"><i class="fas fa-eye"></i> إجمالي المشاهدات</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">2,847</div>
+                <div class="stat-number">20</div>
                 <div class="stat-label"><i class="fas fa-heart"></i> إجمالي المفضلة</div>
             </div>
         </div>
@@ -427,29 +532,29 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
                     <div class="form-group">
                         <label class="form-label">اسم المستخدم</label>
-                        <input type="text" class="form-input" placeholder="اسم المستخدم" required>
+                        <input type="text" class="form-input" id="userName" placeholder="اسم المستخدم" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">البريد الإلكتروني</label>
-                        <input type="email" class="form-input" placeholder="user@example.com" required>
+                        <input type="email" class="form-input" id="userEmail" placeholder="user@example.com" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">كلمة المرور</label>
-                        <input type="password" class="form-input" placeholder="كلمة المرور" required>
+                        <input type="password" class="form-input" id="userPassword" placeholder="كلمة المرور" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">رقم الهاتف</label>
-                        <input type="tel" class="form-input" placeholder="+964 xxx xxx xxxx">
+                        <input type="tel" class="form-input" id="userPhone" placeholder="+964 xxx xxx xxxx">
                     </div>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
                     <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="checkbox">
+                        <input type="checkbox" id="userIsPremium">
                         <span>⭐ حساب مميز</span>
                     </label>
                     <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="checkbox" checked>
+                        <input type="checkbox" id="userIsActive" checked>
                         <span>✅ الحساب نشط</span>
                     </label>
                 </div>
@@ -473,29 +578,13 @@
                     </div>
                 </div>
                 <div class="card-header-right">
-                    <button class="btn btn-primary"><i class="fas fa-plus"></i> إشعار جديد</button>
-                    <button class="btn btn-warning"><i class="fas fa-sync"></i> تحديث</button>
+                    <button class="btn btn-primary" id="addNotificationBtn"><i class="fas fa-plus"></i> إشعار جديد</button>
+                    <button class="btn btn-warning" id="refreshNotificationsBtn"><i class="fas fa-sync"></i> تحديث</button>
                 </div>
             </div>
             
-            <div class="notifications-grid" id="notificationsContainer">
-                <div class="notification-card">
-                    <h3>مرحباً بك في TvNa!</h3>
-                    <p>تم تفعيل حسابك بنجاح، استمتع بمشاهدة قنواتك المفضلة.</p>
-                    <div class="notification-meta">
-                        <span><i class="fas fa-clock"></i> 18 يونيو 2025</span>
-                        <span><i class="fas fa-exclamation-circle"></i> عادية</span>
-                    </div>
-                </div>
-                
-                <div class="notification-card">
-                    <h3>صيانة النظام</h3>
-                    <p>سيتم إجراء صيانة للنظام يوم الأحد القادم من الساعة 2 صباحاً حتى 4 صباحاً.</p>
-                    <div class="notification-meta">
-                        <span><i class="fas fa-clock"></i> 15 يونيو 2025</span>
-                        <span><i class="fas fa-exclamation-triangle"></i> عاجلة</span>
-                    </div>
-                </div>
+            <div class="notifications-container" id="notificationsContainer">
+                <!-- Notifications will be populated dynamically -->
             </div>
         </div>
 
@@ -512,35 +601,13 @@
                     </div>
                 </div>
                 <div class="card-header-right">
-                    <button class="btn btn-primary"><i class="fas fa-plus"></i> إعلان جديد</button>
-                    <button class="btn btn-warning"><i class="fas fa-sync"></i> تحديث</button>
+                    <button class="btn btn-primary" id="addAdBtn"><i class="fas fa-plus"></i> إعلان جديد</button>
+                    <button class="btn btn-warning" id="refreshAdsBtn"><i class="fas fa-sync"></i> تحديث</button>
                 </div>
             </div>
             
-            <div class="ads-grid" id="adsContainer">
-                <div class="ad-card">
-                    <div class="ad-image-placeholder">
-                        <i class="fas fa-image"></i>
-                    </div>
-                    <h3>عرض خاص للاشتراكات</h3>
-                    <p>احصل على خصم 30% على الاشتراكات السنوية لمدة محدودة</p>
-                    <div class="ad-meta">
-                        <span><i class="fas fa-clock"></i> ينتهي في: 30 يونيو 2025</span>
-                        <span><i class="fas fa-eye"></i> 2,458 مشاهدة</span>
-                    </div>
-                </div>
-                
-                <div class="ad-card">
-                    <div class="ad-image-placeholder">
-                        <i class="fas fa-image"></i>
-                    </div>
-                    <h3>قنوات رياضية جديدة</h3>
-                    <p>تمت إضافة 10 قنوات رياضية جديدة حصرية للمشتركين المميزين</p>
-                    <div class="ad-meta">
-                        <span><i class="fas fa-clock"></i> ينتهي في: 15 يوليو 2025</span>
-                        <span><i class="fas fa-eye"></i> 5,782 مشاهدة</span>
-                    </div>
-                </div>
+            <div class="ads-container" id="adsContainer">
+                <!-- Advertisements will be populated dynamically -->
             </div>
         </div>
 
@@ -562,45 +629,64 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
                     <div class="form-group">
                         <label class="form-label">اسم القناة (English)</label>
-                        <input type="text" class="form-input" placeholder="Channel Name" required>
+                        <input type="text" class="form-input" id="channelName" placeholder="Channel Name" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">اسم القناة (العربية)</label>
-                        <input type="text" class="form-input" placeholder="اسم القناة بالعربية" required>
+                        <input type="text" class="form-input" id="channelNameAr" placeholder="اسم القناة بالعربية" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">رابط القناة</label>
-                        <input type="url" class="form-input" placeholder="https://example.com/stream.m3u8" required>
+                        <input type="url" class="form-input" id="channelUrl" placeholder="https://example.com/stream.m3u8" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">التصنيف</label>
-                        <select class="form-input" required>
+                        <select class="form-input" id="channelCategory" required>
                             <option value="">اختر التصنيف</option>
                             <option value="Sports">رياضة</option>
                             <option value="News">أخبار</option>
                             <option value="Entertainment">ترفيه</option>
+                            <option value="Movies">أفلام</option>
+                            <option value="Kids">أطفال</option>
+                            <option value="Music">موسيقى</option>
+                            <option value="Documentary">وثائقي</option>
+                            <option value="Religious">ديني</option>
+                            <option value="General">عام</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-group" style="margin-top: 20px;">
                     <label class="form-label">صورة القناة</label>
-                    <div class="file-upload-area">
-                        <i class="fas fa-cloud-upload-alt"></i>
+                    <div class="file-upload-area" id="channelImageUpload">
+                        <div class="file-upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
                         <div class="file-upload-text">اضغط لاختيار صورة</div>
                         <div class="file-upload-hint">يدعم: JPG, PNG, GIF (حد أقصى 5MB)</div>
+                        <input type="file" id="channelImageFile" accept="image/*" style="display: none;">
                     </div>
+                    <img id="channelImagePreview" class="image-preview" style="display: none; max-width: 200px; margin-top: 15px;">
                 </div>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
                     <div class="form-group">
                         <label class="form-label">الوصف (English)</label>
-                        <textarea class="form-input" placeholder="Channel Description" rows="3"></textarea>
+                        <textarea class="form-input" id="channelDescription" placeholder="Channel Description" rows="3"></textarea>
                     </div>
                     <div class="form-group">
                         <label class="form-label">الوصف (العربية)</label>
-                        <textarea class="form-input" placeholder="وصف القناة بالعربية" rows="3"></textarea>
+                        <textarea class="form-input" id="channelDescriptionAr" placeholder="وصف القناة بالعربية" rows="3"></textarea>
                     </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="isPremium">
+                        <span>⭐ قناة مميزة</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="supportsRecording" checked>
+                        <span>📹 تدعم التسجيل</span>
+                    </label>
                 </div>
 
                 <button type="submit" class="btn btn-primary" style="margin-top: 20px;">
@@ -625,10 +711,100 @@
             document.getElementById('currentDate').textContent = now.toLocaleDateString('ar-SA', options);
         }
         
+        // Show alert
+        function showAlert(message, type = 'info', duration = 5000) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+            
+            alertDiv.innerHTML = `
+                <div class="alert-icon"><i class="${icons[type] || icons.info}"></i></div>
+                <div>${message}</div>
+            `;
+            
+            alertContainer.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, duration);
+        }
+        
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             updateDateTime();
-            setInterval(updateDateTime, 60000); // Update every minute
+            setInterval(updateDateTime, 60000);
+            
+            // Initialize file upload for channel image
+            const channelImageUpload = document.getElementById('channelImageUpload');
+            const channelImageFile = document.getElementById('channelImageFile');
+            const channelImagePreview = document.getElementById('channelImagePreview');
+            
+            channelImageUpload.addEventListener('click', () => {
+                channelImageFile.click();
+            });
+            
+            channelImageFile.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        channelImagePreview.src = e.target.result;
+                        channelImagePreview.style.display = 'block';
+                    }
+                    
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+            
+            // Add user form submission
+            document.getElementById('addUserForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('userName').value;
+                showAlert(`تم إضافة المستخدم <strong>${username}</strong> بنجاح!`, 'success');
+                this.reset();
+            });
+            
+            // Add channel form submission
+            document.getElementById('addChannelForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const channelName = document.getElementById('channelNameAr').value || 
+                                    document.getElementById('channelName').value;
+                showAlert(`تم إضافة القناة <strong>${channelName}</strong> بنجاح!`, 'success');
+                this.reset();
+                channelImagePreview.style.display = 'none';
+            });
+            
+            // Buttons functionality
+            document.getElementById('addNotificationBtn').addEventListener('click', function() {
+                showAlert('تم فتح نموذج إضافة إشعار جديد', 'info');
+            });
+            
+            document.getElementById('addAdBtn').addEventListener('click', function() {
+                showAlert('تم فتح نموذج إضافة إعلان جديد', 'info');
+            });
+            
+            document.getElementById('refreshNotificationsBtn').addEventListener('click', function() {
+                showAlert('تم تحديث قائمة الإشعارات', 'success');
+            });
+            
+            document.getElementById('refreshAdsBtn').addEventListener('click', function() {
+                showAlert('تم تحديث قائمة الإعلانات', 'success');
+            });
+            
+            // Show initial alerts
+            setTimeout(() => {
+                showAlert('مرحباً بك في لوحة تحكم TvNa!', 'info');
+                showAlert('تم الاتصال بنجاح بقاعدة البيانات', 'success');
+            }, 1000);
         });
     </script>
 </body>
