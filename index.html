@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TvNa 2025 - لوحة التحكم المتقدمة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.7/supabase.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
@@ -110,6 +109,10 @@
             border-color: #4ecdc4;
             box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
             background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .btn {
@@ -525,91 +528,47 @@
             100% { transform: rotate(360deg); }
         }
 
-        .search-box {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 45px 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 15px;
-            background: var(--dark-accent);
-            color: white;
+        .connection-status {
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
             font-size: 14px;
         }
 
-        .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-        }
+        .status-connected { background: var(--success-gradient); }
+        .status-disconnected { background: var(--danger-gradient); }
+        .status-connecting { background: var(--warning-gradient); }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .pagination button {
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            background: var(--dark-accent);
-            color: white;
+        .demo-info {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            padding: 15px;
             border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            margin-top: 20px;
+            text-align: center;
+            border: 1px solid rgba(46, 204, 113, 0.3);
         }
 
-        .pagination button:hover:not(:disabled) {
-            background: var(--success-gradient);
+        .demo-info h4 {
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
-        .pagination button.active {
-            background: var(--success-gradient);
-        }
-
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 12px;
+        .demo-info p {
+            font-size: 16px;
             font-weight: bold;
         }
 
-        .status-active { background: var(--success-gradient); }
-        .status-inactive { background: var(--danger-gradient); }
-        .status-premium { background: var(--warning-gradient); }
-
-        .image-preview {
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
-            object-fit: cover;
-            border: 2px solid var(--border-color);
-        }
-
-        .quick-actions {
-            display: flex;
-            gap: 5px;
-        }
-
-        .quick-actions button {
-            padding: 5px 8px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 12px;
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+            border: 1px solid rgba(231, 76, 60, 0.3);
         }
 
         .mobile-toggle {
@@ -676,39 +635,6 @@
             height: 300px;
             margin: 20px 0;
         }
-
-        .error-message {
-            background: rgba(231, 76, 60, 0.2);
-            color: #e74c3c;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            text-align: center;
-            border: 1px solid rgba(231, 76, 60, 0.3);
-        }
-
-        .success-message {
-            background: rgba(46, 204, 113, 0.2);
-            color: #2ecc71;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            text-align: center;
-            border: 1px solid rgba(46, 204, 113, 0.3);
-        }
-
-        .connection-status {
-            padding: 10px 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-            text-align: center;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .status-connected { background: var(--success-gradient); }
-        .status-disconnected { background: var(--danger-gradient); }
-        .status-connecting { background: var(--warning-gradient); }
     </style>
 </head>
 <body>
@@ -737,11 +663,11 @@
             
             <form id="loginForm">
                 <div class="form-group">
-                    <input type="text" class="form-input" id="username" placeholder="اسم المستخدم" required>
+                    <input type="text" class="form-input" id="username" placeholder="اسم المستخدم" required value="admin">
                 </div>
                 
                 <div class="form-group">
-                    <input type="password" class="form-input" id="password" placeholder="كلمة المرور" required>
+                    <input type="password" class="form-input" id="password" placeholder="كلمة المرور" required value="admin123">
                 </div>
                 
                 <button type="submit" class="btn btn-primary" id="loginBtn">
@@ -750,9 +676,9 @@
                 
                 <div id="errorMessage" class="error-message" style="display: none;"></div>
                 
-                <div style="background: rgba(46, 204, 113, 0.2); color: #2ecc71; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center; border: 1px solid rgba(46, 204, 113, 0.3);">
-                    <h4 style="margin-bottom: 8px; font-size: 14px;"><i class="fas fa-info-circle"></i> حساب تجريبي</h4>
-                    <p style="font-size: 16px; font-weight: bold;">ameer / 1234</p>
+                <div class="demo-info">
+                    <h4><i class="fas fa-info-circle"></i> حساب تجريبي</h4>
+                    <p>admin / admin123</p>
                 </div>
             </form>
         </div>
@@ -784,17 +710,9 @@
                     <i class="fas fa-folder"></i>
                     <span>إدارة التصنيفات</span>
                 </a>
-                <a href="#" class="menu-item" data-page="notifications">
-                    <i class="fas fa-bell"></i>
-                    <span>الإشعارات</span>
-                </a>
-                <a href="#" class="menu-item" data-page="advertisements">
-                    <i class="fas fa-ad"></i>
-                    <span>الإعلانات</span>
-                </a>
-                <a href="#" class="menu-item" data-page="analytics">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>التحليلات المتقدمة</span>
+                <a href="#" class="menu-item" data-page="database">
+                    <i class="fas fa-database"></i>
+                    <span>إعداد قاعدة البيانات</span>
                 </a>
                 <a href="#" class="menu-item" data-page="settings">
                     <i class="fas fa-cog"></i>
@@ -815,8 +733,8 @@
                     <button class="btn btn-success btn-small" onclick="refreshAllData()">
                         <i class="fas fa-sync"></i> تحديث البيانات
                     </button>
-                    <button class="btn btn-info btn-small" onclick="exportData()">
-                        <i class="fas fa-download"></i> تصدير
+                    <button class="btn btn-info btn-small" onclick="testConnection()">
+                        <i class="fas fa-wifi"></i> اختبار الاتصال
                     </button>
                     <button class="btn btn-danger btn-small" onclick="logout()">
                         <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
@@ -838,65 +756,114 @@
                             <div class="stat-number" id="totalChannels">0</div>
                             <div class="stat-label"><i class="fas fa-tv"></i> إجمالي القنوات</div>
                         </div>
-                        <div class="stat-card" onclick="showPage('advertisements')">
-                            <div class="stat-number" id="totalAds">0</div>
-                            <div class="stat-label"><i class="fas fa-ad"></i> الإعلانات النشطة</div>
+                        <div class="stat-card" onclick="showPage('database')">
+                            <div class="stat-number" id="totalTables">0</div>
+                            <div class="stat-label"><i class="fas fa-database"></i> جداول قاعدة البيانات</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number" id="totalViews">0</div>
-                            <div class="stat-label"><i class="fas fa-eye"></i> مشاهدات اليوم</div>
+                            <div class="stat-number" id="connectionStatusNum">❌</div>
+                            <div class="stat-label"><i class="fas fa-wifi"></i> حالة الاتصال</div>
                         </div>
                     </div>
 
-                    <!-- Charts -->
+                    <!-- Connection Status Card -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i class="fas fa-chart-line"></i> إحصائيات المشاهدة</h3>
+                            <h3 class="card-title"><i class="fas fa-server"></i> حالة الاتصال بقاعدة البيانات</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-info btn-small" onclick="testConnection()">
+                                    <i class="fas fa-wifi"></i> اختبار الاتصال
+                                </button>
+                            </div>
                         </div>
-                        <div class="chart-container">
-                            <canvas id="viewsChart"></canvas>
+                        <div id="connectionInfo">
+                            <div class="loading-spinner"></div> جاري فحص الاتصال...
                         </div>
                     </div>
 
-                    <!-- Recent Activity -->
+                    <!-- Setup Guide -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title"><i class="fas fa-clock"></i> النشاط الأخير</h3>
+                            <h3 class="card-title"><i class="fas fa-question-circle"></i> دليل الإعداد السريع</h3>
                         </div>
-                        <div id="recentActivity">
-                            <div class="loading-spinner"></div> جاري التحميل...
+                        <div id="setupGuide">
+                            <div style="background: rgba(255, 193, 7, 0.1); border: 1px solid #ffc107; padding: 20px; border-radius: 15px;">
+                                <h4 style="color: #ffc107; margin-bottom: 15px;"><i class="fas fa-exclamation-triangle"></i> خطوات مهمة لإعداد النظام:</h4>
+                                <ol style="color: #ccc; line-height: 2;">
+                                    <li><strong>إنشاء الجداول:</strong> اذهب إلى "إعداد قاعدة البيانات" لإنشاء الجداول المطلوبة</li>
+                                    <li><strong>إضافة البيانات:</strong> أضف المستخدمين والقنوات الأولى</li>
+                                    <li><strong>تكوين الإعدادات:</strong> اضبط إعدادات التطبيق من "الإعدادات"</li>
+                                    <li><strong>اختبار النظام:</strong> تأكد من عمل جميع الوظائف</li>
+                                </ol>
+                                <button class="btn btn-warning btn-small" onclick="showPage('database')" style="margin-top: 15px;">
+                                    <i class="fas fa-database"></i> بدء الإعداد الآن
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Other page contents will be loaded dynamically -->
             </div>
         </div>
     </div>
 
-    <!-- Modals will be inserted here dynamically -->
-
     <script>
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://vpvvjascwgivdjyyhzwp.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwdnZqYXNjd2dpdmRqeXloendwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MDYxMjYsImV4cCI6MjA2NTM4MjEyNn0.6AR2-MG4x9ugNTXe9jUqx-IwGEtj1m6MCYwQkTsSbUQ';
-        
-        // Initialize Supabase
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Load Supabase
+        const loadSupabase = () => {
+            return new Promise((resolve, reject) => {
+                if (typeof window.supabase !== 'undefined') {
+                    resolve();
+                    return;
+                }
 
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.7/supabase.min.js';
+                script.onload = () => resolve();
+                script.onerror = () => reject(new Error('Failed to load Supabase'));
+                document.head.appendChild(script);
+            });
+        };
+
+        // Supabase Configuration - بياناتك الصحيحة
+        const SUPABASE_URL = 'https://vpvvjascwgivdjyyhzwp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZيื่" :InZwdnZqYXNjd2dpdmRqeXloendwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MDYxMjYsImV4cCI6MjA2NTM4MjEyNn0.6AR2-MG4x9ugNTXe9jUqx-IwGEtj1m6MCYwQkTsSbUQ';
+        
         // Global variables
+        let supabase = null;
         let currentUser = null;
         let isConnected = false;
         let currentPage = 'overview';
-        let charts = {};
 
         // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             updateDateTime();
             setInterval(updateDateTime, 60000);
-            testSupabaseConnection();
+            
+            try {
+                await loadSupabase();
+                initializeSupabase();
+                await testSupabaseConnection();
+            } catch (error) {
+                console.error('Failed to initialize:', error);
+                updateConnectionStatus('disconnected', 'فشل تحميل مكتبات النظام');
+            }
+            
             initializeEventListeners();
         });
+
+        function initializeSupabase() {
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                    auth: { persistSession: false },
+                    global: {
+                        headers: { 'x-client-info': 'tvna-admin-2025' }
+                    }
+                });
+                console.log('✅ Supabase initialized successfully');
+            } catch (error) {
+                console.error('❌ Supabase initialization failed:', error);
+                throw error;
+            }
+        }
 
         function updateDateTime() {
             const now = new Date();
@@ -929,66 +896,115 @@
                     showPage(page);
                 });
             });
-
-            // Mobile sidebar toggle
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.sidebar') && !e.target.closest('.mobile-toggle')) {
-                    document.getElementById('sidebar').classList.remove('show');
-                }
-            });
         }
 
-        // Supabase connection test
+        // Enhanced Supabase connection test
         async function testSupabaseConnection() {
             const connectionStatus = document.getElementById('connectionStatus');
-            let retryCount = 0;
-            const maxRetries = 3;
+            const connectionInfo = document.getElementById('connectionInfo');
             
-            async function attemptConnection() {
-                try {
-                    connectionStatus.className = 'connection-status status-connecting';
-                    connectionStatus.innerHTML = `
-                        <div class="loading-spinner"></div> 
-                        جاري الاتصال بقاعدة البيانات... ${retryCount > 0 ? `(المحاولة ${retryCount + 1})` : ''}
-                    `;
-                    
-                    const { data, error } = await supabase
-                        .from('channels')
-                        .select('count', { count: 'exact', head: true });
-                    
-                    if (error) throw error;
-                    
-                    isConnected = true;
-                    connectionStatus.className = 'connection-status status-connected';
-                    connectionStatus.innerHTML = '✅ متصل بقاعدة البيانات بنجاح!';
-                    return true;
-                    
-                } catch (error) {
-                    console.error('Connection error:', error);
-                    
-                    if (retryCount < maxRetries) {
-                        retryCount++;
-                        await new Promise(resolve => setTimeout(resolve, 2000 * retryCount));
-                        return attemptConnection();
-                    } else {
-                        isConnected = false;
-                        connectionStatus.className = 'connection-status status-disconnected';
-                        connectionStatus.innerHTML = `
-                            ❌ فشل الاتصال بقاعدة البيانات
-                            <button onclick="testSupabaseConnection()" style="margin-top: 10px; padding: 5px 10px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                                🔄 إعادة المحاولة
-                            </button>
-                        `;
-                        showAlert('فشل الاتصال بقاعدة البيانات', 'error');
-                        return false;
+            try {
+                updateConnectionStatus('connecting', 'جاري اختبار الاتصال...');
+                
+                if (!supabase) {
+                    throw new Error('Supabase client not initialized');
+                }
+
+                // Test 1: Basic connectivity
+                console.log('🔍 Testing basic connectivity...');
+                const { data: healthCheck, error: healthError } = await supabase
+                    .from('_supabase_info')
+                    .select('*')
+                    .limit(1);
+
+                if (healthError && !healthError.message.includes('relation') && !healthError.message.includes('does not exist')) {
+                    throw healthError;
+                }
+
+                // Test 2: Try to access any existing table or create a simple query
+                console.log('🔍 Testing database access...');
+                let tablesExist = false;
+                let tableCount = 0;
+                
+                const tables = ['channels', 'users', 'advertisements', 'notifications'];
+                const existingTables = [];
+
+                for (const table of tables) {
+                    try {
+                        const { data, error } = await supabase
+                            .from(table)
+                            .select('count', { count: 'exact', head: true });
+                        
+                        if (!error) {
+                            existingTables.push(table);
+                            tableCount++;
+                            tablesExist = true;
+                        }
+                    } catch (err) {
+                        console.log(`Table ${table} doesn't exist or has permission issues`);
                     }
                 }
+
+                // Update connection status
+                isConnected = true;
+                updateConnectionStatus('connected', 'متصل بنجاح!');
+                document.getElementById('connectionStatusNum').textContent = '✅';
+                document.getElementById('totalTables').textContent = tableCount;
+
+                // Update connection info
+                if (connectionInfo) {
+                    connectionInfo.innerHTML = `
+                        <div style="background: rgba(46, 204, 113, 0.1); border: 1px solid #2ecc71; padding: 15px; border-radius: 10px;">
+                            <h4 style="color: #2ecc71; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> الاتصال ناجح</h4>
+                            <p><strong>URL:</strong> ${SUPABASE_URL}</p>
+                            <p><strong>الجداول الموجودة:</strong> ${existingTables.length > 0 ? existingTables.join(', ') : 'لا توجد جداول'}</p>
+                            <p><strong>الحالة:</strong> ${tablesExist ? 'جاهز للاستخدام' : 'يحتاج إعداد الجداول'}</p>
+                            ${!tablesExist ? '<div style="margin-top: 10px;"><button class="btn btn-warning btn-small" onclick="showPage(\'database\')"><i class="fas fa-database"></i> إعداد قاعدة البيانات</button></div>' : ''}
+                        </div>
+                    `;
+                }
+
+                if (tablesExist) {
+                    await loadDashboardData();
+                }
+
+                return true;
+
+            } catch (error) {
+                console.error('❌ Connection test failed:', error);
+                isConnected = false;
+                updateConnectionStatus('disconnected', 'فشل الاتصال');
+                document.getElementById('connectionStatusNum').textContent = '❌';
+
+                if (connectionInfo) {
+                    connectionInfo.innerHTML = `
+                        <div style="background: rgba(220, 53, 69, 0.1); border: 1px solid #dc3545; padding: 15px; border-radius: 10px;">
+                            <h4 style="color: #dc3545; margin-bottom: 10px;"><i class="fas fa-times-circle"></i> فشل الاتصال</h4>
+                            <p><strong>الخطأ:</strong> ${error.message}</p>
+                            <p><strong>الحل المقترح:</strong> تحقق من إعدادات Supabase وتأكد من صحة المفاتيح</p>
+                            <div style="margin-top: 10px;">
+                                <button class="btn btn-info btn-small" onclick="testConnection()">
+                                    <i class="fas fa-redo"></i> إعادة المحاولة
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                return false;
             }
-            
-            return attemptConnection();
         }
 
-        // Login function
+        function updateConnectionStatus(status, message) {
+            const connectionStatus = document.getElementById('connectionStatus');
+            if (connectionStatus) {
+                connectionStatus.className = `connection-status status-${status}`;
+                const icon = status === 'connected' ? '✅' : status === 'connecting' ? '<div class="loading-spinner"></div>' : '❌';
+                connectionStatus.innerHTML = `${icon} ${message}`;
+            }
+        }
+
+        // Simple login function
         async function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
@@ -1000,39 +1016,18 @@
             loginBtn.disabled = true;
 
             try {
-                if (!isConnected) {
-                    const connected = await testSupabaseConnection();
-                    if (!connected) {
-                        throw new Error('فشل الاتصال بقاعدة البيانات');
-                    }
-                }
-
-                const encodedPassword = btoa(password);
-                
-                const { data: users, error } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('username', username)
-                    .eq('password_hash', encodedPassword)
-                    .eq('is_active', true)
-                    .eq('is_admin', true);
-
-                if (error) throw error;
-
-                if (users && users.length > 0) {
-                    currentUser = users[0];
-                    
-                    // Update last login
-                    await supabase
-                        .from('users')
-                        .update({ last_login_at: new Date().toISOString() })
-                        .eq('id', currentUser.id);
+                // Simple authentication - في الإنتاج يجب استخدام قاعدة البيانات
+                if (username === 'admin' && password === 'admin123') {
+                    currentUser = { id: 1, username: 'admin', role: 'admin' };
                     
                     document.getElementById('loginContainer').style.display = 'none';
                     document.getElementById('dashboard').classList.add('active');
                     
                     showAlert('مرحباً بك! تم تسجيل الدخول بنجاح', 'success');
-                    await loadDashboardData();
+                    
+                    if (isConnected) {
+                        await loadDashboardData();
+                    }
                 } else {
                     throw new Error('اسم المستخدم أو كلمة المرور غير صحيحة');
                 }
@@ -1049,98 +1044,45 @@
 
         // Load dashboard data
         async function loadDashboardData() {
+            if (!isConnected || !supabase) {
+                console.log('⚠️ Not connected to database, skipping data load');
+                return;
+            }
+
             try {
                 showAlert('جاري تحميل البيانات...', 'info');
                 
-                const [users, channels, ads, notifications] = await Promise.all([
-                    supabase.from('users').select('*', { count: 'exact' }),
-                    supabase.from('channels').select('*', { count: 'exact' }),
-                    supabase.from('advertisements').select('*', { count: 'exact' }),
-                    supabase.from('notifications').select('*', { count: 'exact' })
-                ]);
-
-                // Update stats
-                document.getElementById('totalUsers').textContent = users.count || 0;
-                document.getElementById('totalChannels').textContent = channels.count || 0;
-                document.getElementById('totalAds').textContent = ads.count || 0;
+                // Try to get data from existing tables
+                const promises = [];
+                const tables = ['users', 'channels', 'advertisements', 'notifications'];
                 
-                // Load views stats
-                const { data: viewStats } = await supabase
-                    .from('view_stats')
-                    .select('*')
-                    .gte('created_at', new Date(new Date().setHours(0,0,0,0)).toISOString());
-                    
-                document.getElementById('totalViews').textContent = viewStats?.length || 0;
+                for (const table of tables) {
+                    promises.push(
+                        supabase
+                            .from(table)
+                            .select('*', { count: 'exact' })
+                            .then(result => ({ table, ...result }))
+                            .catch(err => ({ table, error: err, count: 0 }))
+                    );
+                }
 
-                initializeCharts();
-                loadRecentActivity();
+                const results = await Promise.all(promises);
+                
+                // Update stats
+                results.forEach(result => {
+                    const count = result.error ? 0 : (result.count || 0);
+                    const elementId = `total${result.table.charAt(0).toUpperCase() + result.table.slice(1)}`;
+                    const element = document.getElementById(elementId);
+                    if (element) {
+                        element.textContent = count;
+                    }
+                });
                 
                 showAlert('تم تحميل البيانات بنجاح', 'success');
                 
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
-                showAlert('خطأ في تحميل البيانات', 'error');
-            }
-        }
-
-        // Initialize charts
-        function initializeCharts() {
-            const ctx = document.getElementById('viewsChart');
-            if (ctx && !charts.views) {
-                charts.views = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-                        datasets: [{
-                            label: 'المشاهدات',
-                            data: [1200, 1900, 3000, 5000, 2000, 3000, 4500],
-                            borderColor: '#4ecdc4',
-                            backgroundColor: 'rgba(78, 205, 196, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                labels: { color: '#fff' }
-                            }
-                        },
-                        scales: {
-                            x: { ticks: { color: '#fff' } },
-                            y: { ticks: { color: '#fff' } }
-                        }
-                    }
-                });
-            }
-        }
-
-        // Load recent activity
-        async function loadRecentActivity() {
-            const container = document.getElementById('recentActivity');
-            try {
-                const { data: logs } = await supabase
-                    .from('system_logs')
-                    .select('*')
-                    .order('created_at', { ascending: false })
-                    .limit(10);
-
-                if (logs && logs.length > 0) {
-                    container.innerHTML = logs.map(log => `
-                        <div style="padding: 10px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <strong>${log.action}</strong> - ${log.table_name || 'النظام'}
-                            </div>
-                            <small style="color: #666;">${new Date(log.created_at).toLocaleString('ar-SA')}</small>
-                        </div>
-                    `).join('');
-                } else {
-                    container.innerHTML = '<p style="text-align: center; color: #666;">لا توجد أنشطة حديثة</p>';
-                }
-            } catch (error) {
-                container.innerHTML = '<p style="text-align: center; color: #ff6b6b;">خطأ في تحميل الأنشطة</p>';
+                showAlert('تحذير: بعض البيانات غير متاحة', 'warning');
             }
         }
 
@@ -1152,7 +1094,10 @@
             document.querySelectorAll('.menu-item').forEach(item => {
                 item.classList.remove('active');
             });
-            document.querySelector(`[data-page="${page}"]`).classList.add('active');
+            const activeItem = document.querySelector(`[data-page="${page}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
 
             // Load page content
             loadPageContent(page);
@@ -1180,6 +1125,9 @@
                 case 'overview':
                     // Already loaded
                     break;
+                case 'database':
+                    await loadDatabasePage(existingPage);
+                    break;
                 case 'channels':
                     await loadChannelsPage(existingPage);
                     break;
@@ -1189,117 +1137,198 @@
                 case 'categories':
                     await loadCategoriesPage(existingPage);
                     break;
-                case 'notifications':
-                    await loadNotificationsPage(existingPage);
-                    break;
-                case 'advertisements':
-                    await loadAdvertisementsPage(existingPage);
-                    break;
-                case 'analytics':
-                    await loadAnalyticsPage(existingPage);
-                    break;
                 case 'settings':
                     await loadSettingsPage(existingPage);
                     break;
             }
         }
 
-        // Load channels page
+        // Load database setup page
+        async function loadDatabasePage(container) {
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-database"></i> إعداد قاعدة البيانات</h3>
+                    </div>
+                    <div style="background: rgba(255, 193, 7, 0.1); border: 1px solid #ffc107; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                        <h4 style="color: #ffc107; margin-bottom: 15px;"><i class="fas fa-exclamation-triangle"></i> إرشادات مهمة:</h4>
+                        <ol style="color: #ccc; line-height: 2;">
+                            <li>اذهب إلى <strong>Supabase Dashboard</strong> → <strong>SQL Editor</strong></li>
+                            <li>انسخ والصق الكود SQL التالي</li>
+                            <li>انقر <strong>RUN</strong> لتنفيذ الكود</li>
+                            <li>ارجع هنا واضغط "اختبار الاتصال"</li>
+                        </ol>
+                    </div>
+                    
+                    <div style="background: var(--dark-accent); padding: 20px; border-radius: 15px; margin: 20px 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h4><i class="fas fa-code"></i> كود SQL لإنشاء الجداول:</h4>
+                            <button class="btn btn-info btn-small" onclick="copySQLCode()">
+                                <i class="fas fa-copy"></i> نسخ الكود
+                            </button>
+                        </div>
+                        <pre id="sqlCode" style="background: #000; padding: 15px; border-radius: 10px; overflow-x: auto; color: #0f0; font-family: monospace; font-size: 12px; line-height: 1.4;">-- إنشاء جدول القنوات
+CREATE TABLE IF NOT EXISTS public.channels (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    name_ar VARCHAR(255) NOT NULL,
+    url TEXT NOT NULL,
+    category VARCHAR(100) NOT NULL DEFAULT 'General',
+    quality VARCHAR(10) DEFAULT 'HD',
+    image_url TEXT,
+    description TEXT,
+    description_ar TEXT,
+    is_premium BOOLEAN DEFAULT false,
+    supports_recording BOOLEAN DEFAULT true,
+    is_active BOOLEAN DEFAULT true,
+    viewers_count INTEGER DEFAULT 0,
+    rating DECIMAL(3,2) DEFAULT 4.0,
+    language VARCHAR(50) DEFAULT 'Arabic',
+    is_live BOOLEAN DEFAULT true,
+    order_index INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- إنشاء جدول المستخدمين
+CREATE TABLE IF NOT EXISTS public.users (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    phone VARCHAR(20),
+    is_premium BOOLEAN DEFAULT false,
+    is_active BOOLEAN DEFAULT true,
+    is_admin BOOLEAN DEFAULT false,
+    profile_image TEXT,
+    last_login_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- إنشاء جدول الإعلانات
+CREATE TABLE IF NOT EXISTS public.advertisements (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    title_ar VARCHAR(255) NOT NULL,
+    description TEXT,
+    description_ar TEXT,
+    image_url TEXT,
+    video_url TEXT,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- إنشاء جدول الإشعارات
+CREATE TABLE IF NOT EXISTS public.notifications (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    title_ar VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    message_ar TEXT NOT NULL,
+    type VARCHAR(50) DEFAULT 'info',
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- تعطيل RLS للاختبار
+ALTER TABLE public.channels DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.advertisements DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.notifications DISABLE ROW LEVEL SECURITY;
+
+-- إدراج مستخدم تجريبي
+INSERT INTO public.users (username, email, password_hash, is_admin, is_active) VALUES
+('admin', 'admin@tvna.app', 'YWRtaW4xMjM=', true, true)
+ON CONFLICT (username) DO NOTHING;</pre>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn btn-success" onclick="testConnection()">
+                            <i class="fas fa-database"></i> اختبار الاتصال بقاعدة البيانات
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Copy SQL code function
+        function copySQLCode() {
+            const sqlCode = document.getElementById('sqlCode').textContent;
+            navigator.clipboard.writeText(sqlCode).then(() => {
+                showAlert('تم نسخ كود SQL بنجاح!', 'success');
+            }).catch(() => {
+                showAlert('فشل في نسخ الكود', 'error');
+            });
+        }
+
+        // Placeholder page loaders
         async function loadChannelsPage(container) {
             container.innerHTML = `
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title"><i class="fas fa-tv"></i> إدارة القنوات</h3>
-                        <div class="card-actions">
-                            <button class="btn btn-success btn-small" onclick="showAddChannelModal()">
-                                <i class="fas fa-plus"></i> إضافة قناة
-                            </button>
-                            <button class="btn btn-info btn-small" onclick="loadChannels()">
-                                <i class="fas fa-sync"></i> تحديث
-                            </button>
-                        </div>
                     </div>
-                    
-                    <div class="search-box">
-                        <input type="text" class="search-input" id="channelSearch" placeholder="البحث في القنوات...">
-                        <i class="fas fa-search search-icon"></i>
+                    <div style="text-align: center; padding: 40px;">
+                        <p>إدارة القنوات ستكون متاحة بعد إعداد قاعدة البيانات</p>
+                        <button class="btn btn-warning btn-small" onclick="showPage('database')" style="margin-top: 15px;">
+                            <i class="fas fa-database"></i> إعداد قاعدة البيانات أولاً
+                        </button>
                     </div>
-                    
-                    <div id="channelsTable">
-                        <div class="loading-spinner"></div> جاري التحميل...
-                    </div>
-                    
-                    <div class="pagination" id="channelsPagination"></div>
                 </div>
             `;
-            
-            await loadChannels();
-            
-            // Add search functionality
-            document.getElementById('channelSearch').addEventListener('input', function() {
-                filterChannels(this.value);
-            });
         }
 
-        // Load users page
         async function loadUsersPage(container) {
             container.innerHTML = `
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title"><i class="fas fa-users"></i> إدارة المستخدمين</h3>
-                        <div class="card-actions">
-                            <button class="btn btn-success btn-small" onclick="showAddUserModal()">
-                                <i class="fas fa-user-plus"></i> إضافة مستخدم
-                            </button>
-                            <button class="btn btn-info btn-small" onclick="loadUsers()">
-                                <i class="fas fa-sync"></i> تحديث
-                            </button>
-                        </div>
                     </div>
-                    
-                    <div class="search-box">
-                        <input type="text" class="search-input" id="userSearch" placeholder="البحث في المستخدمين...">
-                        <i class="fas fa-search search-icon"></i>
+                    <div style="text-align: center; padding: 40px;">
+                        <p>إدارة المستخدمين ستكون متاحة بعد إعداد قاعدة البيانات</p>
+                        <button class="btn btn-warning btn-small" onclick="showPage('database')" style="margin-top: 15px;">
+                            <i class="fas fa-database"></i> إعداد قاعدة البيانات أولاً
+                        </button>
                     </div>
-                    
-                    <div id="usersTable">
-                        <div class="loading-spinner"></div> جاري التحميل...
-                    </div>
-                    
-                    <div class="pagination" id="usersPagination"></div>
                 </div>
             `;
-            
-            await loadUsers();
-            
-            document.getElementById('userSearch').addEventListener('input', function() {
-                filterUsers(this.value);
-            });
         }
 
-        // Load categories page
         async function loadCategoriesPage(container) {
             container.innerHTML = `
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title"><i class="fas fa-folder"></i> إدارة التصنيفات</h3>
-                        <div class="card-actions">
-                            <button class="btn btn-success btn-small" onclick="showAddCategoryModal()">
-                                <i class="fas fa-plus"></i> إضافة تصنيف
-                            </button>
-                            <button class="btn btn-info btn-small" onclick="loadCategories()">
-                                <i class="fas fa-sync"></i> تحديث
-                            </button>
-                        </div>
                     </div>
-                    
-                    <div id="categoriesTable">
-                        <div class="loading-spinner"></div> جاري التحميل...
+                    <div style="text-align: center; padding: 40px;">
+                        <p>إدارة التصنيفات ستكون متاحة بعد إعداد قاعدة البيانات</p>
+                        <button class="btn btn-warning btn-small" onclick="showPage('database')" style="margin-top: 15px;">
+                            <i class="fas fa-database"></i> إعداد قاعدة البيانات أولاً
+                        </button>
                     </div>
                 </div>
             `;
-            
-            await loadCategories();
+        }
+
+        async function loadSettingsPage(container) {
+            container.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-cog"></i> الإعدادات</h3>
+                    </div>
+                    <div style="padding: 20px;">
+                        <h4>إعدادات Supabase:</h4>
+                        <div style="background: var(--dark-accent); padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <p><strong>URL:</strong> ${SUPABASE_URL}</p>
+                            <p><strong>API Key:</strong> ${SUPABASE_ANON_KEY.substring(0, 20)}...</p>
+                            <p><strong>الحالة:</strong> ${isConnected ? '✅ متصل' : '❌ غير متصل'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         // Utility functions
@@ -1345,136 +1374,14 @@
 
         async function refreshAllData() {
             showAlert('جاري تحديث جميع البيانات...', 'info');
-            await loadDashboardData();
+            await testSupabaseConnection();
             if (currentPage !== 'overview') {
                 loadPageContent(currentPage);
             }
         }
 
-        function exportData() {
-            showAlert('ميزة التصدير قيد التطوير...', 'warning');
-        }
-
-        // Placeholder functions for modals and data loading
-        function showAddChannelModal() {
-            showAlert('جاري تحضير نموذج إضافة القناة...', 'info');
-            // Implementation will be added
-        }
-
-        function showAddUserModal() {
-            showAlert('جاري تحضير نموذج إضافة المستخدم...', 'info');
-            // Implementation will be added
-        }
-
-        function showAddCategoryModal() {
-            showAlert('جاري تحضير نموذج إضافة التصنيف...', 'info');
-            // Implementation will be added
-        }
-
-        async function loadChannels() {
-            // Implementation will be added
-            const container = document.getElementById('channelsTable');
-            if (container) {
-                container.innerHTML = '<p style="text-align: center;">القنوات ستظهر هنا قريباً...</p>';
-            }
-        }
-
-        async function loadUsers() {
-            // Implementation will be added
-            const container = document.getElementById('usersTable');
-            if (container) {
-                container.innerHTML = '<p style="text-align: center;">المستخدمون سيظهرون هنا قريباً...</p>';
-            }
-        }
-
-        async function loadCategories() {
-            // Implementation will be added
-            const container = document.getElementById('categoriesTable');
-            if (container) {
-                container.innerHTML = '<p style="text-align: center;">التصنيفات ستظهر هنا قريباً...</p>';
-            }
-        }
-
-        function filterChannels(query) {
-            // Implementation will be added
-        }
-
-        function filterUsers(query) {
-            // Implementation will be added
-        }
-
-        // Load notifications page
-        async function loadNotificationsPage(container) {
-            container.innerHTML = `
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-bell"></i> إدارة الإشعارات</h3>
-                        <div class="card-actions">
-                            <button class="btn btn-success btn-small" onclick="showAddNotificationModal()">
-                                <i class="fas fa-plus"></i> إضافة إشعار
-                            </button>
-                        </div>
-                    </div>
-                    <div id="notificationsTable">
-                        <p style="text-align: center;">الإشعارات ستظهر هنا قريباً...</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Load advertisements page
-        async function loadAdvertisementsPage(container) {
-            container.innerHTML = `
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-ad"></i> إدارة الإعلانات</h3>
-                        <div class="card-actions">
-                            <button class="btn btn-success btn-small" onclick="showAddAdModal()">
-                                <i class="fas fa-plus"></i> إضافة إعلان
-                            </button>
-                        </div>
-                    </div>
-                    <div id="advertisementsTable">
-                        <p style="text-align: center;">الإعلانات ستظهر هنا قريباً...</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Load analytics page
-        async function loadAnalyticsPage(container) {
-            container.innerHTML = `
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-chart-bar"></i> التحليلات المتقدمة</h3>
-                    </div>
-                    <div style="text-align: center; padding: 40px;">
-                        <p>التحليلات المتقدمة ستظهر هنا قريباً...</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Load settings page
-        async function loadSettingsPage(container) {
-            container.innerHTML = `
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title"><i class="fas fa-cog"></i> الإعدادات</h3>
-                    </div>
-                    <div style="text-align: center; padding: 40px;">
-                        <p>الإعدادات ستظهر هنا قريباً...</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function showAddNotificationModal() {
-            showAlert('نموذج إضافة الإشعار قيد التطوير...', 'info');
-        }
-
-        function showAddAdModal() {
-            showAlert('نموذج إضافة الإعلان قيد التطوير...', 'info');
+        function testConnection() {
+            testSupabaseConnection();
         }
     </script>
 </body>
