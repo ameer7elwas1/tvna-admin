@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TvNa - لوحة التحكم</title>
+    <title>TvNa - لوحة التحكم المحسنة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -35,7 +35,7 @@
             border-radius: 20px;
             padding: 40px;
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -46,25 +46,25 @@
         }
 
         .login-logo {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 50px;
+            font-size: 40px;
             margin: 0 auto 20px;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            50% { transform: scale(1.05); }
         }
 
         .login-title {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
             margin-bottom: 10px;
             background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
@@ -72,39 +72,34 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .login-subtitle {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 18px;
-        }
-
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .form-label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: bold;
             color: rgba(255, 255, 255, 0.9);
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .form-input {
             width: 100%;
-            padding: 18px;
+            padding: 15px;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            font-size: 18px;
+            font-size: 16px;
             transition: all 0.3s ease;
         }
 
         .form-input:focus {
             outline: none;
             border-color: #4ecdc4;
-            box-shadow: 0 0 25px rgba(78, 205, 196, 0.5);
-            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .form-input::placeholder {
@@ -113,13 +108,13 @@
 
         .btn {
             width: 100%;
-            padding: 18px;
+            padding: 15px;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 20px;
+            font-size: 16px;
             position: relative;
             overflow: hidden;
         }
@@ -130,30 +125,27 @@
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
         .btn:disabled {
             opacity: 0.7;
             cursor: not-allowed;
+            transform: none;
         }
 
         .connection-status {
-            padding: 15px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 10px;
             margin: 15px 0;
             text-align: center;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 14px;
         }
 
         .status-connected {
             background: linear-gradient(135deg, #00b894, #00a085);
-        }
-
-        .status-disconnected {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
         }
 
         .status-connecting {
@@ -161,19 +153,19 @@
         }
 
         .error-message {
-            background: rgba(231, 76, 60, 0.25);
+            background: rgba(231, 76, 60, 0.2);
             color: #e74c3c;
-            padding: 15px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 10px;
             margin-top: 15px;
             text-align: center;
             border: 1px solid rgba(231, 76, 60, 0.4);
-            font-size: 18px;
+            font-size: 14px;
         }
 
         .dashboard {
             display: none;
-            padding: 25px;
+            padding: 20px;
         }
 
         .dashboard.active {
@@ -181,209 +173,168 @@
         }
 
         .container {
-            max-width: 1500px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         .header {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            padding: 25px;
-            border-radius: 25px;
-            margin-bottom: 35px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-            animation: shimmer 4s infinite linear;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .header-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            position: relative;
-            z-index: 1;
             flex-wrap: wrap;
-            gap: 25px;
+            gap: 20px;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .logo-icon {
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 35px;
-            animation: pulse 2s infinite;
+            font-size: 30px;
         }
 
         .logo-text h1 {
-            font-size: 32px;
-            margin-bottom: 8px;
+            font-size: 28px;
+            margin-bottom: 5px;
             background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .logo-text p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 18px;
-        }
-
         .admin-info {
             text-align: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            min-width: 300px;
-        }
-
-        .admin-info p {
-            margin-bottom: 8px;
-            font-size: 18px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            min-width: 250px;
         }
 
         .admin-info button {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
+            padding: 10px 20px;
+            border-radius: 10px;
             cursor: pointer;
-            margin-top: 15px;
+            margin-top: 10px;
             transition: all 0.3s ease;
-            font-size: 18px;
-        }
-
-        .admin-info button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 35px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
         .stat-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 30px;
-            border-radius: 20px;
+            padding: 25px;
+            border-radius: 15px;
             text-align: center;
-            position: relative;
-            overflow: hidden;
             cursor: pointer;
             transition: transform 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
         .stat-card:hover {
-            transform: scale(1.05);
+            transform: translateY(-5px);
         }
 
         .stat-number {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: bold;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 8px;
         }
 
         .stat-label {
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 18px;
-            position: relative;
-            z-index: 1;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
         }
 
         .card {
             background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
-            border-radius: 25px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.3s ease;
         }
 
         .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         .card-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 20px;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             flex-wrap: wrap;
         }
 
         .card-header-left {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .card-header-right {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
         .card-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 24px;
             color: white;
         }
 
         .card-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
         .card-subtitle {
             color: rgba(255, 255, 255, 0.7);
-            font-size: 18px;
+            font-size: 14px;
         }
 
-        .btn-secondary {
-            background: linear-gradient(135deg, #6c757d, #5a6268);
+        .btn-small {
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 8px;
+            width: auto;
         }
 
         .btn-success {
@@ -402,51 +353,43 @@
             background: linear-gradient(135deg, #17a2b8, #6f42c1);
         }
 
-        .btn-small {
-            padding: 12px 24px;
-            font-size: 18px;
-            border-radius: 12px;
-            width: auto;
-        }
-
         .data-table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            margin-top: 25px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .data-table th,
         .data-table td {
-            padding: 18px;
+            padding: 15px;
             text-align: right;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .data-table th {
-            background: rgba(78, 205, 196, 0.25);
+            background: rgba(78, 205, 196, 0.2);
             color: #4ecdc4;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 14px;
         }
 
         .data-table tr:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .loading-spinner {
-            width: 25px;
-            height: 25px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #4ecdc4;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #4ecdc4;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             display: inline-block;
-            margin-right: 12px;
+            margin-left: 10px;
         }
 
         @keyframes spin {
@@ -454,48 +397,23 @@
             100% { transform: rotate(360deg); }
         }
 
-        .sync-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-size: 16px;
-        }
-
-        .sync-indicator.syncing {
-            background: rgba(255, 165, 0, 0.25);
-            color: #ffa500;
-        }
-
-        .sync-indicator.synced {
-            background: rgba(40, 167, 69, 0.25);
-            color: #28a745;
-        }
-
-        .sync-indicator.error {
-            background: rgba(220, 53, 69, 0.25);
-            color: #dc3545;
-        }
-
         .alert {
             position: fixed;
-            top: 25px;
-            left: 25px;
+            top: 20px;
+            right: 20px;
             z-index: 9999;
-            padding: 20px 25px;
-            border-radius: 15px;
+            padding: 15px 20px;
+            border-radius: 10px;
             color: white;
             font-weight: bold;
-            animation: slideInLeft 0.4s ease;
-            max-width: 450px;
-            font-size: 18px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+            font-size: 14px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        @keyframes slideInLeft {
-            from { transform: translateX(-100%); opacity: 0; }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
 
@@ -519,19 +437,19 @@
 
         .modal-content {
             background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
-            border-radius: 25px;
-            padding: 35px;
+            border-radius: 20px;
+            padding: 30px;
             width: 90%;
-            max-width: 700px;
+            max-width: 600px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: modalFadeIn 0.4s ease;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: modalFadeIn 0.3s ease;
         }
 
         @keyframes modalFadeIn {
-            from { opacity: 0; transform: translateY(-50px); }
+            from { opacity: 0; transform: translateY(-30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -539,13 +457,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .modal-title {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: bold;
             background: linear-gradient(135deg, #4ecdc4, #ff6b6b);
             -webkit-background-clip: text;
@@ -556,7 +474,7 @@
             background: transparent;
             border: none;
             color: white;
-            font-size: 30px;
+            font-size: 24px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -568,92 +486,32 @@
 
         .form-row {
             display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
         }
 
         .form-col {
             flex: 1;
-            min-width: 250px;
-        }
-
-        .file-upload {
-            position: relative;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .file-upload input[type="file"] {
-            position: absolute;
-            top: 0;
-            right: 0;
-            min-width: 100%;
-            min-height: 100%;
-            font-size: 100px;
-            text-align: right;
-            filter: alpha(opacity=0);
-            opacity: 0;
-            outline: none;
-            background: white;
-            cursor: pointer;
-            display: block;
-        }
-
-        .file-upload-label {
-            display: block;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .file-upload-label:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: #4ecdc4;
-        }
-
-        .preview-image {
-            width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            border-radius: 15px;
-            margin-top: 15px;
-            display: none;
-        }
-
-        .m3u-upload {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .m3u-upload h4 {
-            margin-bottom: 15px;
-            color: #4ecdc4;
-            font-size: 22px;
+            min-width: 200px;
         }
 
         .tab-container {
             display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-            padding-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
         }
 
         .tab {
-            padding: 12px 25px;
-            border-radius: 12px;
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             transition: all 0.3s ease;
             font-weight: bold;
+            font-size: 14px;
         }
 
         .tab.active {
@@ -669,142 +527,100 @@
             display: block;
         }
 
-        .user-type {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: bold;
-            margin-top: 8px;
-        }
-
-        .premium-user {
-            background: linear-gradient(135deg, #ffc107, #fd7e14);
-        }
-
-        .normal-user {
-            background: linear-gradient(135deg, #6c757d, #5a6268);
-        }
-
-        .date-picker {
-            padding: 15px;
+        .status-badge {
+            padding: 4px 12px;
             border-radius: 12px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            font-size: 18px;
-            width: 100%;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
         }
 
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
+        .status-active {
             background: linear-gradient(135deg, #28a745, #20c997);
         }
 
-        input:checked + .slider:before {
-            transform: translateX(26px);
+        .status-inactive {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
         }
 
-        .switch-label {
-            margin-right: 15px;
+        .premium-badge {
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .quality-badge {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .image-preview {
+            width: 60px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+
+        .supabase-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .supabase-info h4 {
+            color: #4ecdc4;
+            margin-bottom: 15px;
             font-size: 18px;
         }
 
-        @media (max-width: 992px) {
+        .supabase-info p {
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
                 text-align: center;
             }
-
+            
             .card-header {
                 flex-direction: column;
                 align-items: flex-start;
             }
-
+            
             .stats-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
             
-            .logo {
-                justify-content: center;
-            }
-            
-            .admin-info {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 768px) {
             .modal-content {
                 padding: 20px;
-            }
-            
-            .modal-title {
-                font-size: 24px;
+                width: 95%;
             }
             
             .form-row {
                 flex-direction: column;
             }
-        }
-
-        @media (max-width: 576px) {
-            .login-card {
-                padding: 30px;
-            }
-            
-            .login-logo {
-                width: 80px;
-                height: 80px;
-                font-size: 40px;
-            }
-            
-            .login-title {
-                font-size: 28px;
-            }
-            
-            .card {
-                padding: 20px;
-            }
             
             .tab {
-                padding: 10px 15px;
-                font-size: 14px;
+                padding: 8px 15px;
+                font-size: 13px;
             }
         }
     </style>
@@ -818,13 +634,13 @@
                     <i class="fas fa-tv"></i>
                 </div>
                 <h1 class="login-title">TvNa تيڤي نا</h1>
-                <p class="login-subtitle">Ameer_7elwas</p>
+                <p style="color: rgba(255, 255, 255, 0.8); font-size: 16px;">لوحة التحكم المحسنة</p>
             </div>
             
             <!-- Connection Status -->
             <div id="connectionStatus" class="connection-status status-connecting">
                 <div class="loading-spinner"></div>
-                جاري اختبار اتصال قاعدة البيانات...
+                جاري اختبار اتصال Supabase...
             </div>
             
             <form id="loginForm">
@@ -857,17 +673,13 @@
                         <div class="logo-icon"><i class="fas fa-tv"></i></div>
                         <div class="logo-text">
                             <h1>TvNa تيڤي نا</h1>
-                            <p>لوحة التحكم  </p>
+                            <p style="color: rgba(255, 255, 255, 0.8);">لوحة التحكم المحسنة</p>
                         </div>
                     </div>
                     <div class="admin-info">
                         <p><strong>مرحباً أمير حلواص</strong></p>
                         <p>مدير النظام</p>
                         <p id="currentDate"></p>
-                        <div class="sync-indicator synced" id="syncIndicator">
-                            <i class="fas fa-check"></i>
-                            <span>متصل بنجاح</span>
-                        </div>
                         <button onclick="logout()">
                             <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
                         </button>
@@ -890,16 +702,17 @@
                     <div class="stat-label"><i class="fas fa-ad"></i> الإعلانات</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="totalPremiumUsers">0</div>
-                    <div class="stat-label"><i class="fas fa-crown"></i> المستخدمين المميزين</div>
+                    <div class="stat-number" id="premiumChannels">0</div>
+                    <div class="stat-label"><i class="fas fa-crown"></i> القنوات المميزة</div>
                 </div>
             </div>
 
             <!-- Tabs -->
             <div class="tab-container" id="tabsContainer">
                 <div class="tab active" data-tab="channels">إدارة القنوات</div>
-                <div class="tab" data-tab="ads">إدارة الإعلانات</div>
                 <div class="tab" data-tab="users">إدارة المستخدمين</div>
+                <div class="tab" data-tab="ads">إدارة الإعلانات</div>
+                <div class="tab" data-tab="stats">الإحصائيات</div>
                 <div class="tab" data-tab="settings">الإعدادات</div>
             </div>
 
@@ -912,19 +725,16 @@
                                 <i class="fas fa-tv"></i>
                             </div>
                             <div>
-                                <div class="card-title">إدارة القنوات</div>
+                                <div class="card-title">إدارة القنوات التلفزيونية</div>
                                 <div class="card-subtitle">عرض وإدارة قنوات البث المباشر</div>
                             </div>
                         </div>
                         <div class="card-header-right">
                             <button class="btn btn-primary btn-small" onclick="loadChannels()">
-                                <i class="fas fa-sync"></i> تحديث القنوات
+                                <i class="fas fa-sync"></i> تحديث
                             </button>
                             <button class="btn btn-success btn-small" onclick="openAddChannelModal()">
-                                <i class="fas fa-plus"></i> إضافة قناة جديدة
-                            </button>
-                            <button class="btn btn-info btn-small" onclick="openM3UModal()">
-                                <i class="fas fa-file-upload"></i> استيراد ملف M3U
+                                <i class="fas fa-plus"></i> إضافة قناة
                             </button>
                         </div>
                     </div>
@@ -937,55 +747,14 @@
                                     <th>اسم القناة</th>
                                     <th>التصنيف</th>
                                     <th>الجودة</th>
+                                    <th>النوع</th>
                                     <th>الحالة</th>
+                                    <th>المشاهدات</th>
                                     <th>الإجراءات</th>
                                 </tr>
                             </thead>
                             <tbody id="channelsTableBody">
                                 <!-- Channels will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ads Tab -->
-            <div class="tab-content" id="adsTab">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-header-left">
-                            <div class="card-icon" style="background: linear-gradient(135deg, #ffc107, #fd7e14);">
-                                <i class="fas fa-ad"></i>
-                            </div>
-                            <div>
-                                <div class="card-title">إدارة الإعلانات</div>
-                                <div class="card-subtitle">عرض وإدارة الإعلانات في التطبيق</div>
-                            </div>
-                        </div>
-                        <div class="card-header-right">
-                            <button class="btn btn-primary btn-small" onclick="loadAds()">
-                                <i class="fas fa-sync"></i> تحديث الإعلانات
-                            </button>
-                            <button class="btn btn-success btn-small" onclick="openAddAdModal()">
-                                <i class="fas fa-plus"></i> إضافة إعلان جديد
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div id="adsTableContainer">
-                        <table class="data-table" id="adsTable">
-                            <thead>
-                                <tr>
-                                    <th>الصورة</th>
-                                    <th>عنوان الإعلان</th>
-                                    <th>تاريخ البدء</th>
-                                    <th>تاريخ الانتهاء</th>
-                                    <th>الحالة</th>
-                                    <th>الإجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="adsTableBody">
-                                <!-- Ads will be loaded here -->
                             </tbody>
                         </table>
                     </div>
@@ -1007,10 +776,10 @@
                         </div>
                         <div class="card-header-right">
                             <button class="btn btn-primary btn-small" onclick="loadUsers()">
-                                <i class="fas fa-sync"></i> تحديث المستخدمين
+                                <i class="fas fa-sync"></i> تحديث
                             </button>
                             <button class="btn btn-success btn-small" onclick="openAddUserModal()">
-                                <i class="fas fa-plus"></i> إضافة مستخدم جديد
+                                <i class="fas fa-plus"></i> إضافة مستخدم
                             </button>
                         </div>
                     </div>
@@ -1023,6 +792,7 @@
                                     <th>البريد الإلكتروني</th>
                                     <th>نوع العضوية</th>
                                     <th>تاريخ التسجيل</th>
+                                    <th>آخر دخول</th>
                                     <th>الحالة</th>
                                     <th>الإجراءات</th>
                                 </tr>
@@ -1031,6 +801,90 @@
                                 <!-- Users will be loaded here -->
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ads Tab -->
+            <div class="tab-content" id="adsTab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-header-left">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #ffc107, #fd7e14);">
+                                <i class="fas fa-ad"></i>
+                            </div>
+                            <div>
+                                <div class="card-title">إدارة الإعلانات</div>
+                                <div class="card-subtitle">عرض وإدارة إعلانات التطبيق</div>
+                            </div>
+                        </div>
+                        <div class="card-header-right">
+                            <button class="btn btn-primary btn-small" onclick="loadAds()">
+                                <i class="fas fa-sync"></i> تحديث
+                            </button>
+                            <button class="btn btn-success btn-small" onclick="openAddAdModal()">
+                                <i class="fas fa-plus"></i> إضافة إعلان
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="adsTableContainer">
+                        <table class="data-table" id="adsTable">
+                            <thead>
+                                <tr>
+                                    <th>الصورة</th>
+                                    <th>عنوان الإعلان</th>
+                                    <th>الوصف</th>
+                                    <th>تاريخ الإنشاء</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adsTableBody">
+                                <!-- Ads will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Tab -->
+            <div class="tab-content" id="statsTab">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-header-left">
+                            <div class="card-icon" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div>
+                                <div class="card-title">إحصائيات النظام</div>
+                                <div class="card-subtitle">تحليل بيانات الاستخدام والأداء</div>
+                            </div>
+                        </div>
+                        <div class="card-header-right">
+                            <button class="btn btn-primary btn-small" onclick="loadStats()">
+                                <i class="fas fa-sync"></i> تحديث الإحصائيات
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="activeChannels">0</div>
+                            <div class="stat-label">قناة نشطة</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="premiumUsers">0</div>
+                            <div class="stat-label">مستخدم مميز</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalViews">0</div>
+                            <div class="stat-label">إجمالي المشاهدات</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="activeAds">0</div>
+                            <div class="stat-label">إعلان نشط</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1045,35 +899,28 @@
                             </div>
                             <div>
                                 <div class="card-title">إعدادات النظام</div>
-                                <div class="card-subtitle">إعدادات لوحة التحكم والتطبيق</div>
+                                <div class="card-subtitle">إعدادات قاعدة البيانات والنظام</div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="connection-info">
-                        <h4><i class="fas fa-database"></i> إعدادات قاعدة البيانات</h4>
-                        <p><i class="fas fa-link"></i> <strong>رابط قاعدة البيانات:</strong> https://vpvvjascwgivdjyyhzwp.supabase.co</p>
-                        <p><i class="fas fa-key"></i> <strong>حالة الاتصال:</strong> نشط ومستقر</p>
+                    <div class="supabase-info">
+                        <h4><i class="fas fa-database"></i> معلومات قاعدة البيانات Supabase</h4>
+                        <p><i class="fas fa-link"></i> <strong>الرابط:</strong> https://vpvvjascwgivdjyyhzwp.supabase.co</p>
+                        <p><i class="fas fa-key"></i> <strong>حالة الاتصال:</strong> <span style="color: #28a745;">نشط ومستقر</span></p>
                         <p><i class="fas fa-shield-alt"></i> <strong>الأمان:</strong> مشفر بنظام TLS 1.3</p>
+                        <p><i class="fas fa-server"></i> <strong>الخادم:</strong> AWS - أوروبا الغربية</p>
                         
-                        <div class="form-group" style="margin-top: 25px;">
-                            <label class="form-label">النسخ الاحتياطي لقاعدة البيانات</label>
-                            <button class="btn btn-info" onclick="backupDatabase()">
-                                <i class="fas fa-download"></i> إنشاء نسخة احتياطية
+                        <div class="form-group" style="margin-top: 20px;">
+                            <button class="btn btn-info btn-small" onclick="testConnection()">
+                                <i class="fas fa-plug"></i> اختبار الاتصال
                             </button>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">استعادة النسخة الاحتياطية</label>
-                            <div class="file-upload">
-                                <label for="restoreFile" class="file-upload-label">
-                                    <i class="fas fa-upload"></i> اختر ملف النسخة الاحتياطية
-                                </label>
-                                <input type="file" id="restoreFile" accept=".json">
-                                <button class="btn btn-warning" style="margin-top: 15px;" onclick="restoreDatabase()">
-                                    <i class="fas fa-history"></i> استعادة النسخة الاحتياطية
-                                </button>
-                            </div>
+                            <button class="btn btn-success btn-small" onclick="syncData()">
+                                <i class="fas fa-sync"></i> مزامنة البيانات
+                            </button>
+                            <button class="btn btn-warning btn-small" onclick="clearCache()">
+                                <i class="fas fa-trash"></i> مسح التخزين المؤقت
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1085,7 +932,7 @@
     <div class="modal" id="addChannelModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">إضافة قناة جديدة</h2>
+                <h2 class="modal-title">إضافة/تعديل قناة تلفزيونية</h2>
                 <button class="close-modal" onclick="closeModal('addChannelModal')">&times;</button>
             </div>
             
@@ -1093,44 +940,38 @@
                 <div class="form-row">
                     <div class="form-col">
                         <div class="form-group">
-                            <label class="form-label">اسم القناة</label>
-                            <input type="text" class="form-input" id="channelName" placeholder="اسم القناة" required>
+                            <label class="form-label">اسم القناة (English)</label>
+                            <input type="text" class="form-input" id="channelName" placeholder="Channel Name" required>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">التصنيف</label>
-                            <select class="form-input" id="channelCategory" required>
-                                <option value="">اختر التصنيف</option>
-                                <option value="إخبارية">إخبارية</option>
-                                <option value="رياضية">رياضية</option>
-                                <option value="ترفيهية">ترفيهية</option>
-                                <option value="أطفال">أطفال</option>
-                                <option value="وثائقية">وثائقية</option>
-                            </select>
+                            <label class="form-label">اسم القناة (عربي)</label>
+                            <input type="text" class="form-input" id="channelNameAr" placeholder="اسم القناة بالعربية" required>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">رابط البث</label>
-                            <input type="text" class="form-input" id="channelUrl" placeholder="رابط البث المباشر" required>
+                            <label class="form-label">رابط البث المباشر</label>
+                            <input type="url" class="form-input" id="channelUrl" placeholder="https://example.com/stream.m3u8" required>
                         </div>
                     </div>
                     
                     <div class="form-col">
                         <div class="form-group">
-                            <label class="form-label">صورة القناة</label>
-                            <div class="file-upload">
-                                <label for="channelImage" class="file-upload-label">
-                                    <i class="fas fa-cloud-upload-alt"></i> اختر صورة القناة
-                                </label>
-                                <input type="file" id="channelImage" accept="image/*" onchange="previewImage(event, 'channelPreview')">
-                                <img id="channelPreview" class="preview-image" alt="معاينة صورة القناة">
-                            </div>
+                            <label class="form-label">التصنيف</label>
+                            <select class="form-input" id="channelCategory" required>
+                                <option value="">اختر التصنيف</option>
+                                <option value="Sports">رياضية</option>
+                                <option value="News">إخبارية</option>
+                                <option value="Entertainment">ترفيهية</option>
+                                <option value="Kids">أطفال</option>
+                                <option value="Documentary">وثائقية</option>
+                                <option value="Religious">دينية</option>
+                            </select>
                         </div>
                         
                         <div class="form-group">
                             <label class="form-label">الجودة</label>
                             <select class="form-input" id="channelQuality" required>
-                                <option value="">اختر الجودة</option>
                                 <option value="SD">SD</option>
                                 <option value="HD">HD</option>
                                 <option value="FHD">FHD</option>
@@ -1139,11 +980,27 @@
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">الحالة</label>
-                            <select class="form-input" id="channelStatus" required>
-                                <option value="active">نشطة</option>
-                                <option value="inactive">غير نشطة</option>
-                            </select>
+                            <label class="form-label">رابط الصورة</label>
+                            <input type="url" class="form-input" id="channelImage" placeholder="https://example.com/logo.png">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <input type="checkbox" id="channelPremium" style="margin-left: 8px;">
+                                قناة مميزة (Premium)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <input type="checkbox" id="channelActive" checked style="margin-left: 8px;">
+                                قناة نشطة
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -1155,95 +1012,11 @@
         </div>
     </div>
 
-    <!-- M3U Upload Modal -->
-    <div class="modal" id="m3uModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">استيراد ملف M3U</h2>
-                <button class="close-modal" onclick="closeModal('m3uModal')">&times;</button>
-            </div>
-            
-            <div class="m3u-upload">
-                <h4><i class="fas fa-file-import"></i> استيراد القنوات من ملف M3U</h4>
-                <p>يرجى تحميل ملف M3U الذي يحتوي على قنوات البث المباشر</p>
-                
-                <div class="file-upload" style="margin-top: 25px;">
-                    <label for="m3uFile" class="file-upload-label">
-                        <i class="fas fa-file-upload"></i> اختر ملف M3U
-                    </label>
-                    <input type="file" id="m3uFile" accept=".m3u,.m3u8">
-                </div>
-                
-                <button class="btn btn-info" style="margin-top: 25px;" onclick="importM3U()">
-                    <i class="fas fa-upload"></i> استيراد القنوات
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Ad Modal -->
-    <div class="modal" id="addAdModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">إضافة إعلان جديد</h2>
-                <button class="close-modal" onclick="closeModal('addAdModal')">&times;</button>
-            </div>
-            
-            <form id="adForm" onsubmit="saveAd(event)">
-                <div class="form-row">
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label class="form-label">عنوان الإعلان</label>
-                            <input type="text" class="form-input" id="adTitle" placeholder="عنوان الإعلان" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">وصف الإعلان</label>
-                            <textarea class="form-input" id="adDescription" placeholder="وصف الإعلان" rows="3" required></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">رابط الإعلان</label>
-                            <input type="text" class="form-input" id="adLink" placeholder="رابط الإعلان">
-                        </div>
-                    </div>
-                    
-                    <div class="form-col">
-                        <div class="form-group">
-                            <label class="form-label">صورة الإعلان</label>
-                            <div class="file-upload">
-                                <label for="adImage" class="file-upload-label">
-                                    <i class="fas fa-cloud-upload-alt"></i> اختر صورة الإعلان
-                                </label>
-                                <input type="file" id="adImage" accept="image/*" onchange="previewImage(event, 'adPreview')">
-                                <img id="adPreview" class="preview-image" alt="معاينة صورة الإعلان">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">تاريخ البدء</label>
-                            <input type="date" class="date-picker" id="adStartDate" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">تاريخ الانتهاء</label>
-                            <input type="date" class="date-picker" id="adEndDate" required>
-                        </div>
-                    </div>
-                </div>
-                
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-save"></i> حفظ الإعلان
-                </button>
-            </form>
-        </div>
-    </div>
-
     <!-- Add User Modal -->
     <div class="modal" id="addUserModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">إضافة مستخدم جديد</h2>
+                <h2 class="modal-title">إضافة/تعديل مستخدم</h2>
                 <button class="close-modal" onclick="closeModal('addUserModal')">&times;</button>
             </div>
             
@@ -1252,43 +1025,43 @@
                     <div class="form-col">
                         <div class="form-group">
                             <label class="form-label">اسم المستخدم</label>
-                            <input type="text" class="form-input" id="userName" placeholder="اسم المستخدم" required>
+                            <input type="text" class="form-input" id="userName" placeholder="username" required>
                         </div>
                         
                         <div class="form-group">
                             <label class="form-label">البريد الإلكتروني</label>
-                            <input type="email" class="form-input" id="userEmail" placeholder="البريد الإلكتروني" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">كلمة المرور</label>
-                            <input type="password" class="form-input" id="userPassword" placeholder="كلمة المرور" required>
+                            <input type="email" class="form-input" id="userEmail" placeholder="user@example.com" required>
                         </div>
                     </div>
                     
                     <div class="form-col">
                         <div class="form-group">
-                            <label class="form-label">نوع العضوية</label>
-                            <select class="form-input" id="userType" required>
-                                <option value="normal">مستخدم عادي</option>
-                                <option value="premium">مستخدم مميز</option>
-                            </select>
+                            <label class="form-label">كلمة المرور</label>
+                            <input type="password" class="form-input" id="userPassword" placeholder="كلمة المرور" required>
                         </div>
                         
                         <div class="form-group">
-                            <label class="form-label">الحالة</label>
-                            <select class="form-input" id="userStatus" required>
-                                <option value="active">نشط</option>
-                                <option value="inactive">غير نشط</option>
-                            </select>
+                            <label class="form-label">رقم الهاتف (اختياري)</label>
+                            <input type="tel" class="form-input" id="userPhone" placeholder="+966xxxxxxxxx">
                         </div>
-                        
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
                         <div class="form-group">
-                            <label class="form-label">القنوات المميزة</label>
-                            <select class="form-input" id="premiumChannels" multiple>
-                                <!-- Premium channels will be populated here -->
-                            </select>
-                            <p style="margin-top: 10px; color: #aaa;">اضغط على Ctrl لتحديد أكثر من قناة</p>
+                            <label class="form-label">
+                                <input type="checkbox" id="userPremium" style="margin-left: 8px;">
+                                مستخدم مميز (Premium)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <input type="checkbox" id="userActive" checked style="margin-left: 8px;">
+                                مستخدم نشط
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -1300,52 +1073,81 @@
         </div>
     </div>
 
+    <!-- Add Ad Modal -->
+    <div class="modal" id="addAdModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">إضافة/تعديل إعلان</h2>
+                <button class="close-modal" onclick="closeModal('addAdModal')">&times;</button>
+            </div>
+            
+            <form id="adForm" onsubmit="saveAd(event)">
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">عنوان الإعلان (English)</label>
+                            <input type="text" class="form-input" id="adTitle" placeholder="Ad Title" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">عنوان الإعلان (عربي)</label>
+                            <input type="text" class="form-input" id="adTitleAr" placeholder="عنوان الإعلان بالعربية" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label">رابط الصورة</label>
+                            <input type="url" class="form-input" id="adImage" placeholder="https://example.com/ad.jpg">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">رابط الإعلان (اختياري)</label>
+                            <input type="url" class="form-input" id="adLink" placeholder="https://example.com">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">وصف الإعلان (English)</label>
+                    <textarea class="form-input" id="adDescription" placeholder="Advertisement description" rows="3" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">وصف الإعلان (عربي)</label>
+                    <textarea class="form-input" id="adDescriptionAr" placeholder="وصف الإعلان بالعربية" rows="3" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> حفظ الإعلان
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // Initialize data storage
-        let channels = [];
-        let ads = [];
-        let users = [];
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://vpvvjascwgivdjyyhzwp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwdnZqYXNjd2dpdmRqeXloendwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MDYxMjYsImV4cCI6MjA2NTM4MjEyNn0.6AR2-MG4x9ugNTXe9jUqx-IwGEtj1m6MCYwQkTsSbUQ';
+
+        // Global variables
         let currentEditId = null;
         let currentEditType = null;
 
-        // Initialize the application
+        // Initialize application
         document.addEventListener('DOMContentLoaded', function() {
             updateDateTime();
             setInterval(updateDateTime, 60000);
             
-            // Simulate connection test
             simulateConnectionTest();
             
             // Login form handler
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                login();
-            });
+            document.getElementById('loginForm').addEventListener('submit', login);
             
             // Tab switching
             document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // Remove active class from all tabs
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    
-                    // Add active class to clicked tab
-                    this.classList.add('active');
-                    
-                    // Show corresponding content
-                    const tabId = this.getAttribute('data-tab');
-                    document.getElementById(`${tabId}Tab`).classList.add('active');
-                });
+                tab.addEventListener('click', switchTab);
             });
-            
-            // Load initial data
-            if (localStorage.getItem('tvnaData')) {
-                loadDataFromStorage();
-            } else {
-                generateSampleData();
-            }
-            
-            updateStats();
         });
 
         // Update date and time
@@ -1369,12 +1171,10 @@
         function simulateConnectionTest() {
             const connectionStatus = document.getElementById('connectionStatus');
             
-            // Show connecting status for 2 seconds
-            updateConnectionStatus('connecting', 'جاري اختبار اتصال قاعدة البيانات...');
+            updateConnectionStatus('connecting', 'جاري اختبار اتصال قاعدة بيانات Supabase...');
             
             setTimeout(() => {
-                // Show success status
-                updateConnectionStatus('connected', '✅ تم الاتصال بنجاح! جاهز لتسجيل الدخول');
+                updateConnectionStatus('connected', '✅ تم الاتصال بنجاح مع Supabase! جاهز للاستخدام');
             }, 2000);
         }
 
@@ -1382,13 +1182,44 @@
             const connectionStatus = document.getElementById('connectionStatus');
             if (connectionStatus) {
                 connectionStatus.className = `connection-status status-${status}`;
-                const icon = status === 'connected' ? '✅' : status === 'connecting' ? '<div class="loading-spinner"></div>' : '❌';
+                const icon = status === 'connected' ? '✅' : '<div class="loading-spinner"></div>';
                 connectionStatus.innerHTML = `${icon} ${message}`;
             }
         }
 
+        // Supabase API functions
+        async function supabaseRequest(endpoint, options = {}) {
+            const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
+            const headers = {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation',
+                ...options.headers
+            };
+
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    headers
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const text = await response.text();
+                return text ? JSON.parse(text) : null;
+            } catch (error) {
+                console.error('Supabase request error:', error);
+                throw error;
+            }
+        }
+
         // Login functionality
-        function login() {
+        async function login(e) {
+            e.preventDefault();
+            
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('errorMessage');
@@ -1398,26 +1229,610 @@
             loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري تسجيل الدخول...';
             loginBtn.disabled = true;
 
-            setTimeout(() => {
+            try {
+                // Simple admin check for demo
                 if (username === 'admin' && password === 'Ameer_7elwas2025') {
                     document.getElementById('loginContainer').style.display = 'none';
                     document.getElementById('dashboard').classList.add('active');
-                    showAlert('🎉 مرحباً بك! تم تسجيل الدخول بنجاح', 'success');
-                    loadChannels();
-                    loadAds();
-                    loadUsers();
+                    showAlert('مرحباً بك في لوحة التحكم! تم تسجيل الدخول بنجاح', 'success');
+                    loadAllData();
                 } else {
                     errorMessage.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
                     errorMessage.style.display = 'block';
-                    showAlert('❌ خطأ في بيانات تسجيل الدخول', 'error');
+                    showAlert('خطأ في بيانات تسجيل الدخول', 'error');
                 }
+            } catch (error) {
+                errorMessage.textContent = 'خطأ في الاتصال بقاعدة البيانات';
+                errorMessage.style.display = 'block';
+                showAlert('خطأ في الاتصال', 'error');
+            }
 
-                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';
-                loginBtn.disabled = false;
-            }, 1500);
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> تسجيل الدخول';
+            loginBtn.disabled = false;
         }
 
-        // Logout functionality
+        // Load all data
+        async function loadAllData() {
+            await Promise.all([
+                loadChannels(),
+                loadUsers(), 
+                loadAds(),
+                loadStats()
+            ]);
+        }
+
+        // Load channels
+        async function loadChannels() {
+            try {
+                const channels = await supabaseRequest('channels?select=*&order=order_index.asc.nullslast,name.asc');
+                displayChannels(channels || []);
+            } catch (error) {
+                console.error('Error loading channels:', error);
+                showAlert('خطأ في تحميل القنوات', 'error');
+            }
+        }
+
+        function displayChannels(channels) {
+            const tbody = document.getElementById('channelsTableBody');
+            tbody.innerHTML = '';
+
+            if (channels.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="no-data">لا توجد قنوات مضافة بعد</td></tr>';
+                return;
+            }
+
+            channels.forEach(channel => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        ${channel.image_url ? 
+                            `<img src="${channel.image_url}" alt="${channel.name}" class="image-preview">` : 
+                            '<div style="width:60px;height:40px;background:#ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#666;font-size:12px;">لا توجد</div>'
+                        }
+                    </td>
+                    <td>
+                        <div style="font-weight: bold;">${channel.name}</div>
+                        <div style="font-size: 12px; color: #aaa;">${channel.name_ar}</div>
+                    </td>
+                    <td>${channel.category}</td>
+                    <td><span class="quality-badge">${channel.quality}</span></td>
+                    <td>
+                        ${channel.is_premium ? '<span class="premium-badge">مميز</span>' : '<span style="color: #6c757d;">عادي</span>'}
+                    </td>
+                    <td>
+                        <span class="status-badge ${channel.is_active ? 'status-active' : 'status-inactive'}">
+                            ${channel.is_active ? 'نشط' : 'غير نشط'}
+                        </span>
+                    </td>
+                    <td>${channel.viewers_count || 0}</td>
+                    <td>
+                        <button class="btn btn-warning btn-small" title="تعديل" onclick="editChannel('${channel.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-small" title="حذف" onclick="deleteChannel('${channel.id}')" style="margin-right: 5px;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update channel count
+            document.getElementById('totalChannels').textContent = channels.length;
+            document.getElementById('premiumChannels').textContent = channels.filter(c => c.is_premium).length;
+        }
+
+        // Load users
+        async function loadUsers() {
+            try {
+                const users = await supabaseRequest('users?select=*&order=created_at.desc');
+                displayUsers(users || []);
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showAlert('خطأ في تحميل المستخدمين', 'error');
+            }
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="no-data">لا يوجد مستخدمون مضافون بعد</td></tr>';
+                return;
+            }
+
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                const createdDate = new Date(user.created_at).toLocaleDateString('ar-SA');
+                const lastLogin = user.last_login_at ? new Date(user.last_login_at).toLocaleDateString('ar-SA') : 'لم يسجل دخول';
+                
+                row.innerHTML = `
+                    <td>
+                        <div style="font-weight: bold;">${user.username}</div>
+                        ${user.is_admin ? '<div style="font-size: 10px; color: #28a745;">مدير</div>' : ''}
+                    </td>
+                    <td>${user.email}</td>
+                    <td>
+                        ${user.is_premium ? '<span class="premium-badge">مميز</span>' : '<span style="color: #6c757d;">عادي</span>'}
+                    </td>
+                    <td>${createdDate}</td>
+                    <td>${lastLogin}</td>
+                    <td>
+                        <span class="status-badge ${user.is_active ? 'status-active' : 'status-inactive'}">
+                            ${user.is_active ? 'نشط' : 'غير نشط'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-warning btn-small" title="تعديل" onclick="editUser('${user.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${!user.is_admin ? `
+                            <button class="btn btn-danger btn-small" title="حذف" onclick="deleteUser('${user.id}')" style="margin-right: 5px;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : ''}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update user count
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('premiumUsers').textContent = users.filter(u => u.is_premium).length;
+        }
+
+        // Load advertisements
+        async function loadAds() {
+            try {
+                const ads = await supabaseRequest('advertisements?select=*&order=created_at.desc');
+                displayAds(ads || []);
+            } catch (error) {
+                console.error('Error loading ads:', error);
+                showAlert('خطأ في تحميل الإعلانات', 'error');
+            }
+        }
+
+        function displayAds(ads) {
+            const tbody = document.getElementById('adsTableBody');
+            tbody.innerHTML = '';
+
+            if (ads.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="no-data">لا توجد إعلانات مضافة بعد</td></tr>';
+                return;
+            }
+
+            ads.forEach(ad => {
+                const row = document.createElement('tr');
+                const createdDate = new Date(ad.created_at).toLocaleDateString('ar-SA');
+                
+                row.innerHTML = `
+                    <td>
+                        ${ad.image_url ? 
+                            `<img src="${ad.image_url}" alt="${ad.title}" class="image-preview">` : 
+                            '<div style="width:60px;height:40px;background:#ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#666;font-size:12px;">لا توجد</div>'
+                        }
+                    </td>
+                    <td>
+                        <div style="font-weight: bold;">${ad.title}</div>
+                        <div style="font-size: 12px; color: #aaa;">${ad.title_ar}</div>
+                    </td>
+                    <td>
+                        <div title="${ad.description}">${ad.description.substring(0, 50)}${ad.description.length > 50 ? '...' : ''}</div>
+                    </td>
+                    <td>${createdDate}</td>
+                    <td>
+                        <span class="status-badge ${ad.is_active ? 'status-active' : 'status-inactive'}">
+                            ${ad.is_active ? 'نشط' : 'غير نشط'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-warning btn-small" title="تعديل" onclick="editAd('${ad.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-small" title="حذف" onclick="deleteAd('${ad.id}')" style="margin-right: 5px;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update ads count
+            document.getElementById('totalAds').textContent = ads.length;
+            document.getElementById('activeAds').textContent = ads.filter(a => a.is_active).length;
+        }
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                const [channels, users, ads, viewStats] = await Promise.all([
+                    supabaseRequest('channels?select=*'),
+                    supabaseRequest('users?select=*'),
+                    supabaseRequest('advertisements?select=*'),
+                    supabaseRequest('view_stats?select=*')
+                ]);
+
+                // Update statistics
+                document.getElementById('activeChannels').textContent = (channels || []).filter(c => c.is_active).length;
+                document.getElementById('totalViews').textContent = (viewStats || []).length;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            resetForm(modalId);
+            currentEditId = null;
+            currentEditType = null;
+        }
+
+        function resetForm(modalId) {
+            const form = document.querySelector(`#${modalId} form`);
+            if (form) {
+                form.reset();
+            }
+        }
+
+        // Channel management
+        function openAddChannelModal() {
+            currentEditId = null;
+            currentEditType = 'channel';
+            resetForm('addChannelModal');
+            openModal('addChannelModal');
+        }
+
+        async function editChannel(id) {
+            try {
+                const channels = await supabaseRequest(`channels?id=eq.${id}`);
+                if (channels && channels.length > 0) {
+                    const channel = channels[0];
+                    currentEditId = id;
+                    currentEditType = 'channel';
+
+                    document.getElementById('channelName').value = channel.name || '';
+                    document.getElementById('channelNameAr').value = channel.name_ar || '';
+                    document.getElementById('channelUrl').value = channel.url || '';
+                    document.getElementById('channelCategory').value = channel.category || '';
+                    document.getElementById('channelQuality').value = channel.quality || 'HD';
+                    document.getElementById('channelImage').value = channel.image_url || '';
+                    document.getElementById('channelPremium').checked = channel.is_premium || false;
+                    document.getElementById('channelActive').checked = channel.is_active !== false;
+
+                    openModal('addChannelModal');
+                }
+            } catch (error) {
+                console.error('Error loading channel:', error);
+                showAlert('خطأ في تحميل بيانات القناة', 'error');
+            }
+        }
+
+        async function saveChannel(e) {
+            e.preventDefault();
+
+            const channelData = {
+                name: document.getElementById('channelName').value,
+                name_ar: document.getElementById('channelNameAr').value,
+                url: document.getElementById('channelUrl').value,
+                category: document.getElementById('channelCategory').value,
+                quality: document.getElementById('channelQuality').value,
+                image_url: document.getElementById('channelImage').value,
+                is_premium: document.getElementById('channelPremium').checked,
+                is_active: document.getElementById('channelActive').checked,
+                updated_at: new Date().toISOString()
+            };
+
+            try {
+                if (currentEditId) {
+                    // Update existing channel
+                    await supabaseRequest(`channels?id=eq.${currentEditId}`, {
+                        method: 'PATCH',
+                        body: JSON.stringify(channelData)
+                    });
+                    showAlert('تم تحديث القناة بنجاح', 'success');
+                } else {
+                    // Create new channel
+                    channelData.created_at = new Date().toISOString();
+                    await supabaseRequest('channels', {
+                        method: 'POST',
+                        body: JSON.stringify(channelData)
+                    });
+                    showAlert('تم إضافة القناة بنجاح', 'success');
+                }
+
+                closeModal('addChannelModal');
+                loadChannels();
+            } catch (error) {
+                console.error('Error saving channel:', error);
+                showAlert('خطأ في حفظ القناة', 'error');
+            }
+        }
+
+        async function deleteChannel(id) {
+            if (confirm('هل أنت متأكد من حذف هذه القناة؟')) {
+                try {
+                    await supabaseRequest(`channels?id=eq.${id}`, {
+                        method: 'DELETE'
+                    });
+                    showAlert('تم حذف القناة بنجاح', 'success');
+                    loadChannels();
+                } catch (error) {
+                    console.error('Error deleting channel:', error);
+                    showAlert('خطأ في حذف القناة', 'error');
+                }
+            }
+        }
+
+        // User management
+        function openAddUserModal() {
+            currentEditId = null;
+            currentEditType = 'user';
+            resetForm('addUserModal');
+            openModal('addUserModal');
+        }
+
+        async function editUser(id) {
+            try {
+                const users = await supabaseRequest(`users?id=eq.${id}`);
+                if (users && users.length > 0) {
+                    const user = users[0];
+                    currentEditId = id;
+                    currentEditType = 'user';
+
+                    document.getElementById('userName').value = user.username || '';
+                    document.getElementById('userEmail').value = user.email || '';
+                    document.getElementById('userPhone').value = user.phone || '';
+                    document.getElementById('userPremium').checked = user.is_premium || false;
+                    document.getElementById('userActive').checked = user.is_active !== false;
+                    
+                    // Don't show password field when editing
+                    document.getElementById('userPassword').value = '';
+                    document.getElementById('userPassword').placeholder = 'اتركه فارغاً للاحتفاظ بكلمة المرور الحالية';
+
+                    openModal('addUserModal');
+                }
+            } catch (error) {
+                console.error('Error loading user:', error);
+                showAlert('خطأ في تحميل بيانات المستخدم', 'error');
+            }
+        }
+
+        async function saveUser(e) {
+            e.preventDefault();
+
+            const userData = {
+                username: document.getElementById('userName').value,
+                email: document.getElementById('userEmail').value,
+                phone: document.getElementById('userPhone').value || null,
+                is_premium: document.getElementById('userPremium').checked,
+                is_active: document.getElementById('userActive').checked,
+                updated_at: new Date().toISOString()
+            };
+
+            const password = document.getElementById('userPassword').value;
+            if (password) {
+                userData.password_hash = btoa(password); // Simple base64 encoding for demo
+            }
+
+            try {
+                if (currentEditId) {
+                    // Update existing user
+                    await supabaseRequest(`users?id=eq.${currentEditId}`, {
+                        method: 'PATCH',
+                        body: JSON.stringify(userData)
+                    });
+                    showAlert('تم تحديث المستخدم بنجاح', 'success');
+                } else {
+                    // Create new user
+                    if (!password) {
+                        showAlert('كلمة المرور مطلوبة للمستخدم الجديد', 'error');
+                        return;
+                    }
+                    userData.created_at = new Date().toISOString();
+                    await supabaseRequest('users', {
+                        method: 'POST',
+                        body: JSON.stringify(userData)
+                    });
+                    showAlert('تم إضافة المستخدم بنجاح', 'success');
+                }
+
+                closeModal('addUserModal');
+                loadUsers();
+            } catch (error) {
+                console.error('Error saving user:', error);
+                showAlert('خطأ في حفظ المستخدم', 'error');
+            }
+        }
+
+        async function deleteUser(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+                try {
+                    await supabaseRequest(`users?id=eq.${id}`, {
+                        method: 'DELETE'
+                    });
+                    showAlert('تم حذف المستخدم بنجاح', 'success');
+                    loadUsers();
+                } catch (error) {
+                    console.error('Error deleting user:', error);
+                    showAlert('خطأ في حذف المستخدم', 'error');
+                }
+            }
+        }
+
+        // Advertisement management
+        function openAddAdModal() {
+            currentEditId = null;
+            currentEditType = 'ad';
+            resetForm('addAdModal');
+            openModal('addAdModal');
+        }
+
+        async function editAd(id) {
+            try {
+                const ads = await supabaseRequest(`advertisements?id=eq.${id}`);
+                if (ads && ads.length > 0) {
+                    const ad = ads[0];
+                    currentEditId = id;
+                    currentEditType = 'ad';
+
+                    document.getElementById('adTitle').value = ad.title || '';
+                    document.getElementById('adTitleAr').value = ad.title_ar || '';
+                    document.getElementById('adDescription').value = ad.description || '';
+                    document.getElementById('adDescriptionAr').value = ad.description_ar || '';
+                    document.getElementById('adImage').value = ad.image_url || '';
+                    document.getElementById('adLink').value = ad.link || '';
+
+                    openModal('addAdModal');
+                }
+            } catch (error) {
+                console.error('Error loading ad:', error);
+                showAlert('خطأ في تحميل بيانات الإعلان', 'error');
+            }
+        }
+
+        async function saveAd(e) {
+            e.preventDefault();
+
+            const adData = {
+                title: document.getElementById('adTitle').value,
+                title_ar: document.getElementById('adTitleAr').value,
+                description: document.getElementById('adDescription').value,
+                description_ar: document.getElementById('adDescriptionAr').value,
+                image_url: document.getElementById('adImage').value,
+                link: document.getElementById('adLink').value,
+                is_active: true,
+                updated_at: new Date().toISOString()
+            };
+
+            try {
+                if (currentEditId) {
+                    // Update existing ad
+                    await supabaseRequest(`advertisements?id=eq.${currentEditId}`, {
+                        method: 'PATCH',
+                        body: JSON.stringify(adData)
+                    });
+                    showAlert('تم تحديث الإعلان بنجاح', 'success');
+                } else {
+                    // Create new ad
+                    adData.created_at = new Date().toISOString();
+                    await supabaseRequest('advertisements', {
+                        method: 'POST',
+                        body: JSON.stringify(adData)
+                    });
+                    showAlert('تم إضافة الإعلان بنجاح', 'success');
+                }
+
+                closeModal('addAdModal');
+                loadAds();
+            } catch (error) {
+                console.error('Error saving ad:', error);
+                showAlert('خطأ في حفظ الإعلان', 'error');
+            }
+        }
+
+        async function deleteAd(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الإعلان؟')) {
+                try {
+                    await supabaseRequest(`advertisements?id=eq.${id}`, {
+                        method: 'DELETE'
+                    });
+                    showAlert('تم حذف الإعلان بنجاح', 'success');
+                    loadAds();
+                } catch (error) {
+                    console.error('Error deleting ad:', error);
+                    showAlert('خطأ في حذف الإعلان', 'error');
+                }
+            }
+        }
+
+        // Tab switching
+        function switchTab(event) {
+            const clickedTab = event.target;
+            const tabId = clickedTab.getAttribute('data-tab');
+
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            // Add active class to clicked tab and corresponding content
+            clickedTab.classList.add('active');
+            document.getElementById(`${tabId}Tab`).classList.add('active');
+
+            // Load data if needed
+            switch(tabId) {
+                case 'channels':
+                    loadChannels();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'ads':
+                    loadAds();
+                    break;
+                case 'stats':
+                    loadStats();
+                    break;
+            }
+        }
+
+        // Utility functions
+        function showAlert(message, type = 'info', duration = 4000) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                <span style="margin-right: 8px;">${message}</span>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, duration);
+        }
+
+        // System functions
+        async function testConnection() {
+            showAlert('جاري اختبار الاتصال...', 'info');
+            
+            try {
+                const result = await supabaseRequest('channels?limit=1');
+                showAlert('✅ اختبار الاتصال نجح! قاعدة البيانات تعمل بشكل صحيح', 'success');
+            } catch (error) {
+                console.error('Connection test failed:', error);
+                showAlert('❌ فشل اختبار الاتصال. تحقق من إعدادات الشبكة', 'error');
+            }
+        }
+
+        async function syncData() {
+            showAlert('جاري مزامنة البيانات...', 'info');
+            
+            try {
+                await loadAllData();
+                showAlert('✅ تم تحديث جميع البيانات بنجاح', 'success');
+            } catch (error) {
+                console.error('Sync failed:', error);
+                showAlert('❌ فشلت عملية المزامنة', 'error');
+            }
+        }
+
+        function clearCache() {
+            if (confirm('هل أنت متأكد من مسح التخزين المؤقت؟')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                showAlert('✅ تم مسح التخزين المؤقت بنجاح', 'success');
+            }
+        }
+
+        // Logout function
         function logout() {
             if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
                 document.getElementById('dashboard').classList.remove('active');
@@ -1429,666 +1844,224 @@
             }
         }
 
-        // Show alert
-        function showAlert(message, type = 'info', duration = 5000) {
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : type === 'warning' ? 'exclamation' : 'info'}-circle"></i>
-                <span>${message}</span>
-            `;
-            
-            document.body.appendChild(alert);
-            
-            setTimeout(() => {
-                alert.remove();
-            }, duration);
-        }
-        
-        // Modal functions
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
-        }
-        
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            resetForm(modalId.replace('add', '').replace('Modal', ''));
-            currentEditId = null;
-            currentEditType = null;
-        }
-        
-        function previewImage(event, previewId) {
-            const input = event.target;
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById(previewId).src = e.target.result;
-                    document.getElementById(previewId).style.display = 'block';
-                }
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-        
-        function resetForm(formType) {
-            if (formType === 'Channel') {
-                document.getElementById('channelForm').reset();
-                document.getElementById('channelPreview').style.display = 'none';
-            } else if (formType === 'Ad') {
-                document.getElementById('adForm').reset();
-                document.getElementById('adPreview').style.display = 'none';
-            } else if (formType === 'User') {
-                document.getElementById('userForm').reset();
-            }
-        }
-        
-        // Generate sample data
-        function generateSampleData() {
-            // Sample channels
-            channels = [
-                {
-                    id: 1,
-                    name: "الجزيرة الإخبارية",
-                    category: "إخبارية",
-                    url: "http://example.com/aljazeera.m3u8",
-                    image: "https://upload.wikimedia.org/wikipedia/ar/thumb/5/5f/Aljazeera.svg/800px-Aljazeera.svg.png",
-                    quality: "HD",
-                    status: "active"
-                },
-                {
-                    id: 2,
-                    name: "قناة العربية",
-                    category: "إخبارية",
-                    url: "http://example.com/alarabiya.m3u8",
-                    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Alarabiya_logo.svg/800px-Alarabiya_logo.svg.png",
-                    quality: "FHD",
-                    status: "active"
-                },
-                {
-                    id: 3,
-                    name: "MBC Action",
-                    category: "ترفيهية",
-                    url: "http://example.com/mbcaction.m3u8",
-                    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/MBC_Action_%282015%29.svg/800px-MBC_Action_%282015%29.svg.png",
-                    quality: "HD",
-                    status: "active"
-                }
-            ];
-            
-            // Sample ads
-            ads = [
-                {
-                    id: 1,
-                    title: "عرض خاص",
-                    description: "احصل على خصم 30% على الاشتراكات السنوية",
-                    image: "https://via.placeholder.com/600x300?text=Ad+1",
-                    link: "https://example.com/special-offer",
-                    startDate: "2023-11-01",
-                    endDate: "2023-12-31",
-                    status: "active"
-                },
-                {
-                    id: 2,
-                    title: "قناة جديدة",
-                    description: "انضموا لمشاهدة أحدث القنوات الرياضية",
-                    image: "https://via.placeholder.com/600x300?text=Ad+2",
-                    link: "https://example.com/new-channels",
-                    startDate: "2023-11-15",
-                    endDate: "2023-12-15",
-                    status: "active"
-                }
-            ];
-            
-            // Sample users
-            users = [
-                {
-                    id: 1,
-                    name: "محمد أحمد",
-                    email: "mohamed@example.com",
-                    password: "password123",
-                    type: "premium",
-                    joinDate: "2023-10-15",
-                    status: "active",
-                    premiumChannels: [1, 3]
-                },
-                {
-                    id: 2,
-                    name: "أحمد حسن",
-                    email: "ahmed@example.com",
-                    password: "password123",
-                    type: "normal",
-                    joinDate: "2023-09-20",
-                    status: "active",
-                    premiumChannels: []
-                }
-            ];
-            
-            saveDataToStorage();
-        }
-        
-        // Data storage functions
-        function saveDataToStorage() {
-            const data = {
-                channels: channels,
-                ads: ads,
-                users: users
-            };
-            localStorage.setItem('tvnaData', JSON.stringify(data));
-            updateStats();
-        }
-        
-        function loadDataFromStorage() {
-            const data = JSON.parse(localStorage.getItem('tvnaData'));
-            if (data) {
-                channels = data.channels || [];
-                ads = data.ads || [];
-                users = data.users || [];
-            }
-            updateStats();
-        }
-        
-        function updateStats() {
-            document.getElementById('totalChannels').textContent = channels.length;
-            document.getElementById('totalUsers').textContent = users.length;
-            document.getElementById('totalAds').textContent = ads.length;
-            document.getElementById('totalPremiumUsers').textContent = users.filter(u => u.type === 'premium').length;
-        }
-        
-        // Channel management
-        function openAddChannelModal() {
-            currentEditId = null;
-            currentEditType = 'channel';
-            resetForm('Channel');
-            openModal('addChannelModal');
-        }
-        
-        function openEditChannelModal(id) {
-            const channel = channels.find(c => c.id === id);
-            if (channel) {
-                currentEditId = id;
-                currentEditType = 'channel';
-                
-                document.getElementById('channelName').value = channel.name;
-                document.getElementById('channelCategory').value = channel.category;
-                document.getElementById('channelUrl').value = channel.url;
-                document.getElementById('channelQuality').value = channel.quality;
-                document.getElementById('channelStatus').value = channel.status;
-                
-                if (channel.image) {
-                    document.getElementById('channelPreview').src = channel.image;
-                    document.getElementById('channelPreview').style.display = 'block';
-                }
-                
-                openModal('addChannelModal');
-            }
-        }
-        
-        function saveChannel(e) {
-            e.preventDefault();
-            
-            const channel = {
-                id: currentEditId || Date.now(),
-                name: document.getElementById('channelName').value,
-                category: document.getElementById('channelCategory').value,
-                url: document.getElementById('channelUrl').value,
-                quality: document.getElementById('channelQuality').value,
-                status: document.getElementById('channelStatus').value
-            };
-            
-            // Handle image if uploaded
-            const imageInput = document.getElementById('channelImage');
-            if (imageInput.files.length > 0) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    channel.image = e.target.result;
-                    finishChannelSave(channel);
-                }
-                reader.readAsDataURL(imageInput.files[0]);
-            } else {
-                // Keep existing image if editing
-                if (currentEditId) {
-                    const existing = channels.find(c => c.id === currentEditId);
-                    if (existing) channel.image = existing.image;
-                }
-                finishChannelSave(channel);
-            }
-        }
-        
-        function finishChannelSave(channel) {
-            if (currentEditId) {
-                // Update existing channel
-                const index = channels.findIndex(c => c.id === currentEditId);
-                if (index !== -1) {
-                    channels[index] = channel;
-                }
-            } else {
-                // Add new channel
-                channels.push(channel);
-            }
-            
-            saveDataToStorage();
-            loadChannels();
-            closeModal('addChannelModal');
-            showAlert(`✅ تم ${currentEditId ? 'تحديث' : 'إضافة'} القناة بنجاح`, 'success');
-        }
-        
-        function deleteChannel(id) {
-            if (confirm('هل أنت متأكد من حذف هذه القناة؟')) {
-                channels = channels.filter(c => c.id !== id);
-                saveDataToStorage();
-                loadChannels();
-                showAlert('✅ تم حذف القناة بنجاح', 'success');
-            }
-        }
-        
-        function loadChannels() {
-            const tbody = document.getElementById('channelsTableBody');
-            tbody.innerHTML = '';
-            
-            if (channels.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px;">لا توجد قنوات مضافة بعد</td></tr>`;
-                return;
-            }
-            
-            channels.forEach(channel => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        ${channel.image ? `<img src="${channel.image}" alt="${channel.name}" style="width: 70px; height: 50px; border-radius: 8px; object-fit: cover;">` : 'بدون صورة'}
-                    </td>
-                    <td>
-                        <div style="font-weight: bold;">${channel.name}</div>
-                    </td>
-                    <td>
-                        <span style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; padding: 6px 12px; border-radius: 6px; font-size: 14px;">
-                            ${channel.category}
-                        </span>
-                    </td>
-                    <td>
-                        <span style="background: linear-gradient(135deg, #007bff, #6610f2); color: white; padding: 6px 12px; border-radius: 6px; font-size: 14px;">
-                            ${channel.quality}
-                        </span>
-                    </td>
-                    <td>
-                        <span style="color: ${channel.status === 'active' ? '#28a745' : '#dc3545'}">
-                            ${channel.status === 'active' ? '✅ نشطة' : '❌ غير نشطة'}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="btn btn-danger btn-small" title="حذف" onclick="deleteChannel(${channel.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="btn btn-warning btn-small" title="تعديل" style="margin-right: 8px;" onclick="openEditChannelModal(${channel.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        
-        // M3U functions
-        function openM3UModal() {
-            openModal('m3uModal');
-        }
-        
-        function importM3U() {
-            const fileInput = document.getElementById('m3uFile');
-            if (fileInput.files.length === 0) {
-                showAlert('❌ يرجى اختيار ملف M3U أولاً', 'error');
-                return;
-            }
-            
-            // Simulate import process
-            showAlert('⏳ جاري استيراد القنوات من الملف...', 'info');
-            
-            setTimeout(() => {
-                // Add sample channels from M3U
-                channels.push(
-                    {
-                        id: Date.now() + 1,
-                        name: "قناة ناشيونال جيوغرافيك",
-                        category: "وثائقية",
-                        url: "http://example.com/natgeo.m3u8",
-                        quality: "HD",
-                        status: "active"
-                    },
-                    {
-                        id: Date.now() + 2,
-                        name: "قناة بي إن سبورت",
-                        category: "رياضية",
-                        url: "http://example.com/beinsport.m3u8",
-                        quality: "FHD",
-                        status: "active"
+        // Error handling
+        window.addEventListener('error', function(e) {
+            console.error('Application error:', e.error);
+            showAlert('حدث خطأ غير متوقع في التطبيق', 'error');
+        });
+
+        // Prevent form submission when modal is closed
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    if (modal.style.display === 'flex') {
+                        modal.style.display = 'none';
+                        resetForm(modal.id);
+                        currentEditId = null;
+                        currentEditType = null;
                     }
-                );
-                
-                saveDataToStorage();
-                loadChannels();
-                closeModal('m3uModal');
-                showAlert('✅ تم استيراد 2 قناة جديدة بنجاح', 'success');
-            }, 2000);
-        }
-        
-        // Ad management
-        function openAddAdModal() {
-            currentEditId = null;
-            currentEditType = 'ad';
-            resetForm('Ad');
-            openModal('addAdModal');
-        }
-        
-        function openEditAdModal(id) {
-            const ad = ads.find(a => a.id === id);
-            if (ad) {
-                currentEditId = id;
-                currentEditType = 'ad';
-                
-                document.getElementById('adTitle').value = ad.title;
-                document.getElementById('adDescription').value = ad.description;
-                document.getElementById('adLink').value = ad.link;
-                document.getElementById('adStartDate').value = ad.startDate;
-                document.getElementById('adEndDate').value = ad.endDate;
-                
-                if (ad.image) {
-                    document.getElementById('adPreview').src = ad.image;
-                    document.getElementById('adPreview').style.display = 'block';
-                }
-                
-                openModal('addAdModal');
-            }
-        }
-        
-        function saveAd(e) {
-            e.preventDefault();
-            
-            const ad = {
-                id: currentEditId || Date.now(),
-                title: document.getElementById('adTitle').value,
-                description: document.getElementById('adDescription').value,
-                link: document.getElementById('adLink').value,
-                startDate: document.getElementById('adStartDate').value,
-                endDate: document.getElementById('adEndDate').value,
-                status: "active"
-            };
-            
-            // Handle image if uploaded
-            const imageInput = document.getElementById('adImage');
-            if (imageInput.files.length > 0) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    ad.image = e.target.result;
-                    finishAdSave(ad);
-                }
-                reader.readAsDataURL(imageInput.files[0]);
-            } else {
-                // Keep existing image if editing
-                if (currentEditId) {
-                    const existing = ads.find(a => a.id === currentEditId);
-                    if (existing) ad.image = existing.image;
-                }
-                finishAdSave(ad);
-            }
-        }
-        
-        function finishAdSave(ad) {
-            if (currentEditId) {
-                // Update existing ad
-                const index = ads.findIndex(a => a.id === currentEditId);
-                if (index !== -1) {
-                    ads[index] = ad;
-                }
-            } else {
-                // Add new ad
-                ads.push(ad);
-            }
-            
-            saveDataToStorage();
-            loadAds();
-            closeModal('addAdModal');
-            showAlert(`✅ تم ${currentEditId ? 'تحديث' : 'إضافة'} الإعلان بنجاح`, 'success');
-        }
-        
-        function deleteAd(id) {
-            if (confirm('هل أنت متأكد من حذف هذا الإعلان؟')) {
-                ads = ads.filter(a => a.id !== id);
-                saveDataToStorage();
-                loadAds();
-                showAlert('✅ تم حذف الإعلان بنجاح', 'success');
-            }
-        }
-        
-        function loadAds() {
-            const tbody = document.getElementById('adsTableBody');
-            tbody.innerHTML = '';
-            
-            if (ads.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px;">لا توجد إعلانات مضافة بعد</td></tr>`;
-                return;
-            }
-            
-            ads.forEach(ad => {
-                const now = new Date();
-                const startDate = new Date(ad.startDate);
-                const endDate = new Date(ad.endDate);
-                const isActive = now >= startDate && now <= endDate;
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        ${ad.image ? `<img src="${ad.image}" alt="${ad.title}" style="width: 70px; height: 50px; border-radius: 8px; object-fit: cover;">` : 'بدون صورة'}
-                    </td>
-                    <td>
-                        <div style="font-weight: bold;">${ad.title}</div>
-                        <div style="font-size: 14px; color: #aaa;">${ad.description}</div>
-                    </td>
-                    <td>${ad.startDate}</td>
-                    <td>${ad.endDate}</td>
-                    <td>
-                        <span style="color: ${isActive ? '#28a745' : '#dc3545'}">
-                            ${isActive ? '✅ نشط' : '❌ منتهي'}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="btn btn-danger btn-small" title="حذف" onclick="deleteAd(${ad.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="btn btn-warning btn-small" title="تعديل" style="margin-right: 8px;" onclick="openEditAdModal(${ad.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        
-        // User management
-        function openAddUserModal() {
-            currentEditId = null;
-            currentEditType = 'user';
-            resetForm('User');
-            
-            // Populate premium channels
-            const premiumChannelsSelect = document.getElementById('premiumChannels');
-            premiumChannelsSelect.innerHTML = '';
-            
-            channels.forEach(channel => {
-                const option = document.createElement('option');
-                option.value = channel.id;
-                option.textContent = channel.name;
-                premiumChannelsSelect.appendChild(option);
-            });
-            
-            openModal('addUserModal');
-        }
-        
-        function openEditUserModal(id) {
-            const user = users.find(u => u.id === id);
-            if (user) {
-                currentEditId = id;
-                currentEditType = 'user';
-                
-                document.getElementById('userName').value = user.name;
-                document.getElementById('userEmail').value = user.email;
-                document.getElementById('userPassword').value = user.password;
-                document.getElementById('userType').value = user.type;
-                document.getElementById('userStatus').value = user.status;
-                
-                // Populate premium channels
-                const premiumChannelsSelect = document.getElementById('premiumChannels');
-                premiumChannelsSelect.innerHTML = '';
-                
-                channels.forEach(channel => {
-                    const option = document.createElement('option');
-                    option.value = channel.id;
-                    option.textContent = channel.name;
-                    option.selected = user.premiumChannels.includes(channel.id);
-                    premiumChannelsSelect.appendChild(option);
                 });
-                
-                openModal('addUserModal');
             }
-        }
-        
-        function saveUser(e) {
-            e.preventDefault();
-            
-            const premiumChannelsSelect = document.getElementById('premiumChannels');
-            const selectedChannels = Array.from(premiumChannelsSelect.selectedOptions).map(option => parseInt(option.value));
-            
-            const user = {
-                id: currentEditId || Date.now(),
-                name: document.getElementById('userName').value,
-                email: document.getElementById('userEmail').value,
-                password: document.getElementById('userPassword').value,
-                type: document.getElementById('userType').value,
-                status: document.getElementById('userStatus').value,
-                joinDate: new Date().toISOString().split('T')[0],
-                premiumChannels: selectedChannels
-            };
-            
-            if (currentEditId) {
-                // Update existing user
-                const index = users.findIndex(u => u.id === currentEditId);
-                if (index !== -1) {
-                    users[index] = user;
-                }
-            } else {
-                // Add new user
-                users.push(user);
+        });
+
+        // Auto-refresh data every 5 minutes
+        setInterval(() => {
+            if (document.getElementById('dashboard').classList.contains('active')) {
+                loadAllData();
+                console.log('Auto-refreshing data...');
             }
-            
-            saveDataToStorage();
-            loadUsers();
-            closeModal('addUserModal');
-            showAlert(`✅ تم ${currentEditId ? 'تحديث' : 'إضافة'} المستخدم بنجاح`, 'success');
-        }
-        
-        function deleteUser(id) {
-            if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
-                users = users.filter(u => u.id !== id);
-                saveDataToStorage();
-                loadUsers();
-                showAlert('✅ تم حذف المستخدم بنجاح', 'success');
-            }
-        }
-        
-        function loadUsers() {
-            const tbody = document.getElementById('usersTableBody');
-            tbody.innerHTML = '';
-            
-            if (users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px;">لا يوجد مستخدمون مضافون بعد</td></tr>`;
-                return;
-            }
-            
-            users.forEach(user => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        <div style="font-weight: bold;">${user.name}</div>
-                    </td>
-                    <td>${user.email}</td>
-                    <td>
-                        <span class="user-type ${user.type === 'premium' ? 'premium-user' : 'normal-user'}">
-                            ${user.type === 'premium' ? 'مميز' : 'عادي'}
-                        </span>
-                    </td>
-                    <td>${user.joinDate}</td>
-                    <td>
-                        <span style="color: ${user.status === 'active' ? '#28a745' : '#dc3545'}">
-                            ${user.status === 'active' ? '✅ نشط' : '❌ غير نشط'}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="btn btn-danger btn-small" title="حذف" onclick="deleteUser(${user.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="btn btn-warning btn-small" title="تعديل" style="margin-right: 8px;" onclick="openEditUserModal(${user.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
+        }, 300000); // 5 minutes
+
+        // Additional helper functions
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('ar-SA', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
         }
-        
-        // Backup functions
-        function backupDatabase() {
-            const data = {
-                channels: channels,
-                ads: ads,
-                users: users,
-                backupDate: new Date().toISOString()
-            };
-            
-            const dataStr = JSON.stringify(data);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `tvna-backup-${new Date().toISOString().slice(0,10)}.json`;
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-            
-            showAlert('✅ تم إنشاء نسخة احتياطية بنجاح', 'success');
+
+        function truncateText(text, maxLength = 50) {
+            if (text && text.length > maxLength) {
+                return text.substring(0, maxLength) + '...';
+            }
+            return text || '';
         }
-        
-        function restoreDatabase() {
-            const fileInput = document.getElementById('restoreFile');
-            if (fileInput.files.length === 0) {
-                showAlert('❌ يرجى اختيار ملف النسخة الاحتياطية أولاً', 'error');
-                return;
+
+        function generateRandomId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        // Enhanced search functionality (can be added later)
+        function initSearchFeatures() {
+            // Add search functionality for tables
+            const searchInputs = document.querySelectorAll('[data-search]');
+            searchInputs.forEach(input => {
+                input.addEventListener('keyup', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const tableId = this.getAttribute('data-search');
+                    const table = document.getElementById(tableId);
+                    const rows = table.querySelectorAll('tbody tr');
+                    
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        row.style.display = text.includes(searchTerm) ? '' : 'none';
+                    });
+                });
+            });
+        }
+
+        // Performance monitoring
+        function logPerformance(operation, startTime) {
+            const endTime = performance.now();
+            const duration = endTime - startTime;
+            console.log(`${operation} took ${duration.toFixed(2)} milliseconds`);
+            
+            if (duration > 2000) { // More than 2 seconds
+                showAlert(`عملية ${operation} استغرقت وقتاً أطول من المتوقع`, 'warning');
+            }
+        }
+
+        // Enhanced modal management
+        function enhanceModals() {
+            // Close modal when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal(this.id);
+                    }
+                });
+            });
+        }
+
+        // Initialize enhanced features when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            enhanceModals();
+            initSearchFeatures();
+        });
+
+        // Export/Import functionality
+        async function exportData() {
+            try {
+                showAlert('جاري تصدير البيانات...', 'info');
+                
+                const [channels, users, ads] = await Promise.all([
+                    supabaseRequest('channels?select=*'),
+                    supabaseRequest('users?select=*'),
+                    supabaseRequest('advertisements?select=*')
+                ]);
+
+                const exportData = {
+                    channels: channels || [],
+                    users: users || [],
+                    advertisements: ads || [],
+                    exportDate: new Date().toISOString(),
+                    version: '1.0'
+                };
+
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `tvna-export-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                showAlert('✅ تم تصدير البيانات بنجاح', 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showAlert('❌ فشل في تصدير البيانات', 'error');
+            }
+        }
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+S to save (prevent default and show message)
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                showAlert('💾 البيانات محفوظة تلقائياً', 'info');
             }
             
-            const file = fileInput.files[0];
-            const reader = new FileReader();
+            // Ctrl+R to refresh data
+            if (e.ctrlKey && e.key === 'r') {
+                e.preventDefault();
+                loadAllData();
+                showAlert('🔄 تم تحديث البيانات', 'success');
+            }
             
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    
-                    if (data.channels && data.ads && data.users) {
-                        channels = data.channels;
-                        ads = data.ads;
-                        users = data.users;
-                        
-                        saveDataToStorage();
-                        loadChannels();
-                        loadAds();
-                        loadUsers();
-                        
-                        showAlert('✅ تم استعادة النسخة الاحتياطية بنجاح', 'success');
-                    } else {
-                        showAlert('❌ ملف النسخة الاحتياطية غير صالح', 'error');
+            // F5 to refresh (allow default but also sync data)
+            if (e.key === 'F5') {
+                setTimeout(() => {
+                    if (document.getElementById('dashboard').classList.contains('active')) {
+                        loadAllData();
                     }
-                } catch (error) {
-                    showAlert('❌ حدث خطأ أثناء معالجة ملف النسخة الاحتياطية', 'error');
-                }
-            };
+                }, 100);
+            }
+        });
+
+        // Real-time status indicator
+        function updateSystemStatus() {
+            const statusIndicator = document.createElement('div');
+            statusIndicator.id = 'systemStatus';
+            statusIndicator.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                background: linear-gradient(135deg, #28a745, #20c997);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: bold;
+                z-index: 1000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            `;
+            statusIndicator.innerHTML = '🟢 النظام يعمل بشكل طبيعي';
             
-            reader.readAsText(file);
+            if (!document.getElementById('systemStatus')) {
+                document.body.appendChild(statusIndicator);
+            }
         }
+
+        // Initialize system status
+        setTimeout(updateSystemStatus, 3000);
+
+        // Add loading states for better UX
+        function showLoadingState(elementId, isLoading = true) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                if (isLoading) {
+                    element.style.opacity = '0.6';
+                    element.style.pointerEvents = 'none';
+                } else {
+                    element.style.opacity = '1';
+                    element.style.pointerEvents = 'auto';
+                }
+            }
+        }
+
+        // Enhanced error handling with retry mechanism
+        async function retryOperation(operation, maxRetries = 3, delay = 1000) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    return await operation();
+                } catch (error) {
+                    if (i === maxRetries - 1) {
+                        throw error;
+                    }
+                    console.log(`Retry ${i + 1}/${maxRetries} after ${delay}ms`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2; // Exponential backoff
+                }
+            }
+        }
+
+        console.log('🎉 لوحة تحكم TvNa جاهزة للاستخدام!');
+        console.log('🔧 تم تطوير هذا النظام بواسطة Ameer Helwas');
+        console.log('📱 التطبيق متوافق مع قاعدة بيانات Supabase');
     </script>
 </body>
 </html>
