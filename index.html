@@ -711,23 +711,7 @@
     </div>
 
     <script>
-        // Load Supabase dynamically - نفس الطريقة الناجحة من أدوات التشخيص
-        const loadSupabase = () => {
-            return new Promise((resolve, reject) => {
-                if (typeof window.supabase !== 'undefined') {
-                    resolve();
-                    return;
-                }
-
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.7/supabase.min.js';
-                script.onload = () => resolve();
-                script.onerror = () => reject(new Error('Failed to load Supabase'));
-                document.head.appendChild(script);
-            });
-        };
-
-        // Supabase Configuration - نفس المفاتيح الناجحة
+        // Supabase Configuration
         const SUPABASE_URL = 'https://vpvvjascwgivdjyyhzwp.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwdnZqYXNjd2dpdmRqeXloendwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MDYxMjYsImV4cCI6MjA2NTM4MjEyNn0.6AR2-MG4x9ugNTXe9jUqx-IwGEtj1m6MCYwQkTsSbUQ';
         
@@ -745,7 +729,6 @@
             
             // Load Supabase
             try {
-                await loadSupabase();
                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
                     auth: { persistSession: false },
                     global: {
@@ -754,7 +737,7 @@
                 });
                 console.log('✅ Supabase initialized successfully');
             } catch (error) {
-                console.error('❌ Failed to load Supabase:', error);
+                console.error('❌ Failed to initialize Supabase:', error);
             }
             
             // Test connection
@@ -784,7 +767,7 @@
             }
         }
 
-        // Enhanced Supabase connection test - نفس الطريقة الناجحة
+        // Enhanced Supabase connection test
         async function testSupabaseConnection() {
             const connectionStatus = document.getElementById('connectionStatus');
             const connectionInfo = document.getElementById('connectionInfo');
@@ -799,59 +782,43 @@
 
                 console.log('🔍 Testing Supabase connection...');
                 
-                // Test basic connectivity - same as diagnostic tools
-                const { data: healthCheck, error: healthError } = await supabase
-                    .from('_supabase_info')
+                // Test by querying a table that should exist (channels)
+                const { data, error } = await supabase
+                    .from('channels')
                     .select('*')
                     .limit(1);
 
-                if (healthError && !healthError.message.includes('relation') && !healthError.message.includes('does not exist')) {
-                    throw healthError;
-                }
-
-                // Test table access
-                const tables = ['channels', 'users', 'advertisements', 'notifications'];
-                const existingTables = [];
-                let tableCount = 0;
-
-                for (const table of tables) {
-                    try {
-                        const { data, error } = await supabase
-                            .from(table)
-                            .select('count', { count: 'exact', head: true });
-                        
-                        if (!error) {
-                            existingTables.push(table);
-                            tableCount++;
-                        }
-                    } catch (err) {
-                        console.log(`Table ${table} doesn't exist: ${err.message}`);
-                    }
-                }
-
-                // Update connection status
-                isConnected = true;
-                updateConnectionStatus('connected', 'متصل بنجاح!');
-                updateSyncIndicator('synced', 'متزامن مع Supabase');
-
-                // Update connection info
-                if (connectionInfo) {
+                // If the error is about the table not existing, that's acceptable for now
+                if (error && error.message.includes('relation "channels" does not exist')) {
+                    console.log('Channels table does not exist yet, but connection is ok');
+                    isConnected = true;
+                    updateConnectionStatus('connected', 'متصل بنجاح! (الجداول غير موجودة)');
+                    updateSyncIndicator('synced', 'متزامن مع Supabase');
                     connectionInfo.innerHTML = `
                         <div style="background: rgba(46, 204, 113, 0.1); border: 1px solid #2ecc71; padding: 15px; border-radius: 10px;">
                             <h4 style="color: #2ecc71; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> الاتصال ناجح</h4>
                             <p><strong>URL:</strong> ${SUPABASE_URL}</p>
-                            <p><strong>الجداول الموجودة:</strong> ${existingTables.length > 0 ? existingTables.join(', ') : 'لا توجد جداول'}</p>
-                            <p><strong>عدد الجداول:</strong> ${tableCount}</p>
-                            <p><strong>الحالة:</strong> ${tableCount > 0 ? 'جاهز للاستخدام' : 'يحتاج إعداد الجداول'}</p>
+                            <p><strong>الحالة:</strong> الاتصال ناجح ولكن الجداول غير موجودة بعد</p>
                         </div>
                     `;
+                    showAlert('✅ تم الاتصال بقاعدة البيانات بنجاح', 'success');
+                    return true;
+                } else if (error) {
+                    throw error;
                 }
 
-                // Load data if tables exist
-                if (tableCount > 0) {
-                    await updateStats();
-                }
-
+                // If we get here, connection is successful and table exists
+                isConnected = true;
+                updateConnectionStatus('connected', 'متصل بنجاح!');
+                updateSyncIndicator('synced', 'متزامن مع Supabase');
+                connectionInfo.innerHTML = `
+                    <div style="background: rgba(46, 204, 113, 0.1); border: 1px solid #2ecc71; padding: 15px; border-radius: 10px;">
+                        <h4 style="color: #2ecc71; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> الاتصال ناجح</h4>
+                        <p><strong>URL:</strong> ${SUPABASE_URL}</p>
+                        <p><strong>الحالة:</strong> الاتصال ناجح وجدول القنوات موجود</p>
+                        <p><strong>عدد القنوات:</strong> ${data.length > 0 ? 'تم العثور على قنوات' : 'لا توجد قنوات بعد'}</p>
+                    </div>
+                `;
                 showAlert('✅ تم الاتصال بقاعدة البيانات بنجاح', 'success');
                 return true;
 
