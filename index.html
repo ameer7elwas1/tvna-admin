@@ -1174,7 +1174,7 @@
             updateConnectionStatus('connecting', 'جاري اختبار اتصال قاعدة بيانات Supabase...');
             
             setTimeout(() => {
-                updateConnectionStatus('connected', '✅ تم الاتصال   !  ');
+                updateConnectionStatus('connected', ' تم الاتصال ');
             }, 2000);
         }
 
@@ -1182,7 +1182,7 @@
             const connectionStatus = document.getElementById('connectionStatus');
             if (connectionStatus) {
                 connectionStatus.className = `connection-status status-${status}`;
-                const icon = status === 'connected' ? '✅' : '<div class="loading-spinner"></div>';
+                const icon = status === 'connected' ? '' : '<div class="loading-spinner"></div>';
                 connectionStatus.innerHTML = `${icon} ${message}`;
             }
         }
