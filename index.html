@@ -710,6 +710,9 @@
         </div>
     </div>
 
+    <!-- تحميل مكتبة Supabase -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.7/supabase.min.js"></script>
+    
     <script>
         // Supabase Configuration
         const SUPABASE_URL = 'https://vpvvjascwgivdjyyhzwp.supabase.co';
@@ -732,12 +735,17 @@
                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
                     auth: { persistSession: false },
                     global: {
-                        headers: { 'x-client-info': 'tvna-admin-working' }
+                        headers: { 
+                            'x-client-info': 'tvna-admin-working',
+                            'apikey': SUPABASE_ANON_KEY
+                        }
                     }
                 });
-                console.log('✅ Supabase initialized successfully');
+                console.log('✅ تم تهيئة Supabase بنجاح');
             } catch (error) {
-                console.error('❌ Failed to initialize Supabase:', error);
+                console.error('❌ فشل تهيئة Supabase:', error);
+                updateConnectionStatus('disconnected', 'فشل تهيئة العميل');
+                updateSyncIndicator('error', 'خطأ في التهيئة');
             }
             
             // Test connection
@@ -777,20 +785,20 @@
                 updateSyncIndicator('syncing', 'جاري الفحص...');
                 
                 if (!supabase) {
-                    throw new Error('Supabase client not initialized');
+                    throw new Error('لم يتم تهيئة عميل Supabase');
                 }
 
-                console.log('🔍 Testing Supabase connection...');
+                console.log('🔍 جاري اختبار اتصال Supabase...');
                 
-                // Test by querying a table that should exist (channels)
+                // Test by querying the users table
                 const { data, error } = await supabase
-                    .from('channels')
+                    .from('users')
                     .select('*')
                     .limit(1);
 
-                // If the error is about the table not existing, that's acceptable for now
-                if (error && error.message.includes('relation "channels" does not exist')) {
-                    console.log('Channels table does not exist yet, but connection is ok');
+                // Handle specific errors
+                if (error && error.message.includes('relation "users" does not exist')) {
+                    console.log('جدول المستخدمين غير موجود بعد');
                     isConnected = true;
                     updateConnectionStatus('connected', 'متصل بنجاح! (الجداول غير موجودة)');
                     updateSyncIndicator('synced', 'متزامن مع Supabase');
@@ -799,6 +807,7 @@
                             <h4 style="color: #2ecc71; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> الاتصال ناجح</h4>
                             <p><strong>URL:</strong> ${SUPABASE_URL}</p>
                             <p><strong>الحالة:</strong> الاتصال ناجح ولكن الجداول غير موجودة بعد</p>
+                            <p><strong>الحل:</strong> استخدم زر "إعداد تلقائي" لإنشاء الجداول</p>
                         </div>
                     `;
                     showAlert('✅ تم الاتصال بقاعدة البيانات بنجاح', 'success');
@@ -807,7 +816,7 @@
                     throw error;
                 }
 
-                // If we get here, connection is successful and table exists
+                // If we get here, connection is successful
                 isConnected = true;
                 updateConnectionStatus('connected', 'متصل بنجاح!');
                 updateSyncIndicator('synced', 'متزامن مع Supabase');
@@ -815,15 +824,15 @@
                     <div style="background: rgba(46, 204, 113, 0.1); border: 1px solid #2ecc71; padding: 15px; border-radius: 10px;">
                         <h4 style="color: #2ecc71; margin-bottom: 10px;"><i class="fas fa-check-circle"></i> الاتصال ناجح</h4>
                         <p><strong>URL:</strong> ${SUPABASE_URL}</p>
-                        <p><strong>الحالة:</strong> الاتصال ناجح وجدول القنوات موجود</p>
-                        <p><strong>عدد القنوات:</strong> ${data.length > 0 ? 'تم العثور على قنوات' : 'لا توجد قنوات بعد'}</p>
+                        <p><strong>الحالة:</strong> الاتصال ناجح وجداول البيانات موجودة</p>
+                        <p><strong>عدد المستخدمين:</strong> ${data.length > 0 ? 'تم العثور على مستخدمين' : 'لا يوجد مستخدمين بعد'}</p>
                     </div>
                 `;
                 showAlert('✅ تم الاتصال بقاعدة البيانات بنجاح', 'success');
                 return true;
 
             } catch (error) {
-                console.error('❌ Connection test failed:', error);
+                console.error('❌ فشل اختبار الاتصال:', error);
                 isConnected = false;
                 updateConnectionStatus('disconnected', 'فشل الاتصال');
                 updateSyncIndicator('error', 'خطأ في الاتصال');
@@ -835,6 +844,7 @@
                             <p><strong>الخطأ:</strong> ${error.message}</p>
                             <p><strong>URL:</strong> ${SUPABASE_URL}</p>
                             <p><strong>الحل المقترح:</strong> تحقق من إعدادات Supabase أو أنشئ الجداول</p>
+                            <p><strong>ملاحظة:</strong> تأكد من تعطيل RLS أثناء التطوير</p>
                         </div>
                     `;
                 }
@@ -907,7 +917,7 @@
         // Update statistics
         async function updateStats() {
             if (!isConnected || !supabase) {
-                console.log('Not connected, skipping stats update');
+                console.log('غير متصل، تخطي تحديث الإحصائيات');
                 return;
             }
 
@@ -925,7 +935,7 @@
                 document.getElementById('totalNotifications').textContent = notificationsData.count || 0;
                 
             } catch (error) {
-                console.error('Error updating stats:', error);
+                console.error('خطأ في تحديث الإحصائيات:', error);
                 document.getElementById('totalChannels').textContent = '0';
                 document.getElementById('totalUsers').textContent = '0';
                 document.getElementById('totalAds').textContent = '0';
@@ -966,6 +976,23 @@
                         is_premium BOOLEAN DEFAULT false,
                         is_active BOOLEAN DEFAULT true,
                         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                    )`,
+                    `CREATE TABLE IF NOT EXISTS public.advertisements (
+                        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+                        title VARCHAR(255) NOT NULL,
+                        title_ar VARCHAR(255) NOT NULL,
+                        image_url TEXT,
+                        is_active BOOLEAN DEFAULT true,
+                        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                    )`,
+                    `CREATE TABLE IF NOT EXISTS public.notifications (
+                        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+                        title VARCHAR(255) NOT NULL,
+                        title_ar VARCHAR(255) NOT NULL,
+                        message TEXT NOT NULL,
+                        message_ar TEXT NOT NULL,
+                        is_active BOOLEAN DEFAULT true,
+                        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
                     )`
                 ];
 
@@ -987,7 +1014,7 @@
                 `;
 
             } catch (error) {
-                console.error('Setup error:', error);
+                console.error('خطأ في الإعداد:', error);
                 setupStatus.innerHTML = `<p style="color: #dc3545;">خطأ في الإعداد: ${error.message}</p>`;
             }
         }
@@ -1023,7 +1050,7 @@
                 await loadChannels();
 
             } catch (error) {
-                console.error('Error inserting sample data:', error);
+                console.error('خطأ في إضافة البيانات التجريبية:', error);
                 showAlert(`❌ فشل إضافة البيانات: ${error.message}`, 'error');
             }
         }
@@ -1100,7 +1127,7 @@
                 showAlert(`📺 تم تحميل ${channels.length} قناة`, 'success');
                 
             } catch (error) {
-                console.error('Error loading channels:', error);
+                console.error('خطأ في تحميل القنوات:', error);
                 tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #dc3545;">❌ خطأ في تحميل القنوات</td></tr>';
                 showAlert('❌ فشل تحميل القنوات', 'error');
             }
@@ -1123,7 +1150,7 @@
                 await updateStats();
 
             } catch (error) {
-                console.error('Error deleting channel:', error);
+                console.error('خطأ في حذف القناة:', error);
                 showAlert(`❌ فشل حذف القناة: ${error.message}`, 'error');
             }
         }
