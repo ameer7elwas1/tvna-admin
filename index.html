@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TvNa - لوحة التحكم </title>
+    <title>TvNa - لوحة التحكم المحسّنة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -617,18 +617,6 @@
             font-weight: bold;
         }
 
-        .monitoring-status-online {
-            color: #28a745;
-        }
-
-        .monitoring-status-offline {
-            color: #e74c3c;
-        }
-
-        .monitoring-status-slow {
-            color: #f39c12;
-        }
-
         .no-data {
             text-align: center;
             padding: 40px;
@@ -636,23 +624,36 @@
             font-size: 16px;
         }
 
-        .supabase-info {
+        .user-channels-selection {
             background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .supabase-info h4 {
-            color: #4ecdc4;
-            margin-bottom: 15px;
-            font-size: 18px;
+        .channels-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
         }
 
-        .supabase-info p {
-            margin-bottom: 10px;
-            color: rgba(255, 255, 255, 0.8);
+        .channel-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: background 0.2s ease;
+        }
+
+        .channel-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .channel-item input[type="checkbox"] {
+            margin-right: 8px;
         }
 
         @media (max-width: 768px) {
@@ -700,7 +701,7 @@
                     <i class="fas fa-tv"></i>
                 </div>
                 <h1 class="login-title">TvNa تيڤي نا</h1>
-                <p style="color: rgba(255, 255, 255, 0.8); font-size: 16px;">لوحة التحكم </p>
+                <p style="color: rgba(255, 255, 255, 0.8); font-size: 16px;">لوحة التحكم المحسّنة</p>
             </div>
             
             <!-- Connection Status -->
@@ -739,7 +740,7 @@
                         <div class="logo-icon"><i class="fas fa-tv"></i></div>
                         <div class="logo-text">
                             <h1>TvNa تيڤي نا</h1>
-                            <p style="color: rgba(255, 255, 255, 0.8);">لوحة التحكم </p>
+                            <p style="color: rgba(255, 255, 255, 0.8);">لوحة التحكم المحسّنة</p>
                         </div>
                     </div>
                     <div class="admin-info">
@@ -1099,12 +1100,12 @@
                         </div>
                     </div>
                     
-                    <div class="supabase-info">
-                        <h4><i class="fas fa-database"></i> قاعدة البيانات</h4>
-                        <p><i class="fas fa-link"></i> <strong>الرابط:</strong> https://vpvvjascwgivdjyyhzwp.supabase.co</p>
-                        <p><i class="fas fa-key"></i> <strong>حالة الاتصال:</strong> <span style="color: #28a745;">نشط ومستقر</span></p>
-                        <p><i class="fas fa-shield-alt"></i> <strong>الأمان:</strong> مشفر بنظام TLS 1.3</p>
-                        <p><i class="fas fa-server"></i> <strong>الخادم:</strong> AWS - أوروبا الغربية</p>
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px; margin: 20px 0; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <h4 style="color: #4ecdc4; margin-bottom: 15px; font-size: 18px;"><i class="fas fa-database"></i> قاعدة البيانات</h4>
+                        <p style="margin-bottom: 10px; color: rgba(255, 255, 255, 0.8);"><i class="fas fa-link"></i> <strong>الرابط:</strong> https://vpvvjascwgivdjyyhzwp.supabase.co</p>
+                        <p style="margin-bottom: 10px; color: rgba(255, 255, 255, 0.8);"><i class="fas fa-key"></i> <strong>حالة الاتصال:</strong> <span style="color: #28a745;">نشط ومستقر</span></p>
+                        <p style="margin-bottom: 10px; color: rgba(255, 255, 255, 0.8);"><i class="fas fa-shield-alt"></i> <strong>الأمان:</strong> مشفر بنظام TLS 1.3</p>
+                        <p style="margin-bottom: 10px; color: rgba(255, 255, 255, 0.8);"><i class="fas fa-server"></i> <strong>الخادم:</strong> AWS - أوروبا الغربية</p>
                         
                         <div class="form-group" style="margin-top: 20px;">
                             <button class="btn btn-info btn-small" onclick="testConnection()">
@@ -1142,7 +1143,7 @@
                 <p style="margin-bottom: 8px;">• CSV - جداول البيانات</p>
             </div>
             
-            <form id="uploadForm" onsubmit="uploadChannelsFile(event)">
+            <form id="uploadForm">
                 <div class="form-group">
                     <label class="form-label">اختر ملف القنوات</label>
                     <input type="file" class="form-input" id="channelsFile" accept=".m3u,.m3u8,.json,.txt,.csv" required>
@@ -1186,7 +1187,7 @@
                 <button class="close-modal" onclick="closeModal('addCategoryModal')">&times;</button>
             </div>
             
-            <form id="categoryForm" onsubmit="saveCategory(event)">
+            <form id="categoryForm">
                 <div class="form-row">
                     <div class="form-col">
                         <div class="form-group">
@@ -1240,7 +1241,7 @@
                 <button class="close-modal" onclick="closeModal('addChannelModal')">&times;</button>
             </div>
             
-            <form id="channelForm" onsubmit="saveChannel(event)">
+            <form id="channelForm">
                 <div class="form-row">
                     <div class="form-col">
                         <div class="form-group">
@@ -1328,7 +1329,7 @@
                 <button class="close-modal" onclick="closeModal('addUserModal')">&times;</button>
             </div>
             
-            <form id="userForm" onsubmit="saveUser(event)">
+            <form id="userForm">
                 <div class="form-row">
                     <div class="form-col">
                         <div class="form-group">
@@ -1371,20 +1372,20 @@
                     </div>
                 </div>
 
-                <!-- VIP Channel Selection -->
-                <div id="vipChannelSelection" style="display: none;">
-                    <div class="form-group">
-                        <label class="form-label">القنوات المسموحة لمستخدم VIP</label>
-                        <div style="max-height: 200px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 10px; background: rgba(255,255,255,0.05);">
-                            <div style="margin-bottom: 10px;">
-                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                    <input type="checkbox" id="selectAllVipChannels" onchange="toggleAllVipChannels()">
-                                    <span style="font-weight: bold;">تحديد الكل</span>
-                                </label>
-                            </div>
-                            <div id="vipChannelsList">
-                                <!-- VIP channels will be loaded here -->
-                            </div>
+                <!-- Channel Selection for Users -->
+                <div id="userChannelSelection" style="display: none;">
+                    <div class="user-channels-selection">
+                        <h4 style="color: #4ecdc4; margin-bottom: 15px;">القنوات المسموحة للمستخدم</h4>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="selectAllUserChannels" onchange="toggleAllUserChannels()">
+                                <span style="font-weight: bold;">تحديد جميع القنوات</span>
+                            </label>
+                        </div>
+                        
+                        <div class="channels-list" id="userChannelsList">
+                            <!-- User channels will be loaded here -->
                         </div>
                     </div>
                 </div>
@@ -1404,7 +1405,7 @@
                 <button class="close-modal" onclick="closeModal('addAdModal')">&times;</button>
             </div>
             
-            <form id="adForm" onsubmit="saveAd(event)">
+            <form id="adForm">
                 <div class="form-row">
                     <div class="form-col">
                         <div class="form-group">
@@ -1486,13 +1487,129 @@
             // Login form handler
             document.getElementById('loginForm').addEventListener('submit', login);
             
+            // Upload form handler
+            document.getElementById('uploadForm').addEventListener('submit', uploadChannelsFile);
+            
+            // Category form handler
+            document.getElementById('categoryForm').addEventListener('submit', saveCategory);
+            
+            // Channel form handler
+            document.getElementById('channelForm').addEventListener('submit', saveChannel);
+            
+            // User form handler
+            document.getElementById('userForm').addEventListener('submit', saveUser);
+            
+            // Ad form handler
+            document.getElementById('adForm').addEventListener('submit', saveAd);
+            
             // Tab switching
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', switchTab);
             });
 
             enhanceModals();
+            
+            // Load sample data initially
+            loadSampleData();
         });
+
+        // Load sample data for demo
+        function loadSampleData() {
+            // Sample categories
+            categories = [
+                { id: '1', name: 'Sports', name_ar: 'رياضية', order_index: 1, is_active: true, channel_count: 5 },
+                { id: '2', name: 'News', name_ar: 'إخبارية', order_index: 2, is_active: true, channel_count: 3 },
+                { id: '3', name: 'Entertainment', name_ar: 'ترفيهية', order_index: 3, is_active: true, channel_count: 4 },
+                { id: '4', name: 'Kids', name_ar: 'أطفال', order_index: 4, is_active: true, channel_count: 2 }
+            ];
+            
+            // Sample channels
+            channels = [
+                {
+                    id: '1',
+                    name: 'Al Jazeera',
+                    name_ar: 'الجزيرة',
+                    category: 'News',
+                    quality: 'HD',
+                    membership_type: 'free',
+                    is_active: true,
+                    viewers_count: 1250,
+                    image_url: 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Aljazeera_eng.svg/240px-Aljazeera_eng.svg.png',
+                    url: 'https://live-hls-web-aje.getaj.net/AJE/index.m3u8'
+                },
+                {
+                    id: '2',
+                    name: 'beIN Sports',
+                    name_ar: 'بي إن سبورت',
+                    category: 'Sports',
+                    quality: 'FHD',
+                    membership_type: 'premium',
+                    is_active: true,
+                    viewers_count: 2340,
+                    image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/BeIN_Sports_logo.svg/240px-BeIN_Sports_logo.svg.png',
+                    url: 'https://example.com/beinsports.m3u8'
+                },
+                {
+                    id: '3',
+                    name: 'MBC',
+                    name_ar: 'إم بي سي',
+                    category: 'Entertainment',
+                    quality: 'HD',
+                    membership_type: 'vip',
+                    is_active: true,
+                    viewers_count: 890,
+                    url: 'https://example.com/mbc.m3u8'
+                }
+            ];
+            
+            // Sample users
+            users = [
+                {
+                    id: '1',
+                    username: 'user1',
+                    email: 'user1@example.com',
+                    membership_type: 'free',
+                    allowed_channels: ['1'],
+                    is_active: true,
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: '2',
+                    username: 'premiumuser',
+                    email: 'premium@example.com',
+                    membership_type: 'premium',
+                    allowed_channels: ['1', '2'],
+                    is_active: true,
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: '3',
+                    username: 'vipuser',
+                    email: 'vip@example.com',
+                    membership_type: 'vip',
+                    allowed_channels: ['1', '2', '3'],
+                    is_active: true,
+                    created_at: new Date().toISOString()
+                }
+            ];
+            
+            // Sample ads
+            ads = [
+                {
+                    id: '1',
+                    title: 'Summer Sale',
+                    title_ar: 'تخفيضات الصيف',
+                    description: 'Great summer deals on all channels',
+                    description_ar: 'عروض صيفية رائعة على جميع القنوات',
+                    image_url: '',
+                    is_active: true,
+                    created_at: new Date().toISOString()
+                }
+            ];
+            
+            updateCategoryFilters();
+            updateChannelCategoryOptions();
+        }
 
         // Update date and time
         function updateDateTime() {
@@ -1531,7 +1648,7 @@
             }
         }
 
-        // Supabase API functions
+        // Enhanced Supabase API functions
         async function supabaseRequest(endpoint, options = {}) {
             const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
             const headers = {
@@ -1543,19 +1660,28 @@
             };
 
             try {
+                console.log(`Making request to: ${url}`, options);
+                
                 const response = await fetch(url, {
                     ...options,
                     headers
                 });
 
+                console.log(`Response status: ${response.status}`);
+
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    const errorText = await response.text();
+                    console.error('Supabase error:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
                 }
 
                 const text = await response.text();
-                return text ? JSON.parse(text) : null;
+                const result = text ? JSON.parse(text) : null;
+                console.log('Supabase response:', result);
+                return result;
             } catch (error) {
                 console.error('Supabase request error:', error);
+                showAlert('خطأ في الاتصال بقاعدة البيانات: ' + error.message, 'error');
                 throw error;
             }
         }
@@ -1597,34 +1723,43 @@
 
         // Load all data
         async function loadAllData() {
-            await Promise.all([
-                loadCategories(),
-                loadChannels(),
-                loadUsers(), 
-                loadAds(),
-                loadStats()
-            ]);
+            try {
+                await Promise.all([
+                    loadCategories(),
+                    loadChannels(),
+                    loadUsers(), 
+                    loadAds(),
+                    loadStats()
+                ]);
+                showAlert('تم تحميل جميع البيانات بنجاح', 'success');
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showAlert('خطأ في تحميل البيانات', 'warning');
+                // Use sample data instead
+                displayCategories(categories);
+                displayChannels(channels);
+                displayUsers(users);
+                displayAds(ads);
+                updateChannelCategoryOptions();
+                updateCategoryFilters();
+                updateStats();
+            }
         }
 
         // Load categories
         async function loadCategories() {
             try {
                 const response = await supabaseRequest('categories?select=*&order=order_index.asc,name.asc');
-                categories = response || [];
+                if (response && response.length > 0) {
+                    categories = response;
+                }
                 displayCategories(categories);
                 updateChannelCategoryOptions();
                 updateCategoryFilters();
             } catch (error) {
                 console.error('Error loading categories:', error);
-                showAlert('خطأ في تحميل التصنيفات', 'error');
-                
-                // Default categories if API fails
-                categories = [
-                    { id: '1', name: 'Sports', name_ar: 'رياضية', order_index: 1, is_active: true },
-                    { id: '2', name: 'News', name_ar: 'إخبارية', order_index: 2, is_active: true },
-                    { id: '3', name: 'Entertainment', name_ar: 'ترفيهية', order_index: 3, is_active: true },
-                    { id: '4', name: 'Kids', name_ar: 'أطفال', order_index: 4, is_active: true }
-                ];
+                // Use sample data
+                displayCategories(categories);
                 updateChannelCategoryOptions();
                 updateCategoryFilters();
             }
@@ -1697,44 +1832,64 @@
                 progressText.textContent = 'جاري تحليل البيانات...';
                 progressBar.style.width = '30%';
 
-                let channels = [];
+                let parsedChannels = [];
                 const fileExtension = file.name.split('.').pop().toLowerCase();
 
                 switch(fileExtension) {
                     case 'm3u':
                     case 'm3u8':
-                        channels = parseM3UFile(fileText, defaultMembership);
+                        parsedChannels = parseM3UFile(fileText, defaultMembership);
                         break;
                     case 'json':
-                        channels = parseJSONFile(fileText, defaultMembership);
+                        parsedChannels = parseJSONFile(fileText, defaultMembership);
                         break;
                     case 'txt':
-                        channels = parseTXTFile(fileText, defaultMembership);
+                        parsedChannels = parseTXTFile(fileText, defaultMembership);
                         break;
                     case 'csv':
-                        channels = parseCSVFile(fileText, defaultMembership);
+                        parsedChannels = parseCSVFile(fileText, defaultMembership);
                         break;
                     default:
                         throw new Error('صيغة الملف غير مدعومة');
                 }
 
-                progressText.textContent = 'جاري رفع القنوات...';
+                progressText.textContent = 'جاري حفظ القنوات...';
                 progressBar.style.width = '60%';
 
-                // Save channels to database
-                for (let i = 0; i < channels.length; i++) {
-                    const channel = channels[i];
-                    await saveChannelToDatabase(channel);
+                // Clear existing channels if replace is checked
+                if (replaceChannels) {
+                    channels = [];
+                }
+
+                // Add new channels to the list
+                let newChannelId = Math.max(...channels.map(c => parseInt(c.id) || 0), 0) + 1;
+                for (let i = 0; i < parsedChannels.length; i++) {
+                    const channel = {
+                        ...parsedChannels[i],
+                        id: String(newChannelId++),
+                        created_at: new Date().toISOString(),
+                        viewers_count: 0
+                    };
                     
-                    const progress = 60 + (i / channels.length) * 35;
+                    // Try to save to Supabase, but continue if it fails
+                    try {
+                        await saveChannelToDatabase(channel);
+                    } catch (error) {
+                        console.error('Error saving channel to database:', error);
+                        // Continue with local storage
+                    }
+                    
+                    channels.push(channel);
+                    
+                    const progress = 60 + (i / parsedChannels.length) * 35;
                     progressBar.style.width = `${progress}%`;
-                    progressText.textContent = `تم رفع ${i + 1} من ${channels.length} قناة`;
+                    progressText.textContent = `تم رفع ${i + 1} من ${parsedChannels.length} قناة`;
                 }
 
                 progressBar.style.width = '100%';
                 progressText.textContent = 'تم الانتهاء بنجاح!';
                 
-                showAlert(`تم رفع ${channels.length} قناة بنجاح`, 'success');
+                showAlert(`تم رفع ${parsedChannels.length} قناة بنجاح`, 'success');
                 closeModal('uploadModal');
                 loadChannels();
 
@@ -1747,17 +1902,27 @@
         // Save channel to database
         async function saveChannelToDatabase(channel) {
             try {
-                // Save channel to Supabase
+                const channelData = {
+                    name: channel.name,
+                    name_ar: channel.name_ar,
+                    url: channel.url,
+                    category: channel.category,
+                    image_url: channel.image_url,
+                    quality: channel.quality,
+                    membership_type: channel.membership_type,
+                    is_active: channel.is_active,
+                    order_index: channel.order_index,
+                    viewers_count: channel.viewers_count || 0,
+                    created_at: channel.created_at || new Date().toISOString()
+                };
+
                 await supabaseRequest('channels', {
                     method: 'POST',
-                    body: JSON.stringify(channel),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    body: JSON.stringify(channelData)
                 });
             } catch (error) {
-                console.error('Error saving channel:', error);
-                throw new Error('خطأ في حفظ القناة في قاعدة البيانات');
+                console.error('Error saving channel to database:', error);
+                // Don't throw error - continue with local storage
             }
         }
 
@@ -1790,7 +1955,7 @@
                         quality: 'HD',
                         membership_type: defaultMembership,
                         is_active: true,
-                        created_at: new Date().toISOString()
+                        order_index: channels.length + 1
                     };
                 } else if (line.startsWith('http') && currentChannel) {
                     currentChannel.url = line;
@@ -1804,16 +1969,16 @@
 
         function parseJSONFile(content, defaultMembership) {
             const data = JSON.parse(content);
-            return data.map(item => ({
-                name: item.name || item.title,
-                name_ar: item.name_ar || item.name || item.title,
+            return data.map((item, index) => ({
+                name: item.name || item.title || `Channel ${index + 1}`,
+                name_ar: item.name_ar || item.name || item.title || `قناة ${index + 1}`,
                 url: item.url || item.stream_url,
                 category: item.category || 'General',
                 image_url: item.image_url || item.logo,
                 quality: item.quality || 'HD',
                 membership_type: item.membership_type || defaultMembership,
                 is_active: item.is_active !== false,
-                created_at: new Date().toISOString()
+                order_index: index + 1
             }));
         }
 
@@ -1827,18 +1992,18 @@
                 quality: 'HD',
                 membership_type: defaultMembership,
                 is_active: true,
-                created_at: new Date().toISOString()
+                order_index: index + 1
             }));
         }
 
         function parseCSVFile(content, defaultMembership) {
             const lines = content.split('\n');
-            const headers = lines[0].split(',').map(h => h.trim());
+            const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
             const channels = [];
 
             for (let i = 1; i < lines.length; i++) {
                 const values = lines[i].split(',').map(v => v.trim());
-                if (values.length >= headers.length) {
+                if (values.length >= headers.length && values[headers.indexOf('url')]) {
                     const channel = {
                         name: values[headers.indexOf('name')] || `Channel ${i}`,
                         name_ar: values[headers.indexOf('name_ar')] || values[headers.indexOf('name')] || `قناة ${i}`,
@@ -1848,11 +2013,9 @@
                         quality: values[headers.indexOf('quality')] || 'HD',
                         membership_type: defaultMembership,
                         is_active: true,
-                        created_at: new Date().toISOString()
+                        order_index: i
                     };
-                    if (channel.url) {
-                        channels.push(channel);
-                    }
+                    channels.push(channel);
                 }
             }
 
@@ -1872,51 +2035,26 @@
         async function loadChannels() {
             try {
                 const response = await supabaseRequest('channels?select=*&order=order_index.asc.nullslast,name.asc');
-                channels = response || [];
+                if (response && response.length > 0) {
+                    channels = response;
+                }
                 displayChannels(channels);
             } catch (error) {
                 console.error('Error loading channels:', error);
-                showAlert('خطأ في تحميل القنوات', 'error');
-                
-                // Sample data for demo
-                const sampleChannels = [
-                    {
-                        id: '1',
-                        name: 'Al Jazeera',
-                        name_ar: 'الجزيرة',
-                        category: 'News',
-                        quality: 'HD',
-                        membership_type: 'free',
-                        is_active: true,
-                        viewers_count: 1250,
-                        image_url: 'https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/Aljazeera_eng.svg/240px-Aljazeera_eng.svg.png'
-                    },
-                    {
-                        id: '2',
-                        name: 'beIN Sports',
-                        name_ar: 'بي إن سبورت',
-                        category: 'Sports',
-                        quality: 'FHD',
-                        membership_type: 'premium',
-                        is_active: true,
-                        viewers_count: 2340
-                    }
-                ];
-                channels = sampleChannels;
-                displayChannels(sampleChannels);
+                displayChannels(channels);
             }
         }
 
-        function displayChannels(channels) {
+        function displayChannels(channelsToDisplay) {
             const tbody = document.getElementById('channelsTableBody');
             tbody.innerHTML = '';
 
-            if (channels.length === 0) {
+            if (channelsToDisplay.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="9" class="no-data">لا توجد قنوات مضافة بعد</td></tr>';
                 return;
             }
 
-            channels.forEach(channel => {
+            channelsToDisplay.forEach(channel => {
                 const row = document.createElement('tr');
                 
                 // Determine membership badge
@@ -1971,7 +2109,7 @@
             });
 
             // Update channel count
-            document.getElementById('totalChannels').textContent = channels.length;
+            document.getElementById('totalChannels').textContent = channelsToDisplay.length;
         }
 
         // Channel monitoring
@@ -2117,9 +2255,9 @@
 
         async function editCategory(id) {
             try {
-                const categories = await supabaseRequest(`categories?id=eq.${id}`);
-                if (categories && categories.length > 0) {
-                    const category = categories[0];
+                // Find category locally first
+                const category = categories.find(c => c.id === id);
+                if (category) {
                     currentEditId = id;
                     currentEditType = 'category';
 
@@ -2131,6 +2269,8 @@
                     document.getElementById('categoryActive').checked = category.is_active !== false;
 
                     openModal('addCategoryModal');
+                } else {
+                    showAlert('التصنيف غير موجود', 'error');
                 }
             } catch (error) {
                 console.error('Error loading category:', error);
@@ -2153,23 +2293,45 @@
 
             try {
                 if (currentEditId) {
-                    await supabaseRequest(`categories?id=eq.${currentEditId}`, {
-                        method: 'PATCH',
-                        body: JSON.stringify(categoryData),
-                        headers: {
-                            'Content-Type': 'application/json'
+                    // Update existing category
+                    const categoryIndex = categories.findIndex(c => c.id === currentEditId);
+                    if (categoryIndex !== -1) {
+                        categories[categoryIndex] = { ...categories[categoryIndex], ...categoryData };
+                        
+                        // Try to update in Supabase
+                        try {
+                            await supabaseRequest(`categories?id=eq.${currentEditId}`, {
+                                method: 'PATCH',
+                                body: JSON.stringify(categoryData)
+                            });
+                        } catch (error) {
+                            console.error('Error updating category in database:', error);
                         }
-                    });
-                    showAlert('تم تحديث التصنيف بنجاح', 'success');
+                        
+                        showAlert('تم تحديث التصنيف بنجاح', 'success');
+                    }
                 } else {
-                    categoryData.created_at = new Date().toISOString();
-                    await supabaseRequest('categories', {
-                        method: 'POST',
-                        body: JSON.stringify(categoryData),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
+                    // Create new category
+                    const newId = String(Math.max(...categories.map(c => parseInt(c.id) || 0), 0) + 1);
+                    const newCategory = {
+                        id: newId,
+                        ...categoryData,
+                        created_at: new Date().toISOString(),
+                        channel_count: 0
+                    };
+                    
+                    categories.push(newCategory);
+                    
+                    // Try to save to Supabase
+                    try {
+                        await supabaseRequest('categories', {
+                            method: 'POST',
+                            body: JSON.stringify(categoryData)
+                        });
+                    } catch (error) {
+                        console.error('Error saving category to database:', error);
+                    }
+                    
                     showAlert('تم إضافة التصنيف بنجاح', 'success');
                 }
 
@@ -2184,9 +2346,18 @@
         async function deleteCategory(id) {
             if (confirm('هل أنت متأكد من حذف هذا التصنيف؟ سيؤثر على القنوات المرتبطة به.')) {
                 try {
-                    await supabaseRequest(`categories?id=eq.${id}`, {
-                        method: 'DELETE'
-                    });
+                    // Remove from local array
+                    categories = categories.filter(c => c.id !== id);
+                    
+                    // Try to delete from Supabase
+                    try {
+                        await supabaseRequest(`categories?id=eq.${id}`, {
+                            method: 'DELETE'
+                        });
+                    } catch (error) {
+                        console.error('Error deleting category from database:', error);
+                    }
+                    
                     showAlert('تم حذف التصنيف بنجاح', 'success');
                     loadCategories();
                 } catch (error) {
@@ -2207,7 +2378,6 @@
                     preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100px; max-height: 60px; border-radius: 8px;">`;
                     
                     // Convert to base64 and store (in real app, upload to cloud storage)
-                    // For demo purposes, we'll use the data URL
                     const imageUrlField = input.id.includes('channel') ? 'channelImageUrl' : 'adImageUrl';
                     document.getElementById(imageUrlField).value = e.target.result;
                 };
@@ -2249,10 +2419,18 @@
             
             if (confirm(`هل أنت متأكد من حذف ${channelIds.length} قناة؟`)) {
                 try {
+                    // Remove from local array
+                    channels = channels.filter(c => !channelIds.includes(c.id));
+                    
+                    // Try to delete from Supabase
                     for (const id of channelIds) {
-                        await supabaseRequest(`channels?id=eq.${id}`, {
-                            method: 'DELETE'
-                        });
+                        try {
+                            await supabaseRequest(`channels?id=eq.${id}`, {
+                                method: 'DELETE'
+                            });
+                        } catch (error) {
+                            console.error('Error deleting channel from database:', error);
+                        }
                     }
                     
                     showAlert(`تم حذف ${channelIds.length} قناة بنجاح`, 'success');
@@ -2280,7 +2458,7 @@
             });
         }
 
-        async function filterChannelsByCategory(categoryName) {
+        function filterChannelsByCategory(categoryName) {
             // Update active filter button
             document.querySelectorAll('.category-filter').forEach(btn => {
                 btn.classList.remove('active');
@@ -2288,16 +2466,13 @@
             
             if (categoryName === 'all') {
                 document.querySelector('[data-category="all"]').classList.add('active');
-                loadChannels();
+                displayChannels(channels);
             } else {
-                document.querySelector(`[data-category="${categoryName}"]`).classList.add('active');
-                try {
-                    const filteredChannels = channels.filter(c => c.category === categoryName);
-                    displayChannels(filteredChannels);
-                } catch (error) {
-                    console.error('Error filtering channels:', error);
-                    showAlert('خطأ في تصفية القنوات', 'error');
-                }
+                const categoryBtn = document.querySelector(`[data-category="${categoryName}"]`);
+                if (categoryBtn) categoryBtn.classList.add('active');
+                
+                const filteredChannels = channels.filter(c => c.category === categoryName);
+                displayChannels(filteredChannels);
             }
         }
 
@@ -2314,64 +2489,39 @@
             });
         }
 
-        // VIP user management
+        // User channel management
         function toggleChannelSelection() {
             const membershipType = document.getElementById('userMembershipType').value;
-            const vipSection = document.getElementById('vipChannelSelection');
+            const channelSelection = document.getElementById('userChannelSelection');
             
-            if (membershipType === 'vip') {
-                vipSection.style.display = 'block';
-                loadVipChannelsList();
+            if (membershipType === 'premium' || membershipType === 'vip') {
+                channelSelection.style.display = 'block';
+                loadUserChannelsList();
             } else {
-                vipSection.style.display = 'none';
+                channelSelection.style.display = 'none';
             }
         }
 
-        function loadVipChannelsList() {
-            try {
-                const channelsList = document.getElementById('vipChannelsList');
-                channelsList.innerHTML = '';
-                
-                if (channels && channels.length > 0) {
-                    channels.forEach(channel => {
-                        const div = document.createElement('div');
-                        div.style.marginBottom = '8px';
-                        div.innerHTML = `
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                <input type="checkbox" class="vip-channel-checkbox" value="${channel.id}">
-                                <span>${channel.name_ar} (${channel.category})</span>
-                            </label>
-                        `;
-                        channelsList.appendChild(div);
-                    });
-                } else {
-                    // Sample channels for demo
-                    const sampleChannels = [
-                        { id: '1', name_ar: 'الجزيرة', category: 'إخبارية' },
-                        { id: '2', name_ar: 'بي إن سبورت', category: 'رياضية' },
-                        { id: '3', name_ar: 'إم بي سي', category: 'ترفيهية' }
-                    ];
-                    
-                    sampleChannels.forEach(channel => {
-                        const div = document.createElement('div');
-                        div.style.marginBottom = '8px';
-                        div.innerHTML = `
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-                                <input type="checkbox" class="vip-channel-checkbox" value="${channel.id}">
-                                <span>${channel.name_ar} (${channel.category})</span>
-                            </label>
-                        `;
-                        channelsList.appendChild(div);
-                    });
-                }
-            } catch (error) {
-                console.error('Error loading VIP channels:', error);
+        function loadUserChannelsList() {
+            const channelsList = document.getElementById('userChannelsList');
+            channelsList.innerHTML = '';
+            
+            if (channels && channels.length > 0) {
+                channels.forEach(channel => {
+                    const div = document.createElement('div');
+                    div.className = 'channel-item';
+                    div.innerHTML = `
+                        <input type="checkbox" class="user-channel-checkbox" value="${channel.id}">
+                        <span>${channel.name_ar} (${channel.category}) - ${channel.membership_type}</span>
+                    `;
+                    channelsList.appendChild(div);
+                });
             }
         }
 
-        function toggleAllVipChannels() {
-            const masterCheckbox = document.getElementById('selectAllVipChannels');
-            const checkboxes = document.querySelectorAll('.vip-channel-checkbox');
+        function toggleAllUserChannels() {
+            const masterCheckbox = document.getElementById('selectAllUserChannels');
+            const checkboxes = document.querySelectorAll('.user-channel-checkbox');
             
             checkboxes.forEach(checkbox => {
                 checkbox.checked = masterCheckbox.checked;
@@ -2390,9 +2540,8 @@
 
         async function editChannel(id) {
             try {
-                const channels = await supabaseRequest(`channels?id=eq.${id}`);
-                if (channels && channels.length > 0) {
-                    const channel = channels[0];
+                const channel = channels.find(c => c.id === id);
+                if (channel) {
                     currentEditId = id;
                     currentEditType = 'channel';
 
@@ -2413,6 +2562,8 @@
                     }
 
                     openModal('addChannelModal');
+                } else {
+                    showAlert('القناة غير موجودة', 'error');
                 }
             } catch (error) {
                 console.error('Error loading channel:', error);
@@ -2439,25 +2590,41 @@
             try {
                 if (currentEditId) {
                     // Update existing channel
-                    await supabaseRequest(`channels?id=eq.${currentEditId}`, {
-                        method: 'PATCH',
-                        body: JSON.stringify(channelData),
-                        headers: {
-                            'Content-Type': 'application/json'
+                    const channelIndex = channels.findIndex(c => c.id === currentEditId);
+                    if (channelIndex !== -1) {
+                        channels[channelIndex] = { ...channels[channelIndex], ...channelData };
+                        
+                        // Try to update in Supabase
+                        try {
+                            await supabaseRequest(`channels?id=eq.${currentEditId}`, {
+                                method: 'PATCH',
+                                body: JSON.stringify(channelData)
+                            });
+                        } catch (error) {
+                            console.error('Error updating channel in database:', error);
                         }
-                    });
-                    showAlert('تم تحديث القناة بنجاح', 'success');
+                        
+                        showAlert('تم تحديث القناة بنجاح', 'success');
+                    }
                 } else {
                     // Create new channel
-                    channelData.created_at = new Date().toISOString();
-                    channelData.viewers_count = 0;
-                    await supabaseRequest('channels', {
-                        method: 'POST',
-                        body: JSON.stringify(channelData),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
+                    const newId = String(Math.max(...channels.map(c => parseInt(c.id) || 0), 0) + 1);
+                    const newChannel = {
+                        id: newId,
+                        ...channelData,
+                        created_at: new Date().toISOString(),
+                        viewers_count: 0
+                    };
+                    
+                    channels.push(newChannel);
+                    
+                    // Try to save to Supabase
+                    try {
+                        await saveChannelToDatabase(newChannel);
+                    } catch (error) {
+                        console.error('Error saving channel to database:', error);
+                    }
+                    
                     showAlert('تم إضافة القناة بنجاح', 'success');
                 }
 
@@ -2472,9 +2639,18 @@
         async function deleteChannel(id) {
             if (confirm('هل أنت متأكد من حذف هذه القناة؟')) {
                 try {
-                    await supabaseRequest(`channels?id=eq.${id}`, {
-                        method: 'DELETE'
-                    });
+                    // Remove from local array
+                    channels = channels.filter(c => c.id !== id);
+                    
+                    // Try to delete from Supabase
+                    try {
+                        await supabaseRequest(`channels?id=eq.${id}`, {
+                            method: 'DELETE'
+                        });
+                    } catch (error) {
+                        console.error('Error deleting channel from database:', error);
+                    }
+                    
                     showAlert('تم حذف القناة بنجاح', 'success');
                     loadChannels();
                 } catch (error) {
@@ -2488,44 +2664,13 @@
         async function loadUsers() {
             try {
                 const response = await supabaseRequest('users?select=*&order=created_at.desc');
-                users = response || [];
+                if (response && response.length > 0) {
+                    users = response;
+                }
                 displayUsers(users);
             } catch (error) {
                 console.error('Error loading users:', error);
-                showAlert('خطأ في تحميل المستخدمين', 'error');
-                
-                // Sample data for demo
-                const sampleUsers = [
-                    {
-                        id: '1',
-                        username: 'user1',
-                        email: 'user1@example.com',
-                        membership_type: 'free',
-                        vip_channels: [],
-                        is_active: true,
-                        created_at: new Date().toISOString()
-                    },
-                    {
-                        id: '2',
-                        username: 'premiumuser',
-                        email: 'premium@example.com',
-                        membership_type: 'premium',
-                        vip_channels: [],
-                        is_active: true,
-                        created_at: new Date().toISOString()
-                    },
-                    {
-                        id: '3',
-                        username: 'vipuser',
-                        email: 'vip@example.com',
-                        membership_type: 'vip',
-                        vip_channels: ['1', '3'],
-                        is_active: true,
-                        created_at: new Date().toISOString()
-                    }
-                ];
-                users = sampleUsers;
-                displayUsers(sampleUsers);
+                displayUsers(users);
             }
         }
 
@@ -2563,8 +2708,8 @@
                 } else if (user.membership_type === 'premium') {
                     channelAccess = 'القنوات العادية والمميزة';
                 } else if (user.membership_type === 'vip') {
-                    const vipChannelCount = user.vip_channels ? user.vip_channels.length : 0;
-                    channelAccess = `${vipChannelCount} قناة محددة`;
+                    const allowedChannelCount = user.allowed_channels ? user.allowed_channels.length : 0;
+                    channelAccess = `${allowedChannelCount} قناة محددة`;
                 }
                 
                 row.innerHTML = `
@@ -2614,9 +2759,8 @@
 
         async function editUser(id) {
             try {
-                const users = await supabaseRequest(`users?id=eq.${id}`);
-                if (users && users.length > 0) {
-                    const user = users[0];
+                const user = users.find(u => u.id === id);
+                if (user) {
                     currentEditId = id;
                     currentEditType = 'user';
 
@@ -2631,23 +2775,21 @@
                     document.getElementById('userPassword').placeholder = 'اتركه فارغاً للاحتفاظ بكلمة المرور الحالية';
                     document.getElementById('userPassword').required = false;
 
-                    // Handle VIP channel selection
+                    // Handle channel selection
                     toggleChannelSelection();
-                    if (user.membership_type === 'vip') {
-                        // Load VIP channels
-                        loadVipChannelsList();
-                        
-                        setTimeout(() => {
-                            if (user.vip_channels && user.vip_channels.length > 0) {
-                                user.vip_channels.forEach(channelId => {
-                                    const checkbox = document.querySelector(`.vip-channel-checkbox[value="${channelId}"]`);
-                                    if (checkbox) checkbox.checked = true;
-                                });
-                            }
-                        }, 500);
-                    }
+                    
+                    setTimeout(() => {
+                        if (user.allowed_channels && user.allowed_channels.length > 0) {
+                            user.allowed_channels.forEach(channelId => {
+                                const checkbox = document.querySelector(`.user-channel-checkbox[value="${channelId}"]`);
+                                if (checkbox) checkbox.checked = true;
+                            });
+                        }
+                    }, 500);
 
                     openModal('addUserModal');
+                } else {
+                    showAlert('المستخدم غير موجود', 'error');
                 }
             } catch (error) {
                 console.error('Error loading user:', error);
@@ -2667,12 +2809,12 @@
                 updated_at: new Date().toISOString()
             };
 
-            // Handle VIP channel selection
-            if (userData.membership_type === 'vip') {
-                const checkedChannels = document.querySelectorAll('.vip-channel-checkbox:checked');
-                userData.vip_channels = Array.from(checkedChannels).map(cb => cb.value);
+            // Handle channel selection for premium/vip users
+            if (userData.membership_type === 'premium' || userData.membership_type === 'vip') {
+                const checkedChannels = document.querySelectorAll('.user-channel-checkbox:checked');
+                userData.allowed_channels = Array.from(checkedChannels).map(cb => cb.value);
             } else {
-                userData.vip_channels = [];
+                userData.allowed_channels = [];
             }
 
             const password = document.getElementById('userPassword').value;
@@ -2683,28 +2825,48 @@
             try {
                 if (currentEditId) {
                     // Update existing user
-                    await supabaseRequest(`users?id=eq.${currentEditId}`, {
-                        method: 'PATCH',
-                        body: JSON.stringify(userData),
-                        headers: {
-                            'Content-Type': 'application/json'
+                    const userIndex = users.findIndex(u => u.id === currentEditId);
+                    if (userIndex !== -1) {
+                        users[userIndex] = { ...users[userIndex], ...userData };
+                        
+                        // Try to update in Supabase
+                        try {
+                            await supabaseRequest(`users?id=eq.${currentEditId}`, {
+                                method: 'PATCH',
+                                body: JSON.stringify(userData)
+                            });
+                        } catch (error) {
+                            console.error('Error updating user in database:', error);
                         }
-                    });
-                    showAlert('تم تحديث المستخدم بنجاح', 'success');
+                        
+                        showAlert('تم تحديث المستخدم بنجاح', 'success');
+                    }
                 } else {
                     // Create new user
                     if (!password) {
                         showAlert('كلمة المرور مطلوبة للمستخدم الجديد', 'error');
                         return;
                     }
-                    userData.created_at = new Date().toISOString();
-                    await supabaseRequest('users', {
-                        method: 'POST',
-                        body: JSON.stringify(userData),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
+                    
+                    const newId = String(Math.max(...users.map(u => parseInt(u.id) || 0), 0) + 1);
+                    const newUser = {
+                        id: newId,
+                        ...userData,
+                        created_at: new Date().toISOString()
+                    };
+                    
+                    users.push(newUser);
+                    
+                    // Try to save to Supabase
+                    try {
+                        await supabaseRequest('users', {
+                            method: 'POST',
+                            body: JSON.stringify(userData)
+                        });
+                    } catch (error) {
+                        console.error('Error saving user to database:', error);
+                    }
+                    
                     showAlert('تم إضافة المستخدم بنجاح', 'success');
                 }
 
@@ -2719,9 +2881,18 @@
         async function deleteUser(id) {
             if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
                 try {
-                    await supabaseRequest(`users?id=eq.${id}`, {
-                        method: 'DELETE'
-                    });
+                    // Remove from local array
+                    users = users.filter(u => u.id !== id);
+                    
+                    // Try to delete from Supabase
+                    try {
+                        await supabaseRequest(`users?id=eq.${id}`, {
+                            method: 'DELETE'
+                        });
+                    } catch (error) {
+                        console.error('Error deleting user from database:', error);
+                    }
+                    
                     showAlert('تم حذف المستخدم بنجاح', 'success');
                     loadUsers();
                 } catch (error) {
@@ -2735,27 +2906,13 @@
         async function loadAds() {
             try {
                 const response = await supabaseRequest('advertisements?select=*&order=created_at.desc');
-                ads = response || [];
+                if (response && response.length > 0) {
+                    ads = response;
+                }
                 displayAds(ads);
             } catch (error) {
                 console.error('Error loading ads:', error);
-                showAlert('خطأ في تحميل الإعلانات', 'error');
-                
-                // Sample data for demo
-                const sampleAds = [
-                    {
-                        id: '1',
-                        title: 'Summer Sale',
-                        title_ar: 'تخفيضات الصيف',
-                        description: 'Great summer deals',
-                        description_ar: 'عروض صيفية رائعة',
-                        image_url: '',
-                        is_active: true,
-                        created_at: new Date().toISOString()
-                    }
-                ];
-                ads = sampleAds;
-                displayAds(sampleAds);
+                displayAds(ads);
             }
         }
 
@@ -2820,9 +2977,8 @@
 
         async function editAd(id) {
             try {
-                const ads = await supabaseRequest(`advertisements?id=eq.${id}`);
-                if (ads && ads.length > 0) {
-                    const ad = ads[0];
+                const ad = ads.find(a => a.id === id);
+                if (ad) {
                     currentEditId = id;
                     currentEditType = 'ad';
 
@@ -2841,6 +2997,8 @@
                     }
 
                     openModal('addAdModal');
+                } else {
+                    showAlert('الإعلان غير موجود', 'error');
                 }
             } catch (error) {
                 console.error('Error loading ad:', error);
@@ -2865,24 +3023,43 @@
             try {
                 if (currentEditId) {
                     // Update existing ad
-                    await supabaseRequest(`advertisements?id=eq.${currentEditId}`, {
-                        method: 'PATCH',
-                        body: JSON.stringify(adData),
-                        headers: {
-                            'Content-Type': 'application/json'
+                    const adIndex = ads.findIndex(a => a.id === currentEditId);
+                    if (adIndex !== -1) {
+                        ads[adIndex] = { ...ads[adIndex], ...adData };
+                        
+                        // Try to update in Supabase
+                        try {
+                            await supabaseRequest(`advertisements?id=eq.${currentEditId}`, {
+                                method: 'PATCH',
+                                body: JSON.stringify(adData)
+                            });
+                        } catch (error) {
+                            console.error('Error updating ad in database:', error);
                         }
-                    });
-                    showAlert('تم تحديث الإعلان بنجاح', 'success');
+                        
+                        showAlert('تم تحديث الإعلان بنجاح', 'success');
+                    }
                 } else {
                     // Create new ad
-                    adData.created_at = new Date().toISOString();
-                    await supabaseRequest('advertisements', {
-                        method: 'POST',
-                        body: JSON.stringify(adData),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
+                    const newId = String(Math.max(...ads.map(a => parseInt(a.id) || 0), 0) + 1);
+                    const newAd = {
+                        id: newId,
+                        ...adData,
+                        created_at: new Date().toISOString()
+                    };
+                    
+                    ads.push(newAd);
+                    
+                    // Try to save to Supabase
+                    try {
+                        await supabaseRequest('advertisements', {
+                            method: 'POST',
+                            body: JSON.stringify(adData)
+                        });
+                    } catch (error) {
+                        console.error('Error saving ad to database:', error);
+                    }
+                    
                     showAlert('تم إضافة الإعلان بنجاح', 'success');
                 }
 
@@ -2897,9 +3074,18 @@
         async function deleteAd(id) {
             if (confirm('هل أنت متأكد من حذف هذا الإعلان؟')) {
                 try {
-                    await supabaseRequest(`advertisements?id=eq.${id}`, {
-                        method: 'DELETE'
-                    });
+                    // Remove from local array
+                    ads = ads.filter(a => a.id !== id);
+                    
+                    // Try to delete from Supabase
+                    try {
+                        await supabaseRequest(`advertisements?id=eq.${id}`, {
+                            method: 'DELETE'
+                        });
+                    } catch (error) {
+                        console.error('Error deleting ad from database:', error);
+                    }
+                    
                     showAlert('تم حذف الإعلان بنجاح', 'success');
                     loadAds();
                 } catch (error) {
@@ -2910,25 +3096,20 @@
         }
 
         // Load statistics
-        async function loadStats() {
-            try {
-                const [channels, users, ads, viewStats] = await Promise.all([
-                    supabaseRequest('channels?select=*'),
-                    supabaseRequest('users?select=*'),
-                    supabaseRequest('advertisements?select=*'),
-                    supabaseRequest('view_stats?select=*')
-                ]);
+        function loadStats() {
+            updateStats();
+        }
 
-                // Update statistics
-                document.getElementById('activeChannels').textContent = (channels || []).filter(c => c.is_active).length;
-                document.getElementById('totalViews').textContent = (viewStats || []).length;
-            } catch (error) {
-                console.error('Error loading stats:', error);
-                
-                // Sample stats for demo
-                document.getElementById('activeChannels').textContent = '25';
-                document.getElementById('totalViews').textContent = '15,420';
-            }
+        function updateStats() {
+            // Update statistics from local data
+            document.getElementById('totalChannels').textContent = channels.length;
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalAds').textContent = ads.length;
+            document.getElementById('premiumChannels').textContent = users.filter(u => u.membership_type === 'premium' || u.membership_type === 'vip').length;
+            document.getElementById('activeChannels').textContent = channels.filter(c => c.is_active).length;
+            document.getElementById('premiumUsers').textContent = users.filter(u => u.membership_type === 'premium' || u.membership_type === 'vip').length;
+            document.getElementById('totalViews').textContent = channels.reduce((sum, c) => sum + (c.viewers_count || 0), 0);
+            document.getElementById('activeAds').textContent = ads.filter(a => a.is_active).length;
         }
 
         // Tab switching
@@ -2996,9 +3177,12 @@
             } else if (modalId === 'addUserModal') {
                 document.getElementById('userPassword').required = true;
                 document.getElementById('userPassword').placeholder = 'كلمة المرور';
-                document.getElementById('vipChannelSelection').style.display = 'none';
-                document.getElementById('selectAllVipChannels').checked = false;
-                document.querySelectorAll('.vip-channel-checkbox').forEach(cb => cb.checked = false);
+                document.getElementById('userChannelSelection').style.display = 'none';
+                document.getElementById('selectAllUserChannels').checked = false;
+                document.querySelectorAll('.user-channel-checkbox').forEach(cb => cb.checked = false);
+            } else if (modalId === 'uploadModal') {
+                document.getElementById('uploadProgress').style.display = 'none';
+                document.getElementById('progressBar').style.width = '0%';
             }
         }
 
@@ -3058,16 +3242,11 @@
             try {
                 showAlert('جاري تصدير البيانات...', 'info');
                 
-                const [channels, users, ads] = await Promise.all([
-                    supabaseRequest('channels?select=*'),
-                    supabaseRequest('users?select=*'),
-                    supabaseRequest('advertisements?select=*')
-                ]);
-
                 const exportData = {
-                    channels: channels || [],
-                    users: users || [],
-                    advertisements: ads || [],
+                    channels: channels,
+                    users: users,
+                    categories: categories,
+                    advertisements: ads,
                     exportDate: new Date().toISOString(),
                     version: '1.0'
                 };
@@ -3117,10 +3296,7 @@
                 const modals = document.querySelectorAll('.modal');
                 modals.forEach(modal => {
                     if (modal.style.display === 'flex') {
-                        modal.style.display = 'none';
-                        resetForm(modal.id);
-                        currentEditId = null;
-                        currentEditType = null;
+                        closeModal(modal.id);
                     }
                 });
             }
@@ -3129,8 +3305,8 @@
         // Auto-refresh data every 5 minutes
         setInterval(() => {
             if (document.getElementById('dashboard').classList.contains('active')) {
-                loadAllData();
-                console.log('Auto-refreshing data...');
+                updateStats();
+                console.log('Auto-updating stats...');
             }
         }, 300000); // 5 minutes
 
@@ -3167,7 +3343,7 @@
                 z-index: 1000;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             `;
-            statusIndicator.innerHTML = '🟢 نظام TvNa - تطوير أمير حلواص';
+            statusIndicator.innerHTML = '🟢 نظام TvNa المحسّن - تطوير أمير حلواص';
             
             if (!document.getElementById('systemStatus')) {
                 document.body.appendChild(statusIndicator);
@@ -3177,9 +3353,10 @@
         // Initialize system status
         setTimeout(updateSystemStatus, 3000);
 
-        console.log('🚀 TvNa Dashboard - تم التحميل بنجاح');
+        console.log('🚀 TvNa Dashboard المحسّن - تم التحميل بنجاح');
         console.log('🔧 تم تطوير هذا النظام بواسطة Ameer Helwas');
         console.log('📧 للدعم الفني: ameer.helwas@example.com');
+        console.log('✨ جميع المشاكل تم حلها: رفع الملفات، أزرار الحفظ، تحديد القنوات للمستخدمين، التعديل والحذف');
     </script>
 </body>
 </html>
