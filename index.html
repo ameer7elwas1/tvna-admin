@@ -1968,44 +1968,36 @@
         }
 
         function parseJSONFile(content, defaultMembership) {
-            try {
-                const data = JSON.parse(content);
-                return data.map((item, index) => ({
-                    name: item.name || item.title || `Channel ${index + 1}`,
-                    name_ar: item.name_ar || item.name || item.title || `قناة ${index + 1}`,
-                    url: item.url || item.stream_url,
-                    category: item.category || 'General',
-                    image_url: item.image_url || item.logo,
-                    quality: item.quality || 'HD',
-                    membership_type: item.membership_type || defaultMembership,
-                    is_active: item.is_active !== false,
-                    order_index: index + 1
-                }));
-            } catch (e) {
-                throw new Error('تنسيق JSON غير صحيح');
-            }
+            const data = JSON.parse(content);
+            return data.map((item, index) => ({
+                name: item.name || item.title || `Channel ${index + 1}`,
+                name_ar: item.name_ar || item.name || item.title || `قناة ${index + 1}`,
+                url: item.url || item.stream_url,
+                category: item.category || 'General',
+                image_url: item.image_url || item.logo,
+                quality: item.quality || 'HD',
+                membership_type: item.membership_type || defaultMembership,
+                is_active: item.is_active !== false,
+                order_index: index + 1
+            }));
         }
 
         function parseTXTFile(content, defaultMembership) {
             const lines = content.split('\n');
-            return lines
-                .filter(line => line.trim().startsWith('http'))
-                .map((url, index) => ({
-                    name: `Channel ${index + 1}`,
-                    name_ar: `قناة ${index + 1}`,
-                    url: url.trim(),
-                    category: 'General',
-                    quality: 'HD',
-                    membership_type: defaultMembership,
-                    is_active: true,
-                    order_index: index + 1
-                }));
+            return lines.filter(line => line.trim().startsWith('http')).map((url, index) => ({
+                name: `Channel ${index + 1}`,
+                name_ar: `قناة ${index + 1}`,
+                url: url.trim(),
+                category: 'General',
+                quality: 'HD',
+                membership_type: defaultMembership,
+                is_active: true,
+                order_index: index + 1
+            }));
         }
 
         function parseCSVFile(content, defaultMembership) {
             const lines = content.split('\n');
-            if (lines.length === 0) return [];
-            
             const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
             const channels = [];
 
@@ -2320,7 +2312,7 @@
                     }
                 } else {
                     // Create new category
-                    const newId = String(Math.max(...categories.map(c => parseInt(c.id) || 0), 0) + 1;
+                    const newId = String(Math.max(...categories.map(c => parseInt(c.id) || 0), 0) + 1);
                     const newCategory = {
                         id: newId,
                         ...categoryData,
@@ -2616,7 +2608,7 @@
                     }
                 } else {
                     // Create new channel
-                    const newId = String(Math.max(...channels.map(c => parseInt(c.id) || 0), 0) + 1;
+                    const newId = String(Math.max(...channels.map(c => parseInt(c.id) || 0), 0) + 1);
                     const newChannel = {
                         id: newId,
                         ...channelData,
@@ -2856,7 +2848,7 @@
                         return;
                     }
                     
-                    const newId = String(Math.max(...users.map(u => parseInt(u.id) || 0), 0) + 1;
+                    const newId = String(Math.max(...users.map(u => parseInt(u.id) || 0), 0) + 1);
                     const newUser = {
                         id: newId,
                         ...userData,
@@ -3049,7 +3041,7 @@
                     }
                 } else {
                     // Create new ad
-                    const newId = String(Math.max(...ads.map(a => parseInt(a.id) || 0), 0) + 1;
+                    const newId = String(Math.max(...ads.map(a => parseInt(a.id) || 0), 0) + 1);
                     const newAd = {
                         id: newId,
                         ...adData,
