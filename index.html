@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TvNa - لوحة التحكم </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- إضافة مكتبة Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -1461,7 +1463,9 @@
         const SUPABASE_URL = 'https://vpvvjascwgivdjyyhzwp.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwdnZqYXNjd2dpdmRqeXloendwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MDYxMjYsImV4cCI6MjA2NTM4MjEyNn0.6AR2-MG4x9ugNTXe9jUqx-IwGEtj1m6MCYwQkTsSbUQ';
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // إنشاء عميل Supabase
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         let currentEditId = null;
         let currentEditType = null;
         let monitoringInterval = null;
@@ -1905,7 +1909,7 @@
                 }
 
                 // Add new channels to the list
-                let newChannelId = Math.max(...channels.map(c => parseInt(c.id) || 0), 0) + 1;
+                let newChannelId = Math.max(...channels.map(c => parseInt(c.id) || 0, 0) + 1;
                 let successCount = 0;
                 
                 for (let i = 0; i < parsedChannels.length; i++) {
@@ -2403,7 +2407,7 @@
                     }
                 } else {
                     // Create new category
-                    const newId = String(Math.max(...categories.map(c => parseInt(c.id) || 0), 0) + 1);
+                    const newId = String(Math.max(...categories.map(c => parseInt(c.id) || 0, 0) + 1);
                     const newCategory = {
                         id: newId,
                         ...categoryData,
@@ -2694,7 +2698,7 @@
                     }
                 } else {
                     // Create new channel
-                    const newId = String(Math.max(...channels.map(c => parseInt(c.id) || 0), 0) + 1);
+                    const newId = String(Math.max(...channels.map(c => parseInt(c.id) || 0, 0) + 1);
                     const newChannel = {
                         id: newId,
                         ...channelData,
@@ -2930,7 +2934,7 @@
                         return;
                     }
                     
-                    const newId = String(Math.max(...users.map(u => parseInt(u.id) || 0), 0) + 1);
+                    const newId = String(Math.max(...users.map(u => parseInt(u.id) || 0, 0) + 1);
                     const newUser = {
                         id: newId,
                         ...userData,
@@ -3131,7 +3135,7 @@
                     }
                 } else {
                     // Create new ad
-                    const newId = String(Math.max(...ads.map(a => parseInt(a.id) || 0), 0) + 1);
+                    const newId = String(Math.max(...ads.map(a => parseInt(a.id) || 0, 0) + 1);
                     const newAd = {
                         id: newId,
                         ...adData,
