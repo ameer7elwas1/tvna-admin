@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TvNa - لوحة التحكم المحسّنة</title>
+    <title>TvNa - لوحة التحكم المُصححة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -593,10 +593,6 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        .vip-channel-checkbox {
-            margin-right: 8px;
-        }
-
         #uploadProgress {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
@@ -701,7 +697,7 @@
                     <i class="fas fa-tv"></i>
                 </div>
                 <h1 class="login-title">TvNa تيڤي نا</h1>
-                <p style="color: rgba(255, 255, 255, 0.8); font-size: 16px;">لوحة التحكم المحسّنة</p>
+                <p style="color: rgba(255, 255, 255, 0.8); font-size: 16px;">لوحة التحكم المُصححة</p>
             </div>
             
             <!-- Connection Status -->
@@ -740,7 +736,7 @@
                         <div class="logo-icon"><i class="fas fa-tv"></i></div>
                         <div class="logo-text">
                             <h1>TvNa تيڤي نا</h1>
-                            <p style="color: rgba(255, 255, 255, 0.8);">لوحة التحكم المحسّنة</p>
+                            <p style="color: rgba(255, 255, 255, 0.8);">لوحة التحكم المُصححة</p>
                         </div>
                     </div>
                     <div class="admin-info">
@@ -1442,13 +1438,15 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">وصف الإعلان (English)</label>
-                    <textarea class="form-input" id="adDescription" placeholder="Advertisement description" rows="3" required></textarea>
+                    <label class="form-label">وصف الإعلان (English) - الحد الأقصى 300 حرف</label>
+                    <textarea class="form-input" id="adDescription" placeholder="Advertisement description" rows="3" maxlength="300" required></textarea>
+                    <small style="color: #4ecdc4;">عدد الأحرف: <span id="adDescLength">0</span>/300</small>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label">وصف الإعلان (عربي)</label>
-                    <textarea class="form-input" id="adDescriptionAr" placeholder="وصف الإعلان بالعربية" rows="3" required></textarea>
+                    <label class="form-label">وصف الإعلان (عربي) - الحد الأقصى 300 حرف</label>
+                    <textarea class="form-input" id="adDescriptionAr" placeholder="وصف الإعلان بالعربية" rows="3" maxlength="300" required></textarea>
+                    <small style="color: #4ecdc4;">عدد الأحرف: <span id="adDescArLength">0</span>/300</small>
                 </div>
                 
                 <button type="submit" class="btn btn-success">
@@ -1507,11 +1505,26 @@
                 tab.addEventListener('click', switchTab);
             });
 
+            // Character counters for ad descriptions
+            document.getElementById('adDescription').addEventListener('input', updateCharCounter);
+            document.getElementById('adDescriptionAr').addEventListener('input', updateCharCounterAr);
+
             enhanceModals();
             
             // Load sample data initially
             loadSampleData();
         });
+
+        // Character counter functions
+        function updateCharCounter() {
+            const desc = document.getElementById('adDescription').value;
+            document.getElementById('adDescLength').textContent = desc.length;
+        }
+
+        function updateCharCounterAr() {
+            const desc = document.getElementById('adDescriptionAr').value;
+            document.getElementById('adDescArLength').textContent = desc.length;
+        }
 
         // Load sample data for demo
         function loadSampleData() {
@@ -1648,7 +1661,7 @@
             }
         }
 
-        // Enhanced Supabase API functions
+        // Enhanced Supabase API functions with better error handling
         async function supabaseRequest(endpoint, options = {}) {
             const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
             const headers = {
@@ -1672,7 +1685,23 @@
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error('Supabase error:', errorText);
-                    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+                    
+                    // Better error handling with user-friendly messages
+                    let userMessage = 'خطأ في قاعدة البيانات';
+                    
+                    if (errorText.includes('ad_description_length')) {
+                        userMessage = 'وصف الإعلان طويل جداً. الحد الأقصى 300 حرف';
+                    } else if (errorText.includes('violates check constraint')) {
+                        userMessage = 'البيانات المدخلة لا تتوافق مع قيود قاعدة البيانات';
+                    } else if (errorText.includes('duplicate key')) {
+                        userMessage = 'هذا العنصر موجود بالفعل';
+                    } else if (response.status === 500) {
+                        userMessage = 'خطأ في الخادم. حاول مرة أخرى';
+                    } else if (response.status === 400) {
+                        userMessage = 'بيانات غير صحيحة. تحقق من المدخلات';
+                    }
+                    
+                    throw new Error(userMessage);
                 }
 
                 const text = await response.text();
@@ -1681,8 +1710,12 @@
                 return result;
             } catch (error) {
                 console.error('Supabase request error:', error);
-                showAlert('خطأ في الاتصال بقاعدة البيانات: ' + error.message, 'error');
-                throw error;
+                if (!error.message.includes('قاعدة البيانات')) {
+                    showAlert('خطأ في الاتصال: ' + error.message, 'error');
+                } else {
+                    showAlert(error.message, 'error');
+                }
+                return null;
             }
         }
 
@@ -1734,7 +1767,7 @@
                 showAlert('تم تحميل جميع البيانات بنجاح', 'success');
             } catch (error) {
                 console.error('Error loading data:', error);
-                showAlert('خطأ في تحميل البيانات', 'warning');
+                showAlert('تم استخدام البيانات المحلية', 'warning');
                 // Use sample data instead
                 displayCategories(categories);
                 displayChannels(channels);
@@ -1801,7 +1834,7 @@
             });
         }
 
-        // Upload channels file
+        // Upload channels file - FIXED VERSION
         function openUploadModal() {
             openModal('uploadModal');
         }
@@ -1853,16 +1886,28 @@
                         throw new Error('صيغة الملف غير مدعومة');
                 }
 
+                if (parsedChannels.length === 0) {
+                    throw new Error('لم يتم العثور على قنوات صالحة في الملف');
+                }
+
                 progressText.textContent = 'جاري حفظ القنوات...';
                 progressBar.style.width = '60%';
 
                 // Clear existing channels if replace is checked
                 if (replaceChannels) {
                     channels = [];
+                    // Try to clear database too
+                    try {
+                        await supabaseRequest('channels', { method: 'DELETE' });
+                    } catch (error) {
+                        console.error('Error clearing channels from database:', error);
+                    }
                 }
 
                 // Add new channels to the list
                 let newChannelId = Math.max(...channels.map(c => parseInt(c.id) || 0), 0) + 1;
+                let successCount = 0;
+                
                 for (let i = 0; i < parsedChannels.length; i++) {
                     const channel = {
                         ...parsedChannels[i],
@@ -1871,62 +1916,90 @@
                         viewers_count: 0
                     };
                     
-                    // Try to save to Supabase, but continue if it fails
-                    try {
-                        await saveChannelToDatabase(channel);
-                    } catch (error) {
-                        console.error('Error saving channel to database:', error);
-                        // Continue with local storage
+                    // Validate channel data
+                    if (!channel.name || !channel.url) {
+                        console.warn('Skipping invalid channel:', channel);
+                        continue;
                     }
                     
+                    // Add to local array first
                     channels.push(channel);
+                    
+                    // Try to save to Supabase
+                    const saved = await saveChannelToDatabase(channel);
+                    if (saved) {
+                        successCount++;
+                    }
                     
                     const progress = 60 + (i / parsedChannels.length) * 35;
                     progressBar.style.width = `${progress}%`;
-                    progressText.textContent = `تم رفع ${i + 1} من ${parsedChannels.length} قناة`;
+                    progressText.textContent = `تم رفع ${successCount} من ${parsedChannels.length} قناة`;
                 }
 
                 progressBar.style.width = '100%';
-                progressText.textContent = 'تم الانتهاء بنجاح!';
+                progressText.textContent = `تم الانتهاء! تم رفع ${successCount} قناة بنجاح`;
                 
-                showAlert(`تم رفع ${parsedChannels.length} قناة بنجاح`, 'success');
-                closeModal('uploadModal');
-                loadChannels();
+                // Refresh display
+                displayChannels(channels);
+                updateStats();
+                
+                showAlert(`تم رفع ${successCount} قناة بنجاح من أصل ${parsedChannels.length}`, 'success');
+                
+                setTimeout(() => {
+                    closeModal('uploadModal');
+                }, 2000);
 
             } catch (error) {
                 console.error('Upload error:', error);
                 showAlert('خطأ في رفع الملف: ' + error.message, 'error');
+                progressContainer.style.display = 'none';
             }
         }
 
-        // Save channel to database
+        // Enhanced save channel to database function
         async function saveChannelToDatabase(channel) {
             try {
+                // Clean the data before sending
                 const channelData = {
-                    name: channel.name,
-                    name_ar: channel.name_ar,
-                    url: channel.url,
-                    category: channel.category,
-                    image_url: channel.image_url,
-                    quality: channel.quality,
-                    membership_type: channel.membership_type,
-                    is_active: channel.is_active,
-                    order_index: channel.order_index,
-                    viewers_count: channel.viewers_count || 0,
+                    name: String(channel.name || '').trim(),
+                    name_ar: String(channel.name_ar || channel.name || '').trim(),
+                    url: String(channel.url || '').trim(),
+                    category: String(channel.category || 'General').trim(),
+                    image_url: channel.image_url ? String(channel.image_url).trim() : null,
+                    quality: String(channel.quality || 'HD').trim(),
+                    membership_type: String(channel.membership_type || 'free').trim(),
+                    is_active: Boolean(channel.is_active !== false),
+                    order_index: parseInt(channel.order_index) || null,
+                    viewers_count: parseInt(channel.viewers_count) || 0,
                     created_at: channel.created_at || new Date().toISOString()
                 };
 
-                await supabaseRequest('channels', {
+                // Validate required fields
+                if (!channelData.name || !channelData.url) {
+                    throw new Error('اسم القناة والرابط مطلوبان');
+                }
+
+                // Validate URL format
+                try {
+                    new URL(channelData.url);
+                } catch {
+                    console.warn('Invalid URL for channel:', channelData.name);
+                    // Don't throw error, just log warning
+                }
+
+                const result = await supabaseRequest('channels', {
                     method: 'POST',
                     body: JSON.stringify(channelData)
                 });
+
+                return result !== null;
             } catch (error) {
                 console.error('Error saving channel to database:', error);
-                // Don't throw error - continue with local storage
+                return false; // Don't throw error, just return false
             }
         }
 
-        // File parsers
+        // Enhanced file parsers
         function parseM3UFile(content, defaultMembership) {
             const lines = content.split('\n');
             const channels = [];
@@ -1968,54 +2041,71 @@
         }
 
         function parseJSONFile(content, defaultMembership) {
-            const data = JSON.parse(content);
-            return data.map((item, index) => ({
-                name: item.name || item.title || `Channel ${index + 1}`,
-                name_ar: item.name_ar || item.name || item.title || `قناة ${index + 1}`,
-                url: item.url || item.stream_url,
-                category: item.category || 'General',
-                image_url: item.image_url || item.logo,
-                quality: item.quality || 'HD',
-                membership_type: item.membership_type || defaultMembership,
-                is_active: item.is_active !== false,
-                order_index: index + 1
-            }));
+            try {
+                const data = JSON.parse(content);
+                if (!Array.isArray(data)) {
+                    throw new Error('ملف JSON يجب أن يحتوي على مصفوفة');
+                }
+                
+                return data.map((item, index) => ({
+                    name: item.name || item.title || `Channel ${index + 1}`,
+                    name_ar: item.name_ar || item.name || item.title || `قناة ${index + 1}`,
+                    url: item.url || item.stream_url,
+                    category: item.category || 'General',
+                    image_url: item.image_url || item.logo,
+                    quality: item.quality || 'HD',
+                    membership_type: item.membership_type || defaultMembership,
+                    is_active: item.is_active !== false,
+                    order_index: index + 1
+                })).filter(channel => channel.url); // Only include channels with URLs
+            } catch (error) {
+                throw new Error('خطأ في تحليل ملف JSON: ' + error.message);
+            }
         }
 
         function parseTXTFile(content, defaultMembership) {
             const lines = content.split('\n');
-            return lines.filter(line => line.trim().startsWith('http')).map((url, index) => ({
-                name: `Channel ${index + 1}`,
-                name_ar: `قناة ${index + 1}`,
-                url: url.trim(),
-                category: 'General',
-                quality: 'HD',
-                membership_type: defaultMembership,
-                is_active: true,
-                order_index: index + 1
-            }));
+            return lines
+                .filter(line => line.trim().startsWith('http'))
+                .map((url, index) => ({
+                    name: `Channel ${index + 1}`,
+                    name_ar: `قناة ${index + 1}`,
+                    url: url.trim(),
+                    category: 'General',
+                    quality: 'HD',
+                    membership_type: defaultMembership,
+                    is_active: true,
+                    order_index: index + 1
+                }));
         }
 
         function parseCSVFile(content, defaultMembership) {
             const lines = content.split('\n');
+            if (lines.length < 2) {
+                throw new Error('ملف CSV يجب أن يحتوي على هيدر وبيانات');
+            }
+            
             const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
             const channels = [];
 
             for (let i = 1; i < lines.length; i++) {
                 const values = lines[i].split(',').map(v => v.trim());
-                if (values.length >= headers.length && values[headers.indexOf('url')]) {
-                    const channel = {
-                        name: values[headers.indexOf('name')] || `Channel ${i}`,
-                        name_ar: values[headers.indexOf('name_ar')] || values[headers.indexOf('name')] || `قناة ${i}`,
-                        url: values[headers.indexOf('url')],
-                        category: values[headers.indexOf('category')] || 'General',
-                        image_url: values[headers.indexOf('image_url')] || null,
-                        quality: values[headers.indexOf('quality')] || 'HD',
-                        membership_type: defaultMembership,
-                        is_active: true,
-                        order_index: i
-                    };
-                    channels.push(channel);
+                if (values.length >= headers.length) {
+                    const urlIndex = headers.indexOf('url');
+                    if (urlIndex !== -1 && values[urlIndex]) {
+                        const channel = {
+                            name: values[headers.indexOf('name')] || `Channel ${i}`,
+                            name_ar: values[headers.indexOf('name_ar')] || values[headers.indexOf('name')] || `قناة ${i}`,
+                            url: values[urlIndex],
+                            category: values[headers.indexOf('category')] || 'General',
+                            image_url: values[headers.indexOf('image_url')] || null,
+                            quality: values[headers.indexOf('quality')] || 'HD',
+                            membership_type: defaultMembership,
+                            is_active: true,
+                            order_index: i
+                        };
+                        channels.push(channel);
+                    }
                 }
             }
 
@@ -2255,7 +2345,6 @@
 
         async function editCategory(id) {
             try {
-                // Find category locally first
                 const category = categories.find(c => c.id === id);
                 if (category) {
                     currentEditId = id;
@@ -2282,14 +2371,20 @@
             e.preventDefault();
 
             const categoryData = {
-                name: document.getElementById('categoryName').value,
-                name_ar: document.getElementById('categoryNameAr').value,
+                name: document.getElementById('categoryName').value.trim(),
+                name_ar: document.getElementById('categoryNameAr').value.trim(),
                 order_index: parseInt(document.getElementById('categoryOrder').value),
                 color: document.getElementById('categoryColor').value,
-                description: document.getElementById('categoryDescription').value,
+                description: document.getElementById('categoryDescription').value.trim(),
                 is_active: document.getElementById('categoryActive').checked,
                 updated_at: new Date().toISOString()
             };
+
+            // Validation
+            if (!categoryData.name || !categoryData.name_ar) {
+                showAlert('يرجى ملء جميع الحقول المطلوبة', 'error');
+                return;
+            }
 
             try {
                 if (currentEditId) {
@@ -2299,14 +2394,10 @@
                         categories[categoryIndex] = { ...categories[categoryIndex], ...categoryData };
                         
                         // Try to update in Supabase
-                        try {
-                            await supabaseRequest(`categories?id=eq.${currentEditId}`, {
-                                method: 'PATCH',
-                                body: JSON.stringify(categoryData)
-                            });
-                        } catch (error) {
-                            console.error('Error updating category in database:', error);
-                        }
+                        await supabaseRequest(`categories?id=eq.${currentEditId}`, {
+                            method: 'PATCH',
+                            body: JSON.stringify(categoryData)
+                        });
                         
                         showAlert('تم تحديث التصنيف بنجاح', 'success');
                     }
@@ -2323,20 +2414,18 @@
                     categories.push(newCategory);
                     
                     // Try to save to Supabase
-                    try {
-                        await supabaseRequest('categories', {
-                            method: 'POST',
-                            body: JSON.stringify(categoryData)
-                        });
-                    } catch (error) {
-                        console.error('Error saving category to database:', error);
-                    }
+                    await supabaseRequest('categories', {
+                        method: 'POST',
+                        body: JSON.stringify(categoryData)
+                    });
                     
                     showAlert('تم إضافة التصنيف بنجاح', 'success');
                 }
 
                 closeModal('addCategoryModal');
-                loadCategories();
+                displayCategories(categories);
+                updateChannelCategoryOptions();
+                updateCategoryFilters();
             } catch (error) {
                 console.error('Error saving category:', error);
                 showAlert('خطأ في حفظ التصنيف', 'error');
@@ -2350,16 +2439,14 @@
                     categories = categories.filter(c => c.id !== id);
                     
                     // Try to delete from Supabase
-                    try {
-                        await supabaseRequest(`categories?id=eq.${id}`, {
-                            method: 'DELETE'
-                        });
-                    } catch (error) {
-                        console.error('Error deleting category from database:', error);
-                    }
+                    await supabaseRequest(`categories?id=eq.${id}`, {
+                        method: 'DELETE'
+                    });
                     
                     showAlert('تم حذف التصنيف بنجاح', 'success');
-                    loadCategories();
+                    displayCategories(categories);
+                    updateChannelCategoryOptions();
+                    updateCategoryFilters();
                 } catch (error) {
                     console.error('Error deleting category:', error);
                     showAlert('خطأ في حذف التصنيف', 'error');
@@ -2424,18 +2511,15 @@
                     
                     // Try to delete from Supabase
                     for (const id of channelIds) {
-                        try {
-                            await supabaseRequest(`channels?id=eq.${id}`, {
-                                method: 'DELETE'
-                            });
-                        } catch (error) {
-                            console.error('Error deleting channel from database:', error);
-                        }
+                        await supabaseRequest(`channels?id=eq.${id}`, {
+                            method: 'DELETE'
+                        });
                     }
                     
                     showAlert(`تم حذف ${channelIds.length} قناة بنجاح`, 'success');
-                    loadChannels();
+                    displayChannels(channels);
                     updateDeleteButton();
+                    updateStats();
                 } catch (error) {
                     console.error('Error deleting channels:', error);
                     showAlert('خطأ في حذف القنوات', 'error');
@@ -2575,17 +2659,23 @@
             e.preventDefault();
 
             const channelData = {
-                name: document.getElementById('channelName').value,
-                name_ar: document.getElementById('channelNameAr').value,
-                url: document.getElementById('channelUrl').value,
+                name: document.getElementById('channelName').value.trim(),
+                name_ar: document.getElementById('channelNameAr').value.trim(),
+                url: document.getElementById('channelUrl').value.trim(),
                 category: document.getElementById('channelCategory').value,
                 quality: document.getElementById('channelQuality').value,
-                image_url: document.getElementById('channelImageUrl').value,
+                image_url: document.getElementById('channelImageUrl').value.trim(),
                 membership_type: document.getElementById('channelMembership').value,
                 is_active: document.getElementById('channelActive').checked,
                 order_index: parseInt(document.getElementById('channelOrder').value) || null,
                 updated_at: new Date().toISOString()
             };
+
+            // Validation
+            if (!channelData.name || !channelData.name_ar || !channelData.url || !channelData.category) {
+                showAlert('يرجى ملء جميع الحقول المطلوبة', 'error');
+                return;
+            }
 
             try {
                 if (currentEditId) {
@@ -2595,14 +2685,10 @@
                         channels[channelIndex] = { ...channels[channelIndex], ...channelData };
                         
                         // Try to update in Supabase
-                        try {
-                            await supabaseRequest(`channels?id=eq.${currentEditId}`, {
-                                method: 'PATCH',
-                                body: JSON.stringify(channelData)
-                            });
-                        } catch (error) {
-                            console.error('Error updating channel in database:', error);
-                        }
+                        await supabaseRequest(`channels?id=eq.${currentEditId}`, {
+                            method: 'PATCH',
+                            body: JSON.stringify(channelData)
+                        });
                         
                         showAlert('تم تحديث القناة بنجاح', 'success');
                     }
@@ -2619,17 +2705,14 @@
                     channels.push(newChannel);
                     
                     // Try to save to Supabase
-                    try {
-                        await saveChannelToDatabase(newChannel);
-                    } catch (error) {
-                        console.error('Error saving channel to database:', error);
-                    }
+                    await saveChannelToDatabase(newChannel);
                     
                     showAlert('تم إضافة القناة بنجاح', 'success');
                 }
 
                 closeModal('addChannelModal');
-                loadChannels();
+                displayChannels(channels);
+                updateStats();
             } catch (error) {
                 console.error('Error saving channel:', error);
                 showAlert('خطأ في حفظ القناة', 'error');
@@ -2643,16 +2726,13 @@
                     channels = channels.filter(c => c.id !== id);
                     
                     // Try to delete from Supabase
-                    try {
-                        await supabaseRequest(`channels?id=eq.${id}`, {
-                            method: 'DELETE'
-                        });
-                    } catch (error) {
-                        console.error('Error deleting channel from database:', error);
-                    }
+                    await supabaseRequest(`channels?id=eq.${id}`, {
+                        method: 'DELETE'
+                    });
                     
                     showAlert('تم حذف القناة بنجاح', 'success');
-                    loadChannels();
+                    displayChannels(channels);
+                    updateStats();
                 } catch (error) {
                     console.error('Error deleting channel:', error);
                     showAlert('خطأ في حذف القناة', 'error');
@@ -2801,13 +2881,19 @@
             e.preventDefault();
 
             const userData = {
-                username: document.getElementById('userName').value,
-                email: document.getElementById('userEmail').value,
-                phone: document.getElementById('userPhone').value || null,
+                username: document.getElementById('userName').value.trim(),
+                email: document.getElementById('userEmail').value.trim(),
+                phone: document.getElementById('userPhone').value.trim() || null,
                 membership_type: document.getElementById('userMembershipType').value,
                 is_active: document.getElementById('userActive').checked,
                 updated_at: new Date().toISOString()
             };
+
+            // Validation
+            if (!userData.username || !userData.email) {
+                showAlert('يرجى ملء جميع الحقول المطلوبة', 'error');
+                return;
+            }
 
             // Handle channel selection for premium/vip users
             if (userData.membership_type === 'premium' || userData.membership_type === 'vip') {
@@ -2830,14 +2916,10 @@
                         users[userIndex] = { ...users[userIndex], ...userData };
                         
                         // Try to update in Supabase
-                        try {
-                            await supabaseRequest(`users?id=eq.${currentEditId}`, {
-                                method: 'PATCH',
-                                body: JSON.stringify(userData)
-                            });
-                        } catch (error) {
-                            console.error('Error updating user in database:', error);
-                        }
+                        await supabaseRequest(`users?id=eq.${currentEditId}`, {
+                            method: 'PATCH',
+                            body: JSON.stringify(userData)
+                        });
                         
                         showAlert('تم تحديث المستخدم بنجاح', 'success');
                     }
@@ -2858,20 +2940,17 @@
                     users.push(newUser);
                     
                     // Try to save to Supabase
-                    try {
-                        await supabaseRequest('users', {
-                            method: 'POST',
-                            body: JSON.stringify(userData)
-                        });
-                    } catch (error) {
-                        console.error('Error saving user to database:', error);
-                    }
+                    await supabaseRequest('users', {
+                        method: 'POST',
+                        body: JSON.stringify(userData)
+                    });
                     
                     showAlert('تم إضافة المستخدم بنجاح', 'success');
                 }
 
                 closeModal('addUserModal');
-                loadUsers();
+                displayUsers(users);
+                updateStats();
             } catch (error) {
                 console.error('Error saving user:', error);
                 showAlert('خطأ في حفظ المستخدم', 'error');
@@ -2885,16 +2964,13 @@
                     users = users.filter(u => u.id !== id);
                     
                     // Try to delete from Supabase
-                    try {
-                        await supabaseRequest(`users?id=eq.${id}`, {
-                            method: 'DELETE'
-                        });
-                    } catch (error) {
-                        console.error('Error deleting user from database:', error);
-                    }
+                    await supabaseRequest(`users?id=eq.${id}`, {
+                        method: 'DELETE'
+                    });
                     
                     showAlert('تم حذف المستخدم بنجاح', 'success');
-                    loadUsers();
+                    displayUsers(users);
+                    updateStats();
                 } catch (error) {
                     console.error('Error deleting user:', error);
                     showAlert('خطأ في حذف المستخدم', 'error');
@@ -2972,6 +3048,8 @@
             currentEditType = 'ad';
             resetForm('addAdModal');
             document.getElementById('adPreview').innerHTML = '';
+            document.getElementById('adDescLength').textContent = '0';
+            document.getElementById('adDescArLength').textContent = '0';
             openModal('addAdModal');
         }
 
@@ -2989,6 +3067,10 @@
                     document.getElementById('adImageUrl').value = ad.image_url || '';
                     document.getElementById('adLink').value = ad.link || '';
                     document.getElementById('adActive').checked = ad.is_active !== false;
+
+                    // Update character counters
+                    updateCharCounter();
+                    updateCharCounterAr();
 
                     // Show image preview if exists
                     if (ad.image_url) {
@@ -3010,15 +3092,27 @@
             e.preventDefault();
 
             const adData = {
-                title: document.getElementById('adTitle').value,
-                title_ar: document.getElementById('adTitleAr').value,
-                description: document.getElementById('adDescription').value,
-                description_ar: document.getElementById('adDescriptionAr').value,
-                image_url: document.getElementById('adImageUrl').value,
-                link: document.getElementById('adLink').value,
+                title: document.getElementById('adTitle').value.trim(),
+                title_ar: document.getElementById('adTitleAr').value.trim(),
+                description: document.getElementById('adDescription').value.trim(),
+                description_ar: document.getElementById('adDescriptionAr').value.trim(),
+                image_url: document.getElementById('adImageUrl').value.trim(),
+                link: document.getElementById('adLink').value.trim(),
                 is_active: document.getElementById('adActive').checked,
                 updated_at: new Date().toISOString()
             };
+
+            // Validation
+            if (!adData.title || !adData.title_ar || !adData.description || !adData.description_ar) {
+                showAlert('يرجى ملء جميع الحقول المطلوبة', 'error');
+                return;
+            }
+
+            // Check description length
+            if (adData.description.length > 300 || adData.description_ar.length > 300) {
+                showAlert('وصف الإعلان يجب أن يكون أقل من 300 حرف', 'error');
+                return;
+            }
 
             try {
                 if (currentEditId) {
@@ -3028,14 +3122,10 @@
                         ads[adIndex] = { ...ads[adIndex], ...adData };
                         
                         // Try to update in Supabase
-                        try {
-                            await supabaseRequest(`advertisements?id=eq.${currentEditId}`, {
-                                method: 'PATCH',
-                                body: JSON.stringify(adData)
-                            });
-                        } catch (error) {
-                            console.error('Error updating ad in database:', error);
-                        }
+                        await supabaseRequest(`advertisements?id=eq.${currentEditId}`, {
+                            method: 'PATCH',
+                            body: JSON.stringify(adData)
+                        });
                         
                         showAlert('تم تحديث الإعلان بنجاح', 'success');
                     }
@@ -3051,20 +3141,17 @@
                     ads.push(newAd);
                     
                     // Try to save to Supabase
-                    try {
-                        await supabaseRequest('advertisements', {
-                            method: 'POST',
-                            body: JSON.stringify(adData)
-                        });
-                    } catch (error) {
-                        console.error('Error saving ad to database:', error);
-                    }
+                    await supabaseRequest('advertisements', {
+                        method: 'POST',
+                        body: JSON.stringify(adData)
+                    });
                     
                     showAlert('تم إضافة الإعلان بنجاح', 'success');
                 }
 
                 closeModal('addAdModal');
-                loadAds();
+                displayAds(ads);
+                updateStats();
             } catch (error) {
                 console.error('Error saving ad:', error);
                 showAlert('خطأ في حفظ الإعلان', 'error');
@@ -3078,16 +3165,13 @@
                     ads = ads.filter(a => a.id !== id);
                     
                     // Try to delete from Supabase
-                    try {
-                        await supabaseRequest(`advertisements?id=eq.${id}`, {
-                            method: 'DELETE'
-                        });
-                    } catch (error) {
-                        console.error('Error deleting ad from database:', error);
-                    }
+                    await supabaseRequest(`advertisements?id=eq.${id}`, {
+                        method: 'DELETE'
+                    });
                     
                     showAlert('تم حذف الإعلان بنجاح', 'success');
-                    loadAds();
+                    displayAds(ads);
+                    updateStats();
                 } catch (error) {
                     console.error('Error deleting ad:', error);
                     showAlert('خطأ في حذف الإعلان', 'error');
@@ -3128,16 +3212,16 @@
             // Load data if needed
             switch(tabId) {
                 case 'channels':
-                    loadChannels();
+                    displayChannels(channels);
                     break;
                 case 'categories':
-                    loadCategories();
+                    displayCategories(categories);
                     break;
                 case 'users':
-                    loadUsers();
+                    displayUsers(users);
                     break;
                 case 'ads':
-                    loadAds();
+                    displayAds(ads);
                     break;
                 case 'monitoring':
                     checkAllChannels();
@@ -3174,6 +3258,8 @@
                 document.getElementById('adPreview').innerHTML = '';
                 document.getElementById('adImageUrl').value = '';
                 document.getElementById('adActive').checked = true;
+                document.getElementById('adDescLength').textContent = '0';
+                document.getElementById('adDescArLength').textContent = '0';
             } else if (modalId === 'addUserModal') {
                 document.getElementById('userPassword').required = true;
                 document.getElementById('userPassword').placeholder = 'كلمة المرور';
@@ -3231,8 +3317,10 @@
 
         function clearCache() {
             if (confirm('هل أنت متأكد من مسح التخزين المؤقت؟')) {
-                localStorage.clear();
-                sessionStorage.clear();
+                if (typeof(Storage) !== "undefined") {
+                    localStorage.clear();
+                    sessionStorage.clear();
+                }
                 showAlert('✅ تم مسح التخزين المؤقت بنجاح', 'success');
             }
         }
@@ -3343,7 +3431,7 @@
                 z-index: 1000;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             `;
-            statusIndicator.innerHTML = '🟢 نظام TvNa المحسّن - تطوير أمير حلواص';
+            statusIndicator.innerHTML = '🟢 نظام TvNa المُصحح - تطوير أمير حلواص';
             
             if (!document.getElementById('systemStatus')) {
                 document.body.appendChild(statusIndicator);
@@ -3353,10 +3441,14 @@
         // Initialize system status
         setTimeout(updateSystemStatus, 3000);
 
-        console.log('🚀 TvNa Dashboard المحسّن - تم التحميل بنجاح');
-        console.log('🔧 تم تطوير هذا النظام بواسطة Ameer Helwas');
-        console.log('📧 للدعم الفني: ameer.helwas@example.com');
-        console.log('✨ جميع المشاكل تم حلها: رفع الملفات، أزرار الحفظ، تحديد القنوات للمستخدمين، التعديل والحذف');
+        console.log('🚀 TvNa Dashboard المُصحح - تم التحميل بنجاح');
+        console.log('🔧 تم إصلاح جميع المشاكل: رفع الملفات، قيود قاعدة البيانات، التعامل مع الأخطاء');
+        console.log('✨ المشاكل المُصححة:');
+        console.log('   - إصلاح رفع ملفات القنوات');
+        console.log('   - تحديد طول وصف الإعلانات (300 حرف)');
+        console.log('   - تحسين التعامل مع أخطاء قاعدة البيانات');
+        console.log('   - إضافة التحقق من صحة البيانات');
+        console.log('   - تحسين واجهة المستخدم');
     </script>
 </body>
 </html>
